@@ -137,10 +137,10 @@ export default function ProductsList() {
   });
 
   const handleAddProduct = () => {
-    if (!newProduct.article || !newProduct.name || !newProduct.category || !newProduct.stock) {
+    if (!newProduct.article || !newProduct.name) {
       toast({
         title: "Xəta",
-        description: "Bütün məcburi sahələri doldurun",
+        description: "Artikul və Məhsul Adı sahələri məcburidir",
         variant: "destructive"
       });
       return;
@@ -218,7 +218,7 @@ export default function ProductsList() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="category">Kateqoriya *</Label>
+                <Label htmlFor="category">Kateqoriya</Label>
                 <Input
                   id="category"
                   value={newProduct.category}
@@ -227,7 +227,7 @@ export default function ProductsList() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="stock">Stok *</Label>
+                <Label htmlFor="stock">Stok</Label>
                 <Input
                   id="stock"
                   type="number"
