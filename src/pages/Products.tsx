@@ -14,11 +14,38 @@ const warehouses = [
       id: `albali-${i + 1}`,
       name: `Albalı ${i + 1}`,
       batchNumber: i + 1,
-      rolls: Array.from({ length: Math.floor(Math.random() * 20) + 10 }, (_, rollIndex) => ({
-        id: `albali-${i + 1}-roll-${rollIndex + 1}`,
-        rollNumber: rollIndex + 1,
-        checked: Math.random() > 0.7,
-      })),
+      products: [
+        {
+          id: `albali-${i + 1}-product-1`,
+          name: "Premium Albalı",
+          sizes: Array.from({ length: Math.floor(Math.random() * 5) + 3 }, (_, sizeIndex) => ({
+            id: `albali-${i + 1}-product-1-size-${sizeIndex + 1}`,
+            sizeLabel: `${50 + sizeIndex * 10}x${30 + sizeIndex * 5} sm`,
+            rollCount: Math.floor(Math.random() * 15) + 5,
+            checkedRolls: Math.floor(Math.random() * 8),
+          })),
+        },
+        {
+          id: `albali-${i + 1}-product-2`,
+          name: "Standart Albalı",
+          sizes: Array.from({ length: Math.floor(Math.random() * 4) + 2 }, (_, sizeIndex) => ({
+            id: `albali-${i + 1}-product-2-size-${sizeIndex + 1}`,
+            sizeLabel: `${60 + sizeIndex * 15}x${40 + sizeIndex * 10} sm`,
+            rollCount: Math.floor(Math.random() * 12) + 8,
+            checkedRolls: Math.floor(Math.random() * 6),
+          })),
+        },
+        {
+          id: `albali-${i + 1}-product-3`,
+          name: "Deluxe Albalı",
+          sizes: Array.from({ length: Math.floor(Math.random() * 3) + 2 }, (_, sizeIndex) => ({
+            id: `albali-${i + 1}-product-3-size-${sizeIndex + 1}`,
+            sizeLabel: `${70 + sizeIndex * 20}x${50 + sizeIndex * 15} sm`,
+            rollCount: Math.floor(Math.random() * 10) + 6,
+            checkedRolls: Math.floor(Math.random() * 5),
+          })),
+        },
+      ],
       status: Math.random() > 0.3 ? "available" : "low",
     })),
   },
@@ -28,11 +55,28 @@ const warehouses = [
       id: `qaragat-${i + 1}`,
       name: `Qarağat ${i + 1}`,
       batchNumber: i + 1,
-      rolls: Array.from({ length: Math.floor(Math.random() * 15) + 8 }, (_, rollIndex) => ({
-        id: `qaragat-${i + 1}-roll-${rollIndex + 1}`,
-        rollNumber: rollIndex + 1,
-        checked: Math.random() > 0.7,
-      })),
+      products: [
+        {
+          id: `qaragat-${i + 1}-product-1`,
+          name: "Premium Qarağat",
+          sizes: Array.from({ length: Math.floor(Math.random() * 4) + 2 }, (_, sizeIndex) => ({
+            id: `qaragat-${i + 1}-product-1-size-${sizeIndex + 1}`,
+            sizeLabel: `${55 + sizeIndex * 12}x${35 + sizeIndex * 8} sm`,
+            rollCount: Math.floor(Math.random() * 18) + 10,
+            checkedRolls: Math.floor(Math.random() * 9),
+          })),
+        },
+        {
+          id: `qaragat-${i + 1}-product-2`,
+          name: "Standart Qarağat",
+          sizes: Array.from({ length: Math.floor(Math.random() * 3) + 2 }, (_, sizeIndex) => ({
+            id: `qaragat-${i + 1}-product-2-size-${sizeIndex + 1}`,
+            sizeLabel: `${65 + sizeIndex * 18}x${45 + sizeIndex * 12} sm`,
+            rollCount: Math.floor(Math.random() * 14) + 7,
+            checkedRolls: Math.floor(Math.random() * 7),
+          })),
+        },
+      ],
       status: Math.random() > 0.3 ? "available" : "low",
     })),
   },
@@ -42,11 +86,38 @@ const warehouses = [
       id: `mango-${i + 1}`,
       name: `Mango ${i + 1}`,
       batchNumber: i + 1,
-      rolls: Array.from({ length: Math.floor(Math.random() * 18) + 12 }, (_, rollIndex) => ({
-        id: `mango-${i + 1}-roll-${rollIndex + 1}`,
-        rollNumber: rollIndex + 1,
-        checked: Math.random() > 0.7,
-      })),
+      products: [
+        {
+          id: `mango-${i + 1}-product-1`,
+          name: "Premium Mango",
+          sizes: Array.from({ length: Math.floor(Math.random() * 5) + 3 }, (_, sizeIndex) => ({
+            id: `mango-${i + 1}-product-1-size-${sizeIndex + 1}`,
+            sizeLabel: `${48 + sizeIndex * 8}x${32 + sizeIndex * 6} sm`,
+            rollCount: Math.floor(Math.random() * 16) + 8,
+            checkedRolls: Math.floor(Math.random() * 8),
+          })),
+        },
+        {
+          id: `mango-${i + 1}-product-2`,
+          name: "Standart Mango",
+          sizes: Array.from({ length: Math.floor(Math.random() * 4) + 2 }, (_, sizeIndex) => ({
+            id: `mango-${i + 1}-product-2-size-${sizeIndex + 1}`,
+            sizeLabel: `${58 + sizeIndex * 14}x${38 + sizeIndex * 9} sm`,
+            rollCount: Math.floor(Math.random() * 13) + 6,
+            checkedRolls: Math.floor(Math.random() * 6),
+          })),
+        },
+        {
+          id: `mango-${i + 1}-product-3`,
+          name: "Lux Mango",
+          sizes: Array.from({ length: Math.floor(Math.random() * 3) + 2 }, (_, sizeIndex) => ({
+            id: `mango-${i + 1}-product-3-size-${sizeIndex + 1}`,
+            sizeLabel: `${68 + sizeIndex * 16}x${48 + sizeIndex * 11} sm`,
+            rollCount: Math.floor(Math.random() * 11) + 5,
+            checkedRolls: Math.floor(Math.random() * 5),
+          })),
+        },
+      ],
       status: Math.random() > 0.3 ? "available" : "low",
     })),
   },
@@ -57,11 +128,28 @@ const warehouses = [
         id: "zeytun-1",
         name: "Zeytun 1",
         batchNumber: 1,
-        rolls: Array.from({ length: Math.floor(Math.random() * 25) + 15 }, (_, rollIndex) => ({
-          id: `zeytun-1-roll-${rollIndex + 1}`,
-          rollNumber: rollIndex + 1,
-          checked: Math.random() > 0.7,
-        })),
+        products: [
+          {
+            id: "zeytun-1-product-1",
+            name: "Premium Zeytun",
+            sizes: Array.from({ length: Math.floor(Math.random() * 6) + 4 }, (_, sizeIndex) => ({
+              id: `zeytun-1-product-1-size-${sizeIndex + 1}`,
+              sizeLabel: `${52 + sizeIndex * 10}x${36 + sizeIndex * 7} sm`,
+              rollCount: Math.floor(Math.random() * 20) + 10,
+              checkedRolls: Math.floor(Math.random() * 10),
+            })),
+          },
+          {
+            id: "zeytun-1-product-2",
+            name: "Standart Zeytun",
+            sizes: Array.from({ length: Math.floor(Math.random() * 4) + 3 }, (_, sizeIndex) => ({
+              id: `zeytun-1-product-2-size-${sizeIndex + 1}`,
+              sizeLabel: `${62 + sizeIndex * 12}x${42 + sizeIndex * 8} sm`,
+              rollCount: Math.floor(Math.random() * 15) + 8,
+              checkedRolls: Math.floor(Math.random() * 7),
+            })),
+          },
+        ],
         status: Math.random() > 0.3 ? "available" : "low",
       },
     ],
@@ -85,11 +173,15 @@ const getStatusColor = (status: string, allRollsChecked: boolean) => {
 export default function Products() {
   const [warehouseData, setWarehouseData] = useState(warehouses);
 
-  const handleRollToggle = (warehouseIndex: number, batchIndex: number, rollIndex: number) => {
+  const handleRollToggle = (warehouseIndex: number, batchIndex: number, productIndex: number, sizeIndex: number) => {
     setWarehouseData(prev => {
       const newData = [...prev];
-      newData[warehouseIndex].batches[batchIndex].rolls[rollIndex].checked = 
-        !newData[warehouseIndex].batches[batchIndex].rolls[rollIndex].checked;
+      const currentSize = newData[warehouseIndex].batches[batchIndex].products[productIndex].sizes[sizeIndex];
+      if (currentSize.checkedRolls < currentSize.rollCount) {
+        currentSize.checkedRolls += 1;
+      } else {
+        currentSize.checkedRolls = 0;
+      }
       return newData;
     });
   };
@@ -119,9 +211,15 @@ export default function Products() {
 
       <div className="grid gap-6">
         {warehouseData.map((warehouse, warehouseIndex) => {
-          const totalRolls = warehouse.batches.reduce((sum, batch) => sum + batch.rolls.length, 0);
-          const checkedRolls = warehouse.batches.reduce((sum, batch) => sum + batch.rolls.filter(roll => roll.checked).length, 0);
-          const availableRolls = totalRolls - checkedRolls;
+          const totalProducts = warehouse.batches.reduce((sum, batch) => sum + batch.products.length, 0);
+          const totalSizes = warehouse.batches.reduce((sum, batch) => 
+            sum + batch.products.reduce((prodSum, product) => prodSum + product.sizes.length, 0), 0);
+          const totalRolls = warehouse.batches.reduce((sum, batch) => 
+            sum + batch.products.reduce((prodSum, product) => 
+              prodSum + product.sizes.reduce((sizeSum, size) => sizeSum + size.rollCount, 0), 0), 0);
+          const checkedRolls = warehouse.batches.reduce((sum, batch) => 
+            sum + batch.products.reduce((prodSum, product) => 
+              prodSum + product.sizes.reduce((sizeSum, size) => sizeSum + size.checkedRolls, 0), 0), 0);
 
           return (
             <Card key={warehouse.name}>
@@ -129,23 +227,27 @@ export default function Products() {
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-xl">{warehouse.name}</CardTitle>
                   <div className="flex gap-2 text-sm text-muted-foreground">
-                    <span>Ümumi Rulon: {totalRolls}</span>
+                    <span>Məhsul: {totalProducts}</span>
+                    <span>•</span>
+                    <span>Ölçü: {totalSizes}</span>
+                    <span>•</span>
+                    <span>Rulon: {totalRolls}</span>
                     <span>•</span>
                     <span className="text-success">Çıxarıldı: {checkedRolls}</span>
-                    <span>•</span>
-                    <span className="text-info">Mövcud: {availableRolls}</span>
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
                   {warehouse.batches.map((batch, batchIndex) => {
-                    const batchCheckedRolls = batch.rolls.filter(roll => roll.checked).length;
-                    const batchAvailableRolls = batch.rolls.length - batchCheckedRolls;
-                    const allRollsChecked = batchCheckedRolls === batch.rolls.length;
+                    const batchTotalRolls = batch.products.reduce((sum, product) => 
+                      sum + product.sizes.reduce((sizeSum, size) => sizeSum + size.rollCount, 0), 0);
+                    const batchCheckedRolls = batch.products.reduce((sum, product) => 
+                      sum + product.sizes.reduce((sizeSum, size) => sizeSum + size.checkedRolls, 0), 0);
+                    const allRollsChecked = batchCheckedRolls === batchTotalRolls && batchTotalRolls > 0;
 
                     return (
-                      <div key={batch.id} className="space-y-3">
+                      <div key={batch.id} className="space-y-4">
                         <div className="flex items-center justify-between border-b pb-2">
                           <div className="flex items-center gap-3">
                             <h3 className={`text-lg font-semibold ${allRollsChecked ? "line-through text-muted-foreground" : ""}`}>
@@ -156,9 +258,7 @@ export default function Products() {
                             </Badge>
                           </div>
                           <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                            <span>Çıxarıldı: {batchCheckedRolls}</span>
-                            <span>•</span>
-                            <span>Mövcud: {batchAvailableRolls}</span>
+                            <span>Çıxarıldı: {batchCheckedRolls}/{batchTotalRolls}</span>
                             <div className="flex gap-1 ml-3">
                               <Button variant="ghost" size="icon" className="h-7 w-7">
                                 <Edit className="h-3 w-3" />
@@ -170,44 +270,68 @@ export default function Products() {
                           </div>
                         </div>
                         
-                        <div className="rounded-lg border">
-                          <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead className="w-16">Çıxış</TableHead>
-                                <TableHead>Rulon №</TableHead>
-                                <TableHead>Vəziyyət</TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {batch.rolls.map((roll, rollIndex) => (
-                                <TableRow 
-                                  key={roll.id}
-                                  className={roll.checked ? "bg-success/10" : ""}
-                                >
-                                  <TableCell>
-                                    <Checkbox
-                                      checked={roll.checked}
-                                      onCheckedChange={() => handleRollToggle(warehouseIndex, batchIndex, rollIndex)}
-                                      className="h-4 w-4"
-                                    />
-                                  </TableCell>
-                                  <TableCell className={roll.checked ? "line-through text-muted-foreground" : ""}>
-                                    Rulon #{roll.rollNumber}
-                                  </TableCell>
-                                  <TableCell>
-                                    <Badge 
-                                      variant="secondary" 
-                                      className={roll.checked ? "bg-success text-success-foreground" : "bg-info text-info-foreground"}
-                                    >
-                                      {roll.checked ? "Çıxarıldı" : "Anbarda"}
-                                    </Badge>
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </div>
+                        {batch.products.map((product, productIndex) => (
+                          <div key={product.id} className="ml-4 space-y-3">
+                            <h4 className="text-md font-medium text-primary">{product.name}</h4>
+                            <div className="rounded-lg border">
+                              <Table>
+                                <TableHeader>
+                                  <TableRow>
+                                    <TableHead className="w-16">Çıxış</TableHead>
+                                    <TableHead>Ölçü</TableHead>
+                                    <TableHead>Rulon Sayı</TableHead>
+                                    <TableHead>Çıxarıldı</TableHead>
+                                    <TableHead>Vəziyyət</TableHead>
+                                  </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                  {product.sizes.map((size, sizeIndex) => {
+                                    const isFullyChecked = size.checkedRolls === size.rollCount;
+                                    const hasPartiallyChecked = size.checkedRolls > 0 && size.checkedRolls < size.rollCount;
+                                    
+                                    return (
+                                      <TableRow 
+                                        key={size.id}
+                                        className={isFullyChecked ? "bg-success/10" : hasPartiallyChecked ? "bg-warning/10" : ""}
+                                      >
+                                        <TableCell>
+                                          <Checkbox
+                                            checked={isFullyChecked}
+                                            onCheckedChange={() => handleRollToggle(warehouseIndex, batchIndex, productIndex, sizeIndex)}
+                                            className="h-4 w-4"
+                                          />
+                                        </TableCell>
+                                        <TableCell className={isFullyChecked ? "line-through text-muted-foreground" : ""}>
+                                          {size.sizeLabel}
+                                        </TableCell>
+                                        <TableCell className={isFullyChecked ? "line-through text-muted-foreground" : ""}>
+                                          {size.rollCount} ədəd
+                                        </TableCell>
+                                        <TableCell>
+                                          <span className={isFullyChecked ? "text-success font-medium" : hasPartiallyChecked ? "text-warning font-medium" : ""}>
+                                            {size.checkedRolls}/{size.rollCount}
+                                          </span>
+                                        </TableCell>
+                                        <TableCell>
+                                          <Badge 
+                                            variant="secondary" 
+                                            className={
+                                              isFullyChecked ? "bg-success text-success-foreground" : 
+                                              hasPartiallyChecked ? "bg-warning text-warning-foreground" : 
+                                              "bg-info text-info-foreground"
+                                            }
+                                          >
+                                            {isFullyChecked ? "Tamamlandı" : hasPartiallyChecked ? "Qismən" : "Anbarda"}
+                                          </Badge>
+                                        </TableCell>
+                                      </TableRow>
+                                    );
+                                  })}
+                                </TableBody>
+                              </Table>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     );
                   })}
