@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 const sidebarItems = [
   { title: "Ana Səhifə", href: "/", icon: Home },
-  { title: "Məhsullar", href: "/products", icon: Package },
+  { title: "Anbarlar", href: "/products", icon: Package },
   { title: "Hesabatlar", href: "/reports", icon: BarChart3 },
   { title: "Şablonlar", href: "/templates", icon: FileText },
   { title: "Yeni Əməliyyat", href: "/add", icon: Plus },

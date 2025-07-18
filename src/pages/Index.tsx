@@ -8,8 +8,8 @@ const Index = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">İnventar İdarəetmə Sistemi</h1>
-          <p className="text-muted-foreground">Məhsul inventarınızı idarə edin və izləyin</p>
+          <h1 className="text-3xl font-bold tracking-tight">Anbar İdarəetmə Sistemi</h1>
+          <p className="text-muted-foreground">Anbar partiyalarını izləyin və idarə edin</p>
         </div>
         <Button asChild>
           <Link to="/add">
@@ -22,13 +22,13 @@ const Index = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ümumi Məhsul</CardTitle>
+            <CardTitle className="text-sm font-medium">Ümumi Partiya</CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">19</div>
             <p className="text-xs text-muted-foreground">
-              +2 keçən həftəyə nisbətən
+              4 anbarda bölünən
             </p>
           </CardContent>
         </Card>
@@ -81,13 +81,13 @@ const Index = () => {
           <CardContent className="space-y-2">
             <Button variant="outline" className="w-full justify-between" asChild>
               <Link to="/products">
-                Məhsulları görüntülə
+                Anbarları görüntülə
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
             <Button variant="outline" className="w-full justify-between" asChild>
               <Link to="/reports">
-                Hesabatları yoxla
+                Partiya hesabatları
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
