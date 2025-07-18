@@ -2,7 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, Edit, Trash2 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Search, Plus, Edit, Trash2, CheckCircle } from "lucide-react";
 
 const productCategories = [
   {
@@ -11,6 +12,7 @@ const productCategories = [
       id: `albali-${i + 1}`,
       name: `Albalı ${i + 1}`,
       quantity: Math.floor(Math.random() * 100),
+      checked: Math.random() > 0.7,
       status: Math.random() > 0.3 ? "available" : "low",
     })),
   },
@@ -20,6 +22,7 @@ const productCategories = [
       id: `qaragat-${i + 1}`,
       name: `Qarağat ${i + 1}`,
       quantity: Math.floor(Math.random() * 100),
+      checked: Math.random() > 0.7,
       status: Math.random() > 0.3 ? "available" : "low",
     })),
   },
@@ -29,6 +32,7 @@ const productCategories = [
       id: `mango-${i + 1}`,
       name: `Mango ${i + 1}`,
       quantity: Math.floor(Math.random() * 100),
+      checked: Math.random() > 0.7,
       status: Math.random() > 0.3 ? "available" : "low",
     })),
   },
@@ -39,16 +43,20 @@ const productCategories = [
         id: "zeytun-1",
         name: "Zeytun 1",
         quantity: Math.floor(Math.random() * 100),
+        checked: Math.random() > 0.7,
         status: Math.random() > 0.3 ? "available" : "low",
       },
     ],
   },
 ];
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: string, checked: boolean) => {
+  if (checked) {
+    return "bg-success text-success-foreground";
+  }
   switch (status) {
     case "available":
-      return "bg-success text-success-foreground";
+      return "bg-info text-info-foreground";
     case "low":
       return "bg-warning text-warning-foreground";
     default:
@@ -61,10 +69,16 @@ export default function Products() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Məhsullar</h1>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Yeni Məhsul
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline">
+            <CheckCircle className="mr-2 h-4 w-4" />
+            İşarələnmiş: 47
+          </Button>
+          <Button>
+            <Plus className="mr-2 h-4 w-4" />
+            Yeni Məhsul
+          </Button>
+        </div>
       </div>
 
       <div className="flex items-center space-x-2">
@@ -83,17 +97,27 @@ export default function Products() {
                 {category.items.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted/50"
+                    className={`flex items-center justify-between rounded-lg border p-3 hover:bg-muted/50 ${
+                      item.checked ? "bg-success/10" : ""
+                    }`}
                   >
-                    <div className="space-y-1">
-                      <p className="font-medium">{item.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Miqdar: {item.quantity}
-                      </p>
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        checked={item.checked}
+                        className="h-5 w-5"
+                      />
+                      <div className="space-y-1">
+                        <p className={`font-medium ${item.checked ? "line-through text-muted-foreground" : ""}`}>
+                          {item.name}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Miqdar: {item.quantity} ədəd
+                        </p>
+                      </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge className={getStatusColor(item.status)}>
-                        {item.status === "available" ? "Mövcud" : "Az"}
+                      <Badge className={getStatusColor(item.status, item.checked)}>
+                        {item.checked ? "Çıxarıldı" : item.status === "available" ? "Mövcud" : "Az"}
                       </Badge>
                       <div className="flex gap-1">
                         <Button variant="ghost" size="icon">

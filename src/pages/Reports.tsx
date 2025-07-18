@@ -35,13 +35,13 @@ export default function Reports() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ümumi Miqdar</CardTitle>
+            <CardTitle className="text-sm font-medium">İşarələnmiş</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,247</div>
+            <div className="text-2xl font-bold">142</div>
             <p className="text-xs text-muted-foreground">
-              Anbar məhsulları
+              Çıxarılmış məhsullar
             </p>
           </CardContent>
         </Card>
@@ -61,13 +61,13 @@ export default function Reports() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Kateqoriya</CardTitle>
+            <CardTitle className="text-sm font-medium">Qalan</CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">4</div>
+            <div className="text-2xl font-bold">1,105</div>
             <p className="text-xs text-muted-foreground">
-              Albalı, Qarağat, Mango, Zeytun
+              Anbarda qalan məhsul
             </p>
           </CardContent>
         </Card>
@@ -76,40 +76,33 @@ export default function Reports() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Kateqoriya üzrə Paylanma</CardTitle>
+            <CardTitle>Məhsul Statusu</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span>Albalı</span>
-                <span className="font-medium">47%</span>
+                <span>Çıxarılmış</span>
+                <span className="font-medium">47 ədəd</span>
               </div>
               <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-primary h-2 rounded-full" style={{ width: "47%" }}></div>
+                <div className="bg-success h-2 rounded-full" style={{ width: "47%" }}></div>
               </div>
               
               <div className="flex items-center justify-between">
-                <span>Mango</span>
-                <span className="font-medium">26%</span>
+                <span>Qalan</span>
+                <span className="font-medium">53 ədəd</span>
               </div>
               <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-success h-2 rounded-full" style={{ width: "26%" }}></div>
+                <div className="bg-info h-2 rounded-full" style={{ width: "53%" }}></div>
               </div>
               
-              <div className="flex items-center justify-between">
-                <span>Qarağat</span>
-                <span className="font-medium">21%</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-info h-2 rounded-full" style={{ width: "21%" }}></div>
-              </div>
               
               <div className="flex items-center justify-between">
-                <span>Zeytun</span>
-                <span className="font-medium">6%</span>
+                <span>Az qalan</span>
+                <span className="font-medium">4 ədəd</span>
               </div>
               <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-warning h-2 rounded-full" style={{ width: "6%" }}></div>
+                <div className="bg-warning h-2 rounded-full" style={{ width: "8%" }}></div>
               </div>
             </div>
           </CardContent>
@@ -123,26 +116,26 @@ export default function Reports() {
             <div className="space-y-3">
               <div className="flex items-center justify-between py-2 border-b">
                 <div>
-                  <p className="font-medium">Albalı 3 - Daxil olma</p>
+                  <p className="font-medium">Albalı 3 - Çıxarıldı</p>
                   <p className="text-sm text-muted-foreground">Bugün, 14:30</p>
                 </div>
-                <span className="text-success font-medium">+25</span>
+                <span className="text-success font-medium">✓ 25 ədəd</span>
               </div>
               
               <div className="flex items-center justify-between py-2 border-b">
                 <div>
-                  <p className="font-medium">Mango 2 - Satış</p>
+                  <p className="font-medium">Mango 2 - Çıxarıldı</p>
                   <p className="text-sm text-muted-foreground">Bugün, 11:15</p>
                 </div>
-                <span className="text-destructive font-medium">-12</span>
+                <span className="text-success font-medium">✓ 12 ədəd</span>
               </div>
               
               <div className="flex items-center justify-between py-2 border-b">
                 <div>
-                  <p className="font-medium">Qarağat 1 - Daxil olma</p>
+                  <p className="font-medium">Qarağat 1 - Çıxarıldı</p>
                   <p className="text-sm text-muted-foreground">Dünən, 16:45</p>
                 </div>
-                <span className="text-success font-medium">+40</span>
+                <span className="text-success font-medium">✓ 40 ədəd</span>
               </div>
             </div>
           </CardContent>
