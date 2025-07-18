@@ -17,7 +17,6 @@ const products = [
     name: "Albalı Məhsulu Tip 1",
     category: "Albalı",
     status: "active",
-    price: 25.50,
     stock: 150,
     description: "Premium keyfiyyətli albalı məhsulu"
   },
@@ -27,7 +26,6 @@ const products = [
     name: "Albalı Məhsulu Tip 2",
     category: "Albalı",
     status: "active",
-    price: 22.30,
     stock: 200,
     description: "Standart keyfiyyətli albalı məhsulu"
   },
@@ -37,7 +35,6 @@ const products = [
     name: "Albalı Məhsulu Tip 3",
     category: "Albalı",
     status: "active",
-    price: 28.75,
     stock: 80,
     description: "Deluxe keyfiyyətli albalı məhsulu"
   },
@@ -47,7 +44,6 @@ const products = [
     name: "Qarağat Məhsulu Tip 1", 
     category: "Qarağat",
     status: "active",
-    price: 32.20,
     stock: 120,
     description: "Premium keyfiyyətli qarağat məhsulu"
   },
@@ -57,7 +53,6 @@ const products = [
     name: "Qarağat Məhsulu Tip 2",
     category: "Qarağat", 
     status: "low_stock",
-    price: 29.90,
     stock: 45,
     description: "Standart keyfiyyətli qarağat məhsulu"
   },
@@ -67,7 +62,6 @@ const products = [
     name: "Mango Məhsulu Tip 1",
     category: "Mango",
     status: "active",
-    price: 35.60,
     stock: 90,
     description: "Premium keyfiyyətli mango məhsulu"
   },
@@ -77,7 +71,6 @@ const products = [
     name: "Mango Məhsulu Tip 2",
     category: "Mango",
     status: "active",
-    price: 31.40,
     stock: 110,
     description: "Standart keyfiyyətli mango məhsulu"
   },
@@ -87,7 +80,6 @@ const products = [
     name: "Mango Məhsulu Tip 3",
     category: "Mango",
     status: "out_of_stock",
-    price: 38.90,
     stock: 0,
     description: "Lux keyfiyyətli mango məhsulu"
   },
@@ -97,7 +89,6 @@ const products = [
     name: "Zeytun Məhsulu Tip 1",
     category: "Zeytun",
     status: "active", 
-    price: 42.30,
     stock: 75,
     description: "Premium keyfiyyətli zeytun məhsulu"
   },
@@ -107,7 +98,6 @@ const products = [
     name: "Zeytun Məhsulu Tip 2",
     category: "Zeytun",
     status: "active",
-    price: 38.50,
     stock: 95,
     description: "Standart keyfiyyətli zeytun məhsulu"
   }
@@ -132,7 +122,6 @@ export default function ProductsList() {
     article: "",
     name: "",
     category: "",
-    price: "",
     stock: "",
     description: ""
   });
@@ -148,7 +137,7 @@ export default function ProductsList() {
   });
 
   const handleAddProduct = () => {
-    if (!newProduct.article || !newProduct.name || !newProduct.category || !newProduct.price || !newProduct.stock) {
+    if (!newProduct.article || !newProduct.name || !newProduct.category || !newProduct.stock) {
       toast({
         title: "Xəta",
         description: "Bütün məcburi sahələri doldurun",
@@ -163,7 +152,6 @@ export default function ProductsList() {
       name: newProduct.name,
       category: newProduct.category,
       status: "active",
-      price: parseFloat(newProduct.price),
       stock: parseInt(newProduct.stock),
       description: newProduct.description
     };
@@ -173,7 +161,6 @@ export default function ProductsList() {
       article: "",
       name: "",
       category: "",
-      price: "",
       stock: "",
       description: ""
     });
@@ -239,28 +226,15 @@ export default function ProductsList() {
                   placeholder="Məs: Albalı, Qarağat, Mango"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="price">Qiymət (₼) *</Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    step="0.01"
-                    value={newProduct.price}
-                    onChange={(e) => setNewProduct(prev => ({ ...prev, price: e.target.value }))}
-                    placeholder="0.00"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="stock">Stok *</Label>
-                  <Input
-                    id="stock"
-                    type="number"
-                    value={newProduct.stock}
-                    onChange={(e) => setNewProduct(prev => ({ ...prev, stock: e.target.value }))}
-                    placeholder="0"
-                  />
-                </div>
+              <div className="grid gap-2">
+                <Label htmlFor="stock">Stok *</Label>
+                <Input
+                  id="stock"
+                  type="number"
+                  value={newProduct.stock}
+                  onChange={(e) => setNewProduct(prev => ({ ...prev, stock: e.target.value }))}
+                  placeholder="0"
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="description">Təsvir</Label>
@@ -321,7 +295,6 @@ export default function ProductsList() {
                 <TableHead>Artikul</TableHead>
                 <TableHead>Məhsul Adı</TableHead>
                 <TableHead>Kateqoriya</TableHead>
-                <TableHead>Qiymət</TableHead>
                 <TableHead>Stok</TableHead>
                 <TableHead>Vəziyyət</TableHead>
                 <TableHead>Təsvir</TableHead>
@@ -336,7 +309,6 @@ export default function ProductsList() {
                   <TableCell>
                     <Badge variant="outline">{product.category}</Badge>
                   </TableCell>
-                  <TableCell>{product.price.toFixed(2)} ₼</TableCell>
                   <TableCell>{product.stock} ədəd</TableCell>
                   <TableCell>
                     {getStatusBadge(product.status, product.stock)}
