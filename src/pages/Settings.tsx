@@ -32,20 +32,6 @@ export default function Settings() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="currency">Valyuta</Label>
-              <Select defaultValue="azn">
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="azn">Azərbaycan Manatı (₼)</SelectItem>
-                  <SelectItem value="usd">ABŞ Dolları ($)</SelectItem>
-                  <SelectItem value="eur">Avro (€)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
               <Label htmlFor="language">Dil</Label>
               <Select defaultValue="az">
                 <SelectTrigger>
