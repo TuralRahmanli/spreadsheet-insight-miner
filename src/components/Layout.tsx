@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { Package, Home, FileText, Settings, BarChart3, Plus, Menu } from "lucide-react";
+import { Package, Home, FileText, Settings, BarChart3, Plus, Menu, ShoppingCart } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 const sidebarItems = [
   { title: "Ana Səhifə", href: "/", icon: Home },
   { title: "Anbarlar", href: "/products", icon: Package },
+  { title: "Məhsullar", href: "/products-list", icon: ShoppingCart },
   { title: "Hesabatlar", href: "/reports", icon: BarChart3 },
   { title: "Şablonlar", href: "/templates", icon: FileText },
   { title: "Yeni Əməliyyat", href: "/add", icon: Plus },
