@@ -6,15 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Save } from "lucide-react";
-
-const productOptions = [
-  "Albalı 1", "Albalı 2", "Albalı 3", "Albalı 4", "Albalı 5", "Albalı 6", "Albalı 7", "Albalı 8", "Albalı 9",
-  "Qarağat 1", "Qarağat 2", "Qarağat 3", "Qarağat 4",
-  "Mango 1", "Mango 2", "Mango 3", "Mango 4", "Mango 5",
-  "Zeytun 1"
-];
+import { useProductStore } from "@/lib/productStore";
 
 export default function AddOperation() {
+  const { products } = useProductStore();
   const [operationType, setOperationType] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
   const [quantity, setQuantity] = useState("");
@@ -55,9 +50,9 @@ export default function AddOperation() {
                   <SelectValue placeholder="Məhsul seçin" />
                 </SelectTrigger>
                 <SelectContent>
-                  {productOptions.map((product) => (
-                    <SelectItem key={product} value={product}>
-                      {product}
+                  {products.map((product) => (
+                    <SelectItem key={product.id} value={product.id}>
+                      {product.name} ({product.article})
                     </SelectItem>
                   ))}
                 </SelectContent>

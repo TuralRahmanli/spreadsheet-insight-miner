@@ -9,99 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Plus, Edit, Trash2, Package } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-const products = [
-  {
-    id: "ALB-001",
-    article: "ALB-001",
-    name: "Albalı Məhsulu Tip 1",
-    category: "Albalı",
-    status: "active",
-    stock: 150,
-    description: "Premium keyfiyyətli albalı məhsulu"
-  },
-  {
-    id: "ALB-002", 
-    article: "ALB-002",
-    name: "Albalı Məhsulu Tip 2",
-    category: "Albalı",
-    status: "active",
-    stock: 200,
-    description: "Standart keyfiyyətli albalı məhsulu"
-  },
-  {
-    id: "ALB-003",
-    article: "ALB-003", 
-    name: "Albalı Məhsulu Tip 3",
-    category: "Albalı",
-    status: "active",
-    stock: 80,
-    description: "Deluxe keyfiyyətli albalı məhsulu"
-  },
-  {
-    id: "QAR-001",
-    article: "QAR-001",
-    name: "Qarağat Məhsulu Tip 1", 
-    category: "Qarağat",
-    status: "active",
-    stock: 120,
-    description: "Premium keyfiyyətli qarağat məhsulu"
-  },
-  {
-    id: "QAR-002",
-    article: "QAR-002",
-    name: "Qarağat Məhsulu Tip 2",
-    category: "Qarağat", 
-    status: "low_stock",
-    stock: 45,
-    description: "Standart keyfiyyətli qarağat məhsulu"
-  },
-  {
-    id: "MNG-001",
-    article: "MNG-001",
-    name: "Mango Məhsulu Tip 1",
-    category: "Mango",
-    status: "active",
-    stock: 90,
-    description: "Premium keyfiyyətli mango məhsulu"
-  },
-  {
-    id: "MNG-002",
-    article: "MNG-002", 
-    name: "Mango Məhsulu Tip 2",
-    category: "Mango",
-    status: "active",
-    stock: 110,
-    description: "Standart keyfiyyətli mango məhsulu"
-  },
-  {
-    id: "MNG-003",
-    article: "MNG-003",
-    name: "Mango Məhsulu Tip 3",
-    category: "Mango",
-    status: "out_of_stock",
-    stock: 0,
-    description: "Lux keyfiyyətli mango məhsulu"
-  },
-  {
-    id: "ZEY-001",
-    article: "ZEY-001",
-    name: "Zeytun Məhsulu Tip 1",
-    category: "Zeytun",
-    status: "active", 
-    stock: 75,
-    description: "Premium keyfiyyətli zeytun məhsulu"
-  },
-  {
-    id: "ZEY-002",
-    article: "ZEY-002",
-    name: "Zeytun Məhsulu Tip 2",
-    category: "Zeytun",
-    status: "active",
-    stock: 95,
-    description: "Standart keyfiyyətli zeytun məhsulu"
-  }
-];
+import { useProductStore } from "@/lib/productStore";
 
 const getStatusBadge = (status: string, stock: number) => {
   if (status === "out_of_stock" || stock === 0) {
@@ -114,7 +22,7 @@ const getStatusBadge = (status: string, stock: number) => {
 };
 
 export default function ProductsList() {
-  const [productList, setProductList] = useState(products);
+  const { products, addProduct, removeProduct } = useProductStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -127,9 +35,9 @@ export default function ProductsList() {
   });
   const { toast } = useToast();
   
-  const categories = ["all", ...Array.from(new Set(productList.map(p => p.category)))];
+  const categories = ["all", ...Array.from(new Set(products.map(p => p.category)))];
   
-  const filteredProducts = productList.filter(product => {
+  const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          product.article.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
@@ -150,13 +58,13 @@ export default function ProductsList() {
       id: newProduct.article,
       article: newProduct.article,
       name: newProduct.name,
-      category: newProduct.category,
+      category: newProduct.category || "",
       status: "active",
-      stock: parseInt(newProduct.stock),
+      stock: parseInt(newProduct.stock) || 0,
       description: newProduct.description
     };
 
-    setProductList(prev => [...prev, product]);
+    addProduct(product);
     setNewProduct({
       article: "",
       name: "",
@@ -173,7 +81,7 @@ export default function ProductsList() {
   };
 
   const handleDeleteProduct = (productId: string) => {
-    setProductList(prev => prev.filter(p => p.id !== productId));
+    removeProduct(productId);
     toast({
       title: "Uğur", 
       description: "Məhsul uğurla silindi"
