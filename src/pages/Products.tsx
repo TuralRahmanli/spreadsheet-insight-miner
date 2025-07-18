@@ -17,7 +17,7 @@ const warehouses = [
       products: [
         {
           id: `albali-${i + 1}-product-1`,
-          name: "Premium Albalı",
+          name: "ALB-001",
           sizes: Array.from({ length: Math.floor(Math.random() * 5) + 3 }, (_, sizeIndex) => ({
             id: `albali-${i + 1}-product-1-size-${sizeIndex + 1}`,
             sizeLabel: `${50 + sizeIndex * 10}x${30 + sizeIndex * 5} sm`,
@@ -27,7 +27,7 @@ const warehouses = [
         },
         {
           id: `albali-${i + 1}-product-2`,
-          name: "Standart Albalı",
+          name: "ALB-002",
           sizes: Array.from({ length: Math.floor(Math.random() * 4) + 2 }, (_, sizeIndex) => ({
             id: `albali-${i + 1}-product-2-size-${sizeIndex + 1}`,
             sizeLabel: `${60 + sizeIndex * 15}x${40 + sizeIndex * 10} sm`,
@@ -37,7 +37,7 @@ const warehouses = [
         },
         {
           id: `albali-${i + 1}-product-3`,
-          name: "Deluxe Albalı",
+          name: "ALB-003",
           sizes: Array.from({ length: Math.floor(Math.random() * 3) + 2 }, (_, sizeIndex) => ({
             id: `albali-${i + 1}-product-3-size-${sizeIndex + 1}`,
             sizeLabel: `${70 + sizeIndex * 20}x${50 + sizeIndex * 15} sm`,
@@ -58,7 +58,7 @@ const warehouses = [
       products: [
         {
           id: `qaragat-${i + 1}-product-1`,
-          name: "Premium Qarağat",
+          name: "QAR-001",
           sizes: Array.from({ length: Math.floor(Math.random() * 4) + 2 }, (_, sizeIndex) => ({
             id: `qaragat-${i + 1}-product-1-size-${sizeIndex + 1}`,
             sizeLabel: `${55 + sizeIndex * 12}x${35 + sizeIndex * 8} sm`,
@@ -68,7 +68,7 @@ const warehouses = [
         },
         {
           id: `qaragat-${i + 1}-product-2`,
-          name: "Standart Qarağat",
+          name: "QAR-002",
           sizes: Array.from({ length: Math.floor(Math.random() * 3) + 2 }, (_, sizeIndex) => ({
             id: `qaragat-${i + 1}-product-2-size-${sizeIndex + 1}`,
             sizeLabel: `${65 + sizeIndex * 18}x${45 + sizeIndex * 12} sm`,
@@ -89,7 +89,7 @@ const warehouses = [
       products: [
         {
           id: `mango-${i + 1}-product-1`,
-          name: "Premium Mango",
+          name: "MNG-001",
           sizes: Array.from({ length: Math.floor(Math.random() * 5) + 3 }, (_, sizeIndex) => ({
             id: `mango-${i + 1}-product-1-size-${sizeIndex + 1}`,
             sizeLabel: `${48 + sizeIndex * 8}x${32 + sizeIndex * 6} sm`,
@@ -99,7 +99,7 @@ const warehouses = [
         },
         {
           id: `mango-${i + 1}-product-2`,
-          name: "Standart Mango",
+          name: "MNG-002",
           sizes: Array.from({ length: Math.floor(Math.random() * 4) + 2 }, (_, sizeIndex) => ({
             id: `mango-${i + 1}-product-2-size-${sizeIndex + 1}`,
             sizeLabel: `${58 + sizeIndex * 14}x${38 + sizeIndex * 9} sm`,
@@ -109,7 +109,7 @@ const warehouses = [
         },
         {
           id: `mango-${i + 1}-product-3`,
-          name: "Lux Mango",
+          name: "MNG-003",
           sizes: Array.from({ length: Math.floor(Math.random() * 3) + 2 }, (_, sizeIndex) => ({
             id: `mango-${i + 1}-product-3-size-${sizeIndex + 1}`,
             sizeLabel: `${68 + sizeIndex * 16}x${48 + sizeIndex * 11} sm`,
@@ -131,7 +131,7 @@ const warehouses = [
         products: [
           {
             id: "zeytun-1-product-1",
-            name: "Premium Zeytun",
+            name: "ZEY-001",
             sizes: Array.from({ length: Math.floor(Math.random() * 6) + 4 }, (_, sizeIndex) => ({
               id: `zeytun-1-product-1-size-${sizeIndex + 1}`,
               sizeLabel: `${52 + sizeIndex * 10}x${36 + sizeIndex * 7} sm`,
@@ -141,7 +141,7 @@ const warehouses = [
           },
           {
             id: "zeytun-1-product-2",
-            name: "Standart Zeytun",
+            name: "ZEY-002",
             sizes: Array.from({ length: Math.floor(Math.random() * 4) + 3 }, (_, sizeIndex) => ({
               id: `zeytun-1-product-2-size-${sizeIndex + 1}`,
               sizeLabel: `${62 + sizeIndex * 12}x${42 + sizeIndex * 8} sm`,
