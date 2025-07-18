@@ -211,15 +211,15 @@ export default function Products() {
 
       <div className="grid gap-6">
         {warehouseData.map((warehouse, warehouseIndex) => {
-          const totalProducts = warehouse.batches.reduce((sum, batch) => sum + batch.products.length, 0);
+          const totalProducts = warehouse.batches.reduce((sum, batch) => sum + (batch.products?.length || 0), 0);
           const totalSizes = warehouse.batches.reduce((sum, batch) => 
-            sum + batch.products.reduce((prodSum, product) => prodSum + product.sizes.length, 0), 0);
+            sum + (batch.products?.reduce((prodSum, product) => prodSum + (product.sizes?.length || 0), 0) || 0), 0);
           const totalRolls = warehouse.batches.reduce((sum, batch) => 
-            sum + batch.products.reduce((prodSum, product) => 
-              prodSum + product.sizes.reduce((sizeSum, size) => sizeSum + size.rollCount, 0), 0), 0);
+            sum + (batch.products?.reduce((prodSum, product) => 
+              prodSum + (product.sizes?.reduce((sizeSum, size) => sizeSum + (size.rollCount || 0), 0) || 0), 0) || 0), 0);
           const checkedRolls = warehouse.batches.reduce((sum, batch) => 
-            sum + batch.products.reduce((prodSum, product) => 
-              prodSum + product.sizes.reduce((sizeSum, size) => sizeSum + size.checkedRolls, 0), 0), 0);
+            sum + (batch.products?.reduce((prodSum, product) => 
+              prodSum + (product.sizes?.reduce((sizeSum, size) => sizeSum + (size.checkedRolls || 0), 0) || 0), 0) || 0), 0);
 
           return (
             <Card key={warehouse.name}>
@@ -240,10 +240,10 @@ export default function Products() {
               <CardContent>
                 <div className="space-y-6">
                   {warehouse.batches.map((batch, batchIndex) => {
-                    const batchTotalRolls = batch.products.reduce((sum, product) => 
-                      sum + product.sizes.reduce((sizeSum, size) => sizeSum + size.rollCount, 0), 0);
-                    const batchCheckedRolls = batch.products.reduce((sum, product) => 
-                      sum + product.sizes.reduce((sizeSum, size) => sizeSum + size.checkedRolls, 0), 0);
+                    const batchTotalRolls = batch.products?.reduce((sum, product) => 
+                      sum + (product.sizes?.reduce((sizeSum, size) => sizeSum + (size.rollCount || 0), 0) || 0), 0) || 0;
+                    const batchCheckedRolls = batch.products?.reduce((sum, product) => 
+                      sum + (product.sizes?.reduce((sizeSum, size) => sizeSum + (size.checkedRolls || 0), 0) || 0), 0) || 0;
                     const allRollsChecked = batchCheckedRolls === batchTotalRolls && batchTotalRolls > 0;
 
                     return (
@@ -270,7 +270,7 @@ export default function Products() {
                           </div>
                         </div>
                         
-                        {batch.products.map((product, productIndex) => (
+                        {batch.products?.map((product, productIndex) => (
                           <div key={product.id} className="ml-4 space-y-3">
                             <h4 className="text-md font-medium text-primary">{product.name}</h4>
                             <div className="rounded-lg border">
@@ -285,7 +285,7 @@ export default function Products() {
                                   </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                  {product.sizes.map((size, sizeIndex) => {
+                                  {product.sizes?.map((size, sizeIndex) => {
                                     const isFullyChecked = size.checkedRolls === size.rollCount;
                                     const hasPartiallyChecked = size.checkedRolls > 0 && size.checkedRolls < size.rollCount;
                                     
