@@ -1,22 +1,22 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Package, TrendingUp, AlertTriangle, Activity, Plus, ArrowRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Calendar, Download, TrendingUp, Package, AlertTriangle } from "lucide-react";
 
-const Index = () => {
+export default function Reports() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">İnventar İdarəetmə Sistemi</h1>
-          <p className="text-muted-foreground">Məhsul inventarınızı idarə edin və izləyin</p>
+        <h1 className="text-3xl font-bold tracking-tight">Hesabatlar</h1>
+        <div className="flex gap-2">
+          <Button variant="outline">
+            <Calendar className="mr-2 h-4 w-4" />
+            Tarix seç
+          </Button>
+          <Button>
+            <Download className="mr-2 h-4 w-4" />
+            İxrac et
+          </Button>
         </div>
-        <Button asChild>
-          <Link to="/add">
-            <Plus className="mr-2 h-4 w-4" />
-            Yeni Əməliyyat
-          </Link>
-        </Button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -28,20 +28,20 @@ const Index = () => {
           <CardContent>
             <div className="text-2xl font-bold">19</div>
             <p className="text-xs text-muted-foreground">
-              +2 keçən həftəyə nisbətən
+              Fərqli məhsul növü
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ümumi Dəyər</CardTitle>
+            <CardTitle className="text-sm font-medium">Ümumi Miqdar</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₼2,350</div>
+            <div className="text-2xl font-bold">1,247</div>
             <p className="text-xs text-muted-foreground">
-              +12% bu ay
+              Anbar məhsulları
             </p>
           </CardContent>
         </Card>
@@ -61,13 +61,13 @@ const Index = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Bu Həftə</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Kateqoriya</CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">23</div>
+            <div className="text-2xl font-bold">4</div>
             <p className="text-xs text-muted-foreground">
-              Yeni əməliyyat
+              Albalı, Qarağat, Mango, Zeytun
             </p>
           </CardContent>
         </Card>
@@ -76,37 +76,52 @@ const Index = () => {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Tez Keçid</CardTitle>
+            <CardTitle>Kateqoriya üzrə Paylanma</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <Button variant="outline" className="w-full justify-between" asChild>
-              <Link to="/products">
-                Məhsulları görüntülə
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button variant="outline" className="w-full justify-between" asChild>
-              <Link to="/reports">
-                Hesabatları yoxla
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
-            <Button variant="outline" className="w-full justify-between" asChild>
-              <Link to="/templates">
-                Şablonları idarə et
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span>Albalı</span>
+                <span className="font-medium">47%</span>
+              </div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div className="bg-primary h-2 rounded-full" style={{ width: "47%" }}></div>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span>Mango</span>
+                <span className="font-medium">26%</span>
+              </div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div className="bg-success h-2 rounded-full" style={{ width: "26%" }}></div>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span>Qarağat</span>
+                <span className="font-medium">21%</span>
+              </div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div className="bg-info h-2 rounded-full" style={{ width: "21%" }}></div>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span>Zeytun</span>
+                <span className="font-medium">6%</span>
+              </div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div className="bg-warning h-2 rounded-full" style={{ width: "6%" }}></div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Son Fəaliyyətlər</CardTitle>
+            <CardTitle>Son Əməliyyatlar</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="flex items-center justify-between py-2">
+              <div className="flex items-center justify-between py-2 border-b">
                 <div>
                   <p className="font-medium">Albalı 3 - Daxil olma</p>
                   <p className="text-sm text-muted-foreground">Bugün, 14:30</p>
@@ -114,7 +129,7 @@ const Index = () => {
                 <span className="text-success font-medium">+25</span>
               </div>
               
-              <div className="flex items-center justify-between py-2">
+              <div className="flex items-center justify-between py-2 border-b">
                 <div>
                   <p className="font-medium">Mango 2 - Satış</p>
                   <p className="text-sm text-muted-foreground">Bugün, 11:15</p>
@@ -122,7 +137,7 @@ const Index = () => {
                 <span className="text-destructive font-medium">-12</span>
               </div>
               
-              <div className="flex items-center justify-between py-2">
+              <div className="flex items-center justify-between py-2 border-b">
                 <div>
                   <p className="font-medium">Qarağat 1 - Daxil olma</p>
                   <p className="text-sm text-muted-foreground">Dünən, 16:45</p>
@@ -135,6 +150,4 @@ const Index = () => {
       </div>
     </div>
   );
-};
-
-export default Index;
+}
