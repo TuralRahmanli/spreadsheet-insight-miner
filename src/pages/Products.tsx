@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -82,6 +83,16 @@ const getStatusColor = (status: string, allRollsChecked: boolean) => {
 };
 
 export default function Products() {
+  const [warehouseData, setWarehouseData] = useState(warehouses);
+
+  const handleRollToggle = (warehouseIndex: number, batchIndex: number, rollIndex: number) => {
+    setWarehouseData(prev => {
+      const newData = [...prev];
+      newData[warehouseIndex].batches[batchIndex].rolls[rollIndex].checked = 
+        !newData[warehouseIndex].batches[batchIndex].rolls[rollIndex].checked;
+      return newData;
+    });
+  };
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -107,7 +118,7 @@ export default function Products() {
       </div>
 
       <div className="grid gap-6">
-        {warehouses.map((warehouse) => {
+        {warehouseData.map((warehouse, warehouseIndex) => {
           const totalRolls = warehouse.batches.reduce((sum, batch) => sum + batch.rolls.length, 0);
           const checkedRolls = warehouse.batches.reduce((sum, batch) => sum + batch.rolls.filter(roll => roll.checked).length, 0);
           const availableRolls = totalRolls - checkedRolls;
@@ -128,7 +139,7 @@ export default function Products() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  {warehouse.batches.map((batch) => {
+                  {warehouse.batches.map((batch, batchIndex) => {
                     const batchCheckedRolls = batch.rolls.filter(roll => roll.checked).length;
                     const batchAvailableRolls = batch.rolls.length - batchCheckedRolls;
                     const allRollsChecked = batchCheckedRolls === batch.rolls.length;
@@ -169,7 +180,7 @@ export default function Products() {
                               </TableRow>
                             </TableHeader>
                             <TableBody>
-                              {batch.rolls.map((roll) => (
+                              {batch.rolls.map((roll, rollIndex) => (
                                 <TableRow 
                                   key={roll.id}
                                   className={roll.checked ? "bg-success/10" : ""}
@@ -177,6 +188,7 @@ export default function Products() {
                                   <TableCell>
                                     <Checkbox
                                       checked={roll.checked}
+                                      onCheckedChange={() => handleRollToggle(warehouseIndex, batchIndex, rollIndex)}
                                       className="h-4 w-4"
                                     />
                                   </TableCell>
