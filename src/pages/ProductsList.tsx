@@ -3,8 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Plus, Edit, Trash2, Package } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const products = [
   {
@@ -120,17 +124,74 @@ const getStatusBadge = (status: string, stock: number) => {
 };
 
 export default function ProductsList() {
+  const [productList, setProductList] = useState(products);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    article: "",
+    name: "",
+    category: "",
+    price: "",
+    stock: "",
+    description: ""
+  });
+  const { toast } = useToast();
   
-  const categories = ["all", ...Array.from(new Set(products.map(p => p.category)))];
+  const categories = ["all", ...Array.from(new Set(productList.map(p => p.category)))];
   
-  const filteredProducts = products.filter(product => {
+  const filteredProducts = productList.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          product.article.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  const handleAddProduct = () => {
+    if (!newProduct.article || !newProduct.name || !newProduct.category || !newProduct.price || !newProduct.stock) {
+      toast({
+        title: "Xəta",
+        description: "Bütün məcburi sahələri doldurun",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const product = {
+      id: newProduct.article,
+      article: newProduct.article,
+      name: newProduct.name,
+      category: newProduct.category,
+      status: "active",
+      price: parseFloat(newProduct.price),
+      stock: parseInt(newProduct.stock),
+      description: newProduct.description
+    };
+
+    setProductList(prev => [...prev, product]);
+    setNewProduct({
+      article: "",
+      name: "",
+      category: "",
+      price: "",
+      stock: "",
+      description: ""
+    });
+    setIsDialogOpen(false);
+    
+    toast({
+      title: "Uğur",
+      description: "Məhsul uğurla əlavə edildi"
+    });
+  };
+
+  const handleDeleteProduct = (productId: string) => {
+    setProductList(prev => prev.filter(p => p.id !== productId));
+    toast({
+      title: "Uğur", 
+      description: "Məhsul uğurla silindi"
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -139,10 +200,89 @@ export default function ProductsList() {
           <h1 className="text-3xl font-bold tracking-tight">Məhsullar</h1>
           <p className="text-muted-foreground">Bütün məhsulların siyahısı və məlumatları</p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Yeni Məhsul
-        </Button>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Yeni Məhsul
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Yeni Məhsul Əlavə Et</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="article">Artikul *</Label>
+                <Input
+                  id="article"
+                  value={newProduct.article}
+                  onChange={(e) => setNewProduct(prev => ({ ...prev, article: e.target.value }))}
+                  placeholder="Məs: ALB-004"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="name">Məhsul Adı *</Label>
+                <Input
+                  id="name"
+                  value={newProduct.name}
+                  onChange={(e) => setNewProduct(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="Məhsulun adını daxil edin"
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="category">Kateqoriya *</Label>
+                <Input
+                  id="category"
+                  value={newProduct.category}
+                  onChange={(e) => setNewProduct(prev => ({ ...prev, category: e.target.value }))}
+                  placeholder="Məs: Albalı, Qarağat, Mango"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="price">Qiymət (₼) *</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    step="0.01"
+                    value={newProduct.price}
+                    onChange={(e) => setNewProduct(prev => ({ ...prev, price: e.target.value }))}
+                    placeholder="0.00"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="stock">Stok *</Label>
+                  <Input
+                    id="stock"
+                    type="number"
+                    value={newProduct.stock}
+                    onChange={(e) => setNewProduct(prev => ({ ...prev, stock: e.target.value }))}
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="description">Təsvir</Label>
+                <Textarea
+                  id="description"
+                  value={newProduct.description}
+                  onChange={(e) => setNewProduct(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder="Məhsul haqqında qısa məlumat"
+                  rows={3}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Ləğv et
+              </Button>
+              <Button onClick={handleAddProduct}>
+                Əlavə et
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="flex items-center space-x-4">
@@ -209,7 +349,12 @@ export default function ProductsList() {
                       <Button variant="ghost" size="icon" className="h-8 w-8">
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+                        onClick={() => handleDeleteProduct(product.id)}
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
