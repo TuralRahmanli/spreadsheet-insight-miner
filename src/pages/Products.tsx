@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Plus, Edit, Trash2, CheckCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Search, Plus, Edit, Trash2, CheckCircle, Warehouse, ChevronDown, ChevronUp } from "lucide-react";
 
 const warehouses = [
   {
@@ -172,6 +174,9 @@ const getStatusColor = (status: string, allRollsChecked: boolean) => {
 
 export default function Products() {
   const [warehouseData, setWarehouseData] = useState(warehouses);
+  const [newWarehouseName, setNewWarehouseName] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [expandedWarehouses, setExpandedWarehouses] = useState<{[key: string]: boolean}>({});
 
   const handleRollToggle = (warehouseIndex: number, batchIndex: number, productIndex: number, sizeIndex: number) => {
     setWarehouseData(prev => {
@@ -185,6 +190,25 @@ export default function Products() {
       return newData;
     });
   };
+
+  const handleAddWarehouse = () => {
+    if (newWarehouseName.trim()) {
+      const newWarehouse = {
+        name: newWarehouseName.trim(),
+        batches: []
+      };
+      setWarehouseData(prev => [...prev, newWarehouse]);
+      setNewWarehouseName("");
+      setIsDialogOpen(false);
+    }
+  };
+
+  const toggleWarehouse = (warehouseName: string) => {
+    setExpandedWarehouses(prev => ({
+      ...prev,
+      [warehouseName]: !prev[warehouseName]
+    }));
+  };
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -197,7 +221,40 @@ export default function Products() {
             <CheckCircle className="mr-2 h-4 w-4" />
             İşarələnmiş: 47
           </Button>
-          <Button>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Warehouse className="mr-2 h-4 w-4" />
+                Yeni Anbar
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Yeni Anbar Əlavə Et</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="warehouse-name">Anbar Adı</Label>
+                  <Input
+                    id="warehouse-name"
+                    placeholder="Anbar adını daxil edin..."
+                    value={newWarehouseName}
+                    onChange={(e) => setNewWarehouseName(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleAddWarehouse()}
+                  />
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                    Ləğv et
+                  </Button>
+                  <Button onClick={handleAddWarehouse} disabled={!newWarehouseName.trim()}>
+                    Əlavə et
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+          <Button variant="outline">
             <Plus className="mr-2 h-4 w-4" />
             Yeni Partiya
           </Button>
@@ -223,9 +280,18 @@ export default function Products() {
 
           return (
             <Card key={warehouse.name}>
-              <CardHeader>
+              <CardHeader className="cursor-pointer" onClick={() => toggleWarehouse(warehouse.name)}>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-xl">{warehouse.name}</CardTitle>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2">
+                      {expandedWarehouses[warehouse.name] ? 
+                        <ChevronUp className="h-5 w-5" /> : 
+                        <ChevronDown className="h-5 w-5" />
+                      }
+                      <Warehouse className="h-5 w-5 text-primary" />
+                    </div>
+                    <CardTitle className="text-xl">{warehouse.name}</CardTitle>
+                  </div>
                   <div className="flex gap-2 text-sm text-muted-foreground">
                     <span>Məhsul: {totalProducts}</span>
                     <span>•</span>
@@ -237,9 +303,20 @@ export default function Products() {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  {warehouse.batches.map((batch, batchIndex) => {
+              {expandedWarehouses[warehouse.name] && (
+                <CardContent>
+                  {warehouse.batches.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <Warehouse className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>Bu anbarda hələ partiya yoxdur</p>
+                      <Button variant="outline" className="mt-4">
+                        <Plus className="mr-2 h-4 w-4" />
+                        İlk Partiya Əlavə Et
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-6">
+                      {warehouse.batches.map((batch, batchIndex) => {
                     const batchTotalRolls = batch.products?.reduce((sum, product) => 
                       sum + (product.sizes?.reduce((sizeSum, size) => sizeSum + (size.rollCount || 0), 0) || 0), 0) || 0;
                     const batchCheckedRolls = batch.products?.reduce((sum, product) => 
@@ -334,9 +411,11 @@ export default function Products() {
                         ))}
                       </div>
                     );
-                  })}
-                </div>
-              </CardContent>
+                      })}
+                    </div>
+                  )}
+                </CardContent>
+              )}
             </Card>
           );
         })}
