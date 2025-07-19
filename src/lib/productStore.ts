@@ -8,6 +8,7 @@ interface Product {
   category: string;
   status: string;
   stock: number;
+  unit: string;
   description?: string;
 }
 
@@ -28,6 +29,7 @@ const initialProducts: Product[] = [
     category: "Albalı",
     status: "active",
     stock: 150,
+    unit: "kg",
     description: "Premium keyfiyyətli albalı məhsulu"
   },
   {
@@ -37,6 +39,7 @@ const initialProducts: Product[] = [
     category: "Albalı",
     status: "active",
     stock: 200,
+    unit: "kg",
     description: "Standart keyfiyyətli albalı məhsulu"
   },
   {
@@ -46,6 +49,7 @@ const initialProducts: Product[] = [
     category: "Albalı",
     status: "active",
     stock: 80,
+    unit: "kg",
     description: "Deluxe keyfiyyətli albalı məhsulu"
   },
   {
@@ -55,6 +59,7 @@ const initialProducts: Product[] = [
     category: "Qarağat",
     status: "active",
     stock: 120,
+    unit: "kg",
     description: "Premium keyfiyyətli qarağat məhsulu"
   },
   {
@@ -64,6 +69,7 @@ const initialProducts: Product[] = [
     category: "Qarağat", 
     status: "low_stock",
     stock: 45,
+    unit: "kg",
     description: "Standart keyfiyyətli qarağat məhsulu"
   },
   {
@@ -73,6 +79,7 @@ const initialProducts: Product[] = [
     category: "Mango",
     status: "active",
     stock: 90,
+    unit: "ədəd",
     description: "Premium keyfiyyətli mango məhsulu"
   },
   {
@@ -82,6 +89,7 @@ const initialProducts: Product[] = [
     category: "Mango",
     status: "active",
     stock: 110,
+    unit: "ədəd",
     description: "Standart keyfiyyətli mango məhsulu"
   },
   {
@@ -91,6 +99,7 @@ const initialProducts: Product[] = [
     category: "Mango",
     status: "out_of_stock",
     stock: 0,
+    unit: "ədəd",
     description: "Lux keyfiyyətli mango məhsulu"
   },
   {
@@ -100,6 +109,7 @@ const initialProducts: Product[] = [
     category: "Zeytun",
     status: "active", 
     stock: 75,
+    unit: "litr",
     description: "Premium keyfiyyətli zeytun məhsulu"
   },
   {
@@ -109,6 +119,7 @@ const initialProducts: Product[] = [
     category: "Zeytun",
     status: "active",
     stock: 95,
+    unit: "litr",
     description: "Standart keyfiyyətli zeytun məhsulu"
   }
 ];

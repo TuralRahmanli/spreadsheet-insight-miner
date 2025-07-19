@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Plus, Edit, Trash2, Package } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useProductStore } from "@/lib/productStore";
 
@@ -34,6 +35,7 @@ export default function ProductsList() {
     name: "",
     category: "",
     stock: "",
+    unit: "",
     description: ""
   });
   const { toast } = useToast();
@@ -64,6 +66,7 @@ export default function ProductsList() {
       category: newProduct.category || "",
       status: "active",
       stock: parseInt(newProduct.stock) || 0,
+      unit: newProduct.unit || "",
       description: newProduct.description
     };
 
@@ -73,6 +76,7 @@ export default function ProductsList() {
       name: "",
       category: "",
       stock: "",
+      unit: "",
       description: ""
     });
     setIsDialogOpen(false);
@@ -189,6 +193,23 @@ export default function ProductsList() {
                   onChange={(e) => setNewProduct(prev => ({ ...prev, stock: e.target.value }))}
                   placeholder="0"
                 />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="unit">Ölçü Vahidi</Label>
+                <Select value={newProduct.unit} onValueChange={(value) => setNewProduct(prev => ({ ...prev, unit: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Ölçü vahidini seçin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="kg">Kiloqram (kg)</SelectItem>
+                    <SelectItem value="ədəd">Ədəd</SelectItem>
+                    <SelectItem value="litr">Litr</SelectItem>
+                    <SelectItem value="metr">Metr (m)</SelectItem>
+                    <SelectItem value="sm">Santimetr (sm)</SelectItem>
+                    <SelectItem value="qutu">Qutu</SelectItem>
+                    <SelectItem value="paket">Paket</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="description">Təsvir</Label>
@@ -329,7 +350,7 @@ export default function ProductsList() {
                   <TableCell>
                     <Badge variant="outline">{product.category}</Badge>
                   </TableCell>
-                  <TableCell>{product.stock} ədəd</TableCell>
+                  <TableCell>{product.stock} {product.unit}</TableCell>
                   <TableCell>
                     {getStatusBadge(product.status, product.stock)}
                   </TableCell>
