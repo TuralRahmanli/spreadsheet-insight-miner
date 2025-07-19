@@ -12,6 +12,7 @@ import { Search, Plus, Edit, Trash2, Package } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { useProductStore } from "@/lib/productStore";
 
@@ -224,14 +225,15 @@ export default function ProductsList() {
                       {newProduct.packaging || "Paketləşdirmə üsulunu seçin və ya yazın"}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-full p-0">
+                   <PopoverContent className="w-full p-0">
                     <Command>
                       <CommandInput 
                         placeholder="Paketləşdirmə üsulunu axtarın və ya yazın..." 
                         value={newProduct.packaging}
                         onValueChange={(value) => setNewProduct(prev => ({ ...prev, packaging: value }))}
                       />
-                      <CommandList>
+                      <ScrollArea className="h-72">
+                        <CommandList>
                         <CommandEmpty>
                           <Button 
                             variant="ghost" 
@@ -316,7 +318,8 @@ export default function ProductsList() {
                             </CommandItem>
                           ))}
                         </CommandGroup>
-                      </CommandList>
+                        </CommandList>
+                      </ScrollArea>
                     </Command>
                   </PopoverContent>
                 </Popover>
@@ -440,7 +443,8 @@ export default function ProductsList() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
+          <ScrollArea className="h-96">
+            <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Artikul</TableHead>
@@ -507,7 +511,8 @@ export default function ProductsList() {
                 </TableRow>
               ))}
             </TableBody>
-          </Table>
+            </Table>
+          </ScrollArea>
         </CardContent>
       </Card>
     </div>
