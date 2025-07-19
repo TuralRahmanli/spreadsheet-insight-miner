@@ -177,6 +177,8 @@ export default function Products() {
   const [newWarehouseName, setNewWarehouseName] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [expandedWarehouses, setExpandedWarehouses] = useState<{[key: string]: boolean}>({});
+  const [editingBatch, setEditingBatch] = useState<{warehouseIndex: number, batchIndex: number} | null>(null);
+  const [editBatchName, setEditBatchName] = useState("");
 
   const handleRollToggle = (warehouseIndex: number, batchIndex: number, productIndex: number, sizeIndex: number) => {
     setWarehouseData(prev => {
@@ -204,8 +206,26 @@ export default function Products() {
   };
 
   const handleEditBatch = (warehouseIndex: number, batchIndex: number) => {
-    // Partiya redaktə funksiyası
-    console.log(`Partiya redaktə edilir: Anbar ${warehouseIndex}, Partiya ${batchIndex}`);
+    const batch = warehouseData[warehouseIndex].batches[batchIndex];
+    setEditBatchName(batch.name);
+    setEditingBatch({warehouseIndex, batchIndex});
+  };
+
+  const handleSaveEdit = () => {
+    if (editingBatch && editBatchName.trim()) {
+      setWarehouseData(prev => {
+        const newData = [...prev];
+        newData[editingBatch.warehouseIndex].batches[editingBatch.batchIndex].name = editBatchName.trim();
+        return newData;
+      });
+      setEditingBatch(null);
+      setEditBatchName("");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingBatch(null);
+    setEditBatchName("");
   };
 
   const handleDeleteBatch = (warehouseIndex: number, batchIndex: number) => {
@@ -340,9 +360,22 @@ export default function Products() {
                       <div key={batch.id} className="space-y-4">
                         <div className="flex items-center justify-between border-b pb-2">
                           <div className="flex items-center gap-3">
-                            <h3 className={`text-lg font-semibold ${allRollsChecked ? "line-through text-muted-foreground" : ""}`}>
-                              {batch.name} - Partiya #{batch.batchNumber}
-                            </h3>
+                            {editingBatch?.warehouseIndex === warehouseIndex && editingBatch?.batchIndex === batchIndex ? (
+                              <div className="flex items-center gap-2">
+                                <Input
+                                  value={editBatchName}
+                                  onChange={(e) => setEditBatchName(e.target.value)}
+                                  className="h-8 w-48"
+                                  onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit()}
+                                />
+                                <Button size="sm" onClick={handleSaveEdit}>Yadda saxla</Button>
+                                <Button variant="outline" size="sm" onClick={handleCancelEdit}>Ləğv et</Button>
+                              </div>
+                            ) : (
+                              <h3 className={`text-lg font-semibold ${allRollsChecked ? "line-through text-muted-foreground" : ""}`}>
+                                {batch.name} - Partiya #{batch.batchNumber}
+                              </h3>
+                            )}
                             <Badge className={getStatusColor(batch.status, allRollsChecked)} variant="secondary">
                               {allRollsChecked ? "Tamamlandı" : batch.status === "available" ? "Mövcud" : "Az"}
                             </Badge>
