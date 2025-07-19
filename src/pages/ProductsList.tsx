@@ -10,6 +10,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Plus, Edit, Trash2, Package } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
 import { useProductStore } from "@/lib/productStore";
 
@@ -216,21 +218,56 @@ export default function ProductsList() {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="packaging">Paketləşdirmə Üsulu</Label>
-                <Select value={newProduct.packaging} onValueChange={(value) => setNewProduct(prev => ({ ...prev, packaging: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Paketləşdirmə üsulunu seçin" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Plastik torba">Plastik torba</SelectItem>
-                    <SelectItem value="Plastik qab">Plastik qab</SelectItem>
-                    <SelectItem value="Şüşə qab">Şüşə qab</SelectItem>
-                    <SelectItem value="Şüşə şüşə">Şüşə şüşə</SelectItem>
-                    <SelectItem value="Plastik şüşə">Plastik şüşə</SelectItem>
-                    <SelectItem value="Karton qutu">Karton qutu</SelectItem>
-                    <SelectItem value="Metal qutu">Metal qutu</SelectItem>
-                    <SelectItem value="Vakuum paket">Vakuum paket</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-start">
+                      {newProduct.packaging || "Paketləşdirmə üsulunu seçin və ya yazın"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput 
+                        placeholder="Paketləşdirmə üsulunu axtarın və ya yazın..." 
+                        value={newProduct.packaging}
+                        onValueChange={(value) => setNewProduct(prev => ({ ...prev, packaging: value }))}
+                      />
+                      <CommandList>
+                        <CommandEmpty>
+                          <Button 
+                            variant="ghost" 
+                            className="w-full justify-start h-auto p-2"
+                            onClick={() => {
+                              // Value is already set by CommandInput
+                            }}
+                          >
+                            "{newProduct.packaging}" əlavə et
+                          </Button>
+                        </CommandEmpty>
+                        <CommandGroup>
+                          {[
+                            "Plastik torba",
+                            "Plastik qab", 
+                            "Şüşə qab",
+                            "Şüşə şüşə",
+                            "Plastik şüşə",
+                            "Karton qutu",
+                            "Metal qutu",
+                            "Vakuum paket"
+                          ].map((option) => (
+                            <CommandItem
+                              key={option}
+                              onSelect={() => {
+                                setNewProduct(prev => ({ ...prev, packaging: option }));
+                              }}
+                            >
+                              {option}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="description">Təsvir</Label>
