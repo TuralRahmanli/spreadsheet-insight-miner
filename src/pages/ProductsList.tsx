@@ -12,6 +12,7 @@ import { Search, Plus, Edit, Trash2, Package } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { useProductStore } from "@/lib/productStore";
 
@@ -231,92 +232,94 @@ export default function ProductsList() {
                         value={newProduct.packaging}
                         onValueChange={(value) => setNewProduct(prev => ({ ...prev, packaging: value }))}
                       />
-                      <CommandList className="max-h-[200px] overflow-y-auto">
-                        <CommandEmpty>
-                          <Button 
-                            variant="ghost" 
-                            className="w-full justify-start h-auto p-2"
-                            onClick={() => {
-                              // Value is already set by CommandInput
-                            }}
-                          >
-                            "{newProduct.packaging}" əlavə et
-                          </Button>
-                        </CommandEmpty>
-                        <CommandGroup>
-                          {[
-                            "Plastik torba",
-                            "Plastik qab", 
-                            "Şüşə qab",
-                            "Şüşə şüşə",
-                            "Plastik şüşə",
-                            "Karton qutu",
-                            "Metal qutu",
-                            "Vakuum paket",
-                            "40",
-                            "40+(3)",
-                            "45",
-                            "45+3",
-                            "50",
-                            "50+(3)",
-                            "55",
-                            "55+(3)",
-                            "60",
-                            "60+(3)",
-                            "65",
-                            "65+(3)",
-                            "70",
-                            "70+(3)",
-                            "75",
-                            "75+(3)",
-                            "80",
-                            "80+(3)",
-                            "85",
-                            "85+(3)",
-                            "90",
-                            "90+(3)",
-                            "95",
-                            "95+(3)",
-                            "100",
-                            "100+(3)",
-                            "105",
-                            "105+(3)",
-                            "110",
-                            "110+(3)",
-                            "115",
-                            "115+(3)",
-                            "120",
-                            "120+(3)",
-                            "125",
-                            "125+(3)",
-                            "130",
-                            "130+(3)",
-                            "135",
-                            "135+(3)",
-                            "140",
-                            "140+(3)",
-                            "145",
-                            "145+(3)",
-                            "150",
-                            "150+(3)",
-                            "155",
-                            "155+(3)",
-                            "160",
-                            "160+(3)",
-                            "165",
-                            "165+(3)"
-                          ].map((option) => (
-                            <CommandItem
-                              key={option}
-                              onSelect={() => {
-                                setNewProduct(prev => ({ ...prev, packaging: option }));
+                      <ScrollArea className="h-[200px]">
+                        <CommandList>
+                          <CommandEmpty>
+                            <Button 
+                              variant="ghost" 
+                              className="w-full justify-start h-auto p-2"
+                              onClick={() => {
+                                // Value is already set by CommandInput
                               }}
                             >
-                              {option}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
+                              "{newProduct.packaging}" əlavə et
+                            </Button>
+                          </CommandEmpty>
+                          <CommandGroup>
+                            {[
+                              "Plastik torba",
+                              "Plastik qab", 
+                              "Şüşə qab",
+                              "Şüşə şüşə",
+                              "Plastik şüşə",
+                              "Karton qutu",
+                              "Metal qutu",
+                              "Vakuum paket",
+                              "40",
+                              "40+(3)",
+                              "45",
+                              "45+3",
+                              "50",
+                              "50+(3)",
+                              "55",
+                              "55+(3)",
+                              "60",
+                              "60+(3)",
+                              "65",
+                              "65+(3)",
+                              "70",
+                              "70+(3)",
+                              "75",
+                              "75+(3)",
+                              "80",
+                              "80+(3)",
+                              "85",
+                              "85+(3)",
+                              "90",
+                              "90+(3)",
+                              "95",
+                              "95+(3)",
+                              "100",
+                              "100+(3)",
+                              "105",
+                              "105+(3)",
+                              "110",
+                              "110+(3)",
+                              "115",
+                              "115+(3)",
+                              "120",
+                              "120+(3)",
+                              "125",
+                              "125+(3)",
+                              "130",
+                              "130+(3)",
+                              "135",
+                              "135+(3)",
+                              "140",
+                              "140+(3)",
+                              "145",
+                              "145+(3)",
+                              "150",
+                              "150+(3)",
+                              "155",
+                              "155+(3)",
+                              "160",
+                              "160+(3)",
+                              "165",
+                              "165+(3)"
+                            ].map((option) => (
+                              <CommandItem
+                                key={option}
+                                onSelect={() => {
+                                  setNewProduct(prev => ({ ...prev, packaging: option }));
+                                }}
+                              >
+                                {option}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </ScrollArea>
                     </Command>
                   </PopoverContent>
                 </Popover>
