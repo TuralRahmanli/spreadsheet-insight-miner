@@ -10,6 +10,7 @@ import ProductsList from "./pages/ProductsList";
 import Reports from "./pages/Reports";
 import Templates from "./pages/Templates";
 import AddOperation from "./pages/AddOperation";
+import WarehousesList from "./pages/WarehousesList";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -28,6 +29,8 @@ const App = () => (
             <Route path="products-list" element={<ProductsList />} />
             <Route path="reports" element={<Reports />} />
             <Route path="templates" element={<Templates />} />
+            <Route path="warehouses" element={<WarehousesList />} />
+            <Route path="warehouses/:warehouse" element={<WarehousesList />} />
             <Route path="add" element={<AddOperation />} />
             <Route path="settings" element={<Settings />} />
           </Route>

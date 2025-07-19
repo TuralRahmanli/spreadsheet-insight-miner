@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Plus, Edit, Trash2, Package } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -26,6 +27,7 @@ const getStatusBadge = (status: string, stock: number) => {
 };
 
 export default function ProductsList() {
+  const navigate = useNavigate();
   const { products, addProduct, removeProduct, updateProduct } = useProductStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -470,7 +472,12 @@ export default function ProductsList() {
                     <div className="flex gap-1 flex-wrap">
                       {product.warehouses.length > 0 ? (
                         product.warehouses.map((warehouse, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
+                          <Badge 
+                            key={index} 
+                            variant="secondary" 
+                            className="text-xs cursor-pointer hover:bg-secondary/80 transition-colors"
+                            onClick={() => navigate(`/warehouses/${encodeURIComponent(warehouse)}`)}
+                          >
                             {warehouse}
                           </Badge>
                         ))
