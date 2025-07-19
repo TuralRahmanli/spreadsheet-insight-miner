@@ -6,12 +6,12 @@ import { Link } from "react-router-dom";
 const Index = () => {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Anbar İdarəetmə Sistemi</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Anbar İdarəetmə Sistemi</h1>
           <p className="text-muted-foreground">Anbar partiyalarını izləyin və idarə edin</p>
         </div>
-        <Button asChild>
+        <Button asChild className="w-full sm:w-auto">
           <Link to="/add">
             <Plus className="mr-2 h-4 w-4" />
             Yeni Əməliyyat
@@ -19,7 +19,7 @@ const Index = () => {
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Ümumi Partiya</CardTitle>
@@ -73,7 +73,7 @@ const Index = () => {
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <CardTitle>Tez Keçid</CardTitle>

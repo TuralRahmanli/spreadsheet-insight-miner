@@ -57,12 +57,13 @@ export default function Layout() {
         <SidebarContent />
       </div>
 
-      {/* Mobile Header & Sidebar */}
+      {/* Mobile Header & Main Content Container */}
       <div className="flex flex-col md:ml-64">
+        {/* Mobile Header */}
         <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:px-6 md:hidden">
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="shrink-0 md:hidden">
+              <Button variant="outline" size="icon" className="shrink-0">
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Navigation menyusunu aç</span>
               </Button>
@@ -73,13 +74,15 @@ export default function Layout() {
           </Sheet>
           <div className="flex items-center gap-2 font-semibold">
             <Package className="h-6 w-6 text-primary" />
-            <span>İnventar Sistemi</span>
+            <span className="text-sm sm:text-base">İnventar Sistemi</span>
           </div>
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 lg:p-6">
-          <Outlet />
+        <main className="flex-1 p-4 lg:p-6 w-full min-w-0">
+          <div className="w-full max-w-full overflow-x-auto">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
