@@ -11,7 +11,7 @@ import { Search, Plus, Edit, Trash2, CheckCircle, Warehouse, ChevronDown, Chevro
 
 const warehouses = [
   {
-    name: "Albalı Anbarı",
+    name: "Albalı",
     batches: Array.from({ length: 9 }, (_, i) => ({
       id: `albali-${i + 1}`,
       name: `Albalı ${i + 1}`,
@@ -52,7 +52,7 @@ const warehouses = [
     })),
   },
   {
-    name: "Qarağat Anbarı",
+    name: "Qarağat",
     batches: Array.from({ length: 4 }, (_, i) => ({
       id: `qaragat-${i + 1}`,
       name: `Qarağat ${i + 1}`,
@@ -83,7 +83,7 @@ const warehouses = [
     })),
   },
   {
-    name: "Mango Anbarı",
+    name: "Mango",
     batches: Array.from({ length: 5 }, (_, i) => ({
       id: `mango-${i + 1}`,
       name: `Mango ${i + 1}`,
@@ -124,7 +124,7 @@ const warehouses = [
     })),
   },
   {
-    name: "Zeytun Anbarı",
+    name: "Zeytun",
     batches: [
       {
         id: "zeytun-1",
