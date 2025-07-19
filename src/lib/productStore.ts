@@ -10,6 +10,7 @@ interface Product {
   stock: number;
   unit: string;
   packaging: string;
+  warehouses: string[];
   description?: string;
 }
 
@@ -32,6 +33,7 @@ const initialProducts: Product[] = [
     stock: 150,
     unit: "kg",
     packaging: "Plastik qab",
+    warehouses: ["Anbar 1", "Anbar 2"],
     description: "Premium keyfiyyətli albalı məhsulu"
   },
   {
@@ -43,6 +45,7 @@ const initialProducts: Product[] = [
     stock: 200,
     unit: "kg",
     packaging: "Plastik torba",
+    warehouses: ["Anbar 1"],
     description: "Standart keyfiyyətli albalı məhsulu"
   },
   {
@@ -54,6 +57,7 @@ const initialProducts: Product[] = [
     stock: 80,
     unit: "kg",
     packaging: "Şüşə qab",
+    warehouses: ["Anbar 2", "Anbar 3"],
     description: "Deluxe keyfiyyətli albalı məhsulu"
   },
   {
@@ -65,6 +69,7 @@ const initialProducts: Product[] = [
     stock: 120,
     unit: "kg",
     packaging: "Plastik qab",
+    warehouses: ["Anbar 1", "Anbar 3"],
     description: "Premium keyfiyyətli qarağat məhsulu"
   },
   {
@@ -76,6 +81,7 @@ const initialProducts: Product[] = [
     stock: 45,
     unit: "kg",
     packaging: "Plastik torba",
+    warehouses: ["Anbar 2"],
     description: "Standart keyfiyyətli qarağat məhsulu"
   },
   {
@@ -87,6 +93,7 @@ const initialProducts: Product[] = [
     stock: 90,
     unit: "ədəd",
     packaging: "Karton qutu",
+    warehouses: ["Anbar 1", "Anbar 2", "Anbar 3"],
     description: "Premium keyfiyyətli mango məhsulu"
   },
   {
@@ -98,6 +105,7 @@ const initialProducts: Product[] = [
     stock: 110,
     unit: "ədəd",
     packaging: "Plastik torba",
+    warehouses: ["Anbar 2"],
     description: "Standart keyfiyyətli mango məhsulu"
   },
   {
@@ -109,6 +117,7 @@ const initialProducts: Product[] = [
     stock: 0,
     unit: "ədəd",
     packaging: "Şüşə qab",
+    warehouses: [],
     description: "Lux keyfiyyətli mango məhsulu"
   },
   {
@@ -120,6 +129,7 @@ const initialProducts: Product[] = [
     stock: 75,
     unit: "litr",
     packaging: "Şüşə şüşə",
+    warehouses: ["Anbar 1"],
     description: "Premium keyfiyyətli zeytun məhsulu"
   },
   {
@@ -131,6 +141,7 @@ const initialProducts: Product[] = [
     stock: 95,
     unit: "litr",
     packaging: "Plastik şüşə",
+    warehouses: ["Anbar 3"],
     description: "Standart keyfiyyətli zeytun məhsulu"
   }
 ];

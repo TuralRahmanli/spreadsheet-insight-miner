@@ -71,6 +71,7 @@ export default function ProductsList() {
       stock: parseInt(newProduct.stock) || 0,
       unit: newProduct.unit || "",
       packaging: newProduct.packaging || "",
+      warehouses: [],
       description: newProduct.description
     };
 
@@ -448,6 +449,7 @@ export default function ProductsList() {
                 <TableHead>Kateqoriya</TableHead>
                 <TableHead>Stok</TableHead>
                 <TableHead>Vəziyyət</TableHead>
+                <TableHead>Anbarlar</TableHead>
                 <TableHead>Təsvir</TableHead>
                 <TableHead>Əməliyyatlar</TableHead>
               </TableRow>
@@ -463,6 +465,19 @@ export default function ProductsList() {
                   <TableCell>{product.stock} {product.unit}</TableCell>
                   <TableCell>
                     {getStatusBadge(product.status, product.stock)}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-1 flex-wrap">
+                      {product.warehouses.length > 0 ? (
+                        product.warehouses.map((warehouse, index) => (
+                          <Badge key={index} variant="secondary" className="text-xs">
+                            {warehouse}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-muted-foreground text-sm">Anbar yoxdur</span>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className="max-w-xs truncate" title={product.description}>
                     {product.description}
