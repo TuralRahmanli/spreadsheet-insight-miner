@@ -203,6 +203,19 @@ export default function Products() {
     }
   };
 
+  const handleEditBatch = (warehouseIndex: number, batchIndex: number) => {
+    // Partiya redaktə funksiyası
+    console.log(`Partiya redaktə edilir: Anbar ${warehouseIndex}, Partiya ${batchIndex}`);
+  };
+
+  const handleDeleteBatch = (warehouseIndex: number, batchIndex: number) => {
+    setWarehouseData(prev => {
+      const newData = [...prev];
+      newData[warehouseIndex].batches.splice(batchIndex, 1);
+      return newData;
+    });
+  };
+
   const toggleWarehouse = (warehouseName: string) => {
     setExpandedWarehouses(prev => ({
       ...prev,
@@ -337,10 +350,20 @@ export default function Products() {
                           <div className="flex items-center gap-3 text-sm text-muted-foreground">
                             <span>Çıxarıldı: {batchCheckedRolls}/{batchTotalRolls}</span>
                             <div className="flex gap-1 ml-3">
-                              <Button variant="ghost" size="icon" className="h-7 w-7">
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-7 w-7"
+                                onClick={() => handleEditBatch(warehouseIndex, batchIndex)}
+                              >
                                 <Edit className="h-3 w-3" />
                               </Button>
-                              <Button variant="ghost" size="icon" className="h-7 w-7">
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-7 w-7"
+                                onClick={() => handleDeleteBatch(warehouseIndex, batchIndex)}
+                              >
                                 <Trash2 className="h-3 w-3" />
                               </Button>
                             </div>
