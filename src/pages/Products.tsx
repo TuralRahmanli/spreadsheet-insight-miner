@@ -212,10 +212,10 @@ export default function Products() {
   };
 
   const handleSaveEdit = () => {
-    if (editingBatch && editBatchName.trim()) {
+    if (editingBatch) {
       setWarehouseData(prev => {
         const newData = [...prev];
-        newData[editingBatch.warehouseIndex].batches[editingBatch.batchIndex].name = editBatchName.trim();
+        newData[editingBatch.warehouseIndex].batches[editingBatch.batchIndex].name = editBatchName;
         return newData;
       });
       setEditingBatch(null);
