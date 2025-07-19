@@ -23,10 +23,12 @@ const getStatusBadge = (status: string, stock: number) => {
 };
 
 export default function ProductsList() {
-  const { products, addProduct, removeProduct } = useProductStore();
+  const { products, addProduct, removeProduct, updateProduct } = useProductStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<any>(null);
   const [newProduct, setNewProduct] = useState({
     article: "",
     name: "",
@@ -87,6 +89,49 @@ export default function ProductsList() {
       title: "Uğur", 
       description: "Məhsul uğurla silindi"
     });
+  };
+
+  const handleEditProduct = (product: any) => {
+    setEditingProduct({
+      article: product.article,
+      name: product.name,
+      category: product.category,
+      stock: product.stock.toString(),
+      description: product.description || ""
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateProduct = () => {
+    if (!editingProduct?.article || !editingProduct?.name) {
+      toast({
+        title: "Xəta",
+        description: "Artikul və Məhsul Adı sahələri məcburidir",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const updates = {
+      article: editingProduct.article,
+      name: editingProduct.name,
+      category: editingProduct.category || "",
+      stock: parseInt(editingProduct.stock) || 0,
+      description: editingProduct.description
+    };
+
+    // Find the original product to get its ID
+    const originalProduct = products.find(p => p.article === editingProduct.article);
+    if (originalProduct) {
+      updateProduct(originalProduct.id, updates);
+      setEditingProduct(null);
+      setIsEditDialogOpen(false);
+      
+      toast({
+        title: "Uğur",
+        description: "Məhsul uğurla yeniləndi"
+      });
+    }
   };
 
   return (
@@ -168,6 +213,72 @@ export default function ProductsList() {
         </Dialog>
       </div>
 
+      {/* Edit Product Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Məhsulu Redaktə Et</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="edit-article">Artikul *</Label>
+              <Input
+                id="edit-article"
+                value={editingProduct?.article || ""}
+                onChange={(e) => setEditingProduct(prev => ({ ...prev, article: e.target.value }))}
+                placeholder="Məs: ALB-004"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-name">Məhsul Adı *</Label>
+              <Input
+                id="edit-name"
+                value={editingProduct?.name || ""}
+                onChange={(e) => setEditingProduct(prev => ({ ...prev, name: e.target.value }))}
+                placeholder="Məhsulun adını daxil edin"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-category">Kateqoriya</Label>
+              <Input
+                id="edit-category"
+                value={editingProduct?.category || ""}
+                onChange={(e) => setEditingProduct(prev => ({ ...prev, category: e.target.value }))}
+                placeholder="Məs: Albalı, Qarağat, Mango"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-stock">Stok</Label>
+              <Input
+                id="edit-stock"
+                type="number"
+                value={editingProduct?.stock || ""}
+                onChange={(e) => setEditingProduct(prev => ({ ...prev, stock: e.target.value }))}
+                placeholder="0"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="edit-description">Təsvir</Label>
+              <Textarea
+                id="edit-description"
+                value={editingProduct?.description || ""}
+                onChange={(e) => setEditingProduct(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="Məhsul haqqında qısa məlumat"
+                rows={3}
+              />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+              Ləğv et
+            </Button>
+            <Button onClick={handleUpdateProduct}>
+              Yadda saxla
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2 flex-1">
           <Search className="h-4 w-4 text-muted-foreground" />
@@ -227,7 +338,12 @@ export default function ProductsList() {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => handleEditProduct(product)}
+                      >
                         <Edit className="h-4 w-4" />
                       </Button>
                       <AlertDialog>

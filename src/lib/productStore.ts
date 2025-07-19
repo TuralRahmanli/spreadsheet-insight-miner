@@ -15,6 +15,7 @@ interface ProductStore {
   products: Product[];
   addProduct: (product: Product) => void;
   removeProduct: (productId: string) => void;
+  updateProduct: (productId: string, updates: Partial<Product>) => void;
   getProducts: () => Product[];
 }
 
@@ -118,5 +119,11 @@ export const useProductStore = create<ProductStore>((set, get) => ({
     set((state) => ({ products: [...state.products, product] })),
   removeProduct: (productId) => 
     set((state) => ({ products: state.products.filter(p => p.id !== productId) })),
+  updateProduct: (productId, updates) =>
+    set((state) => ({ 
+      products: state.products.map(p => 
+        p.id === productId ? { ...p, ...updates } : p
+      ) 
+    })),
   getProducts: () => get().products,
 }));
