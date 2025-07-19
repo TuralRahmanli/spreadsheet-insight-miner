@@ -40,7 +40,7 @@ export default function ProductsList() {
     category: "",
     stock: "",
     unit: "",
-    packaging: "",
+    packaging: [] as string[],
     description: ""
   });
   const { toast } = useToast();
@@ -72,7 +72,7 @@ export default function ProductsList() {
       status: "active",
       stock: parseInt(newProduct.stock) || 0,
       unit: newProduct.unit || "",
-      packaging: newProduct.packaging || "",
+      packaging: newProduct.packaging,
       warehouses: [],
       description: newProduct.description
     };
@@ -84,7 +84,7 @@ export default function ProductsList() {
       category: "",
       stock: "",
       unit: "",
-      packaging: "",
+      packaging: [],
       description: ""
     });
     setIsDialogOpen(false);
@@ -220,109 +220,124 @@ export default function ProductsList() {
                 </Select>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="packaging">Paketləşdirmə Üsulu</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-start">
-                      {newProduct.packaging || "Paketləşdirmə üsulunu seçin və ya yazın"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-0">
-                    <Command>
-                      <CommandInput 
-                        placeholder="Paketləşdirmə üsulunu axtarın və ya yazın..." 
-                        value={newProduct.packaging}
-                        onValueChange={(value) => setNewProduct(prev => ({ ...prev, packaging: value }))}
-                      />
-                      <CommandList>
-                        <CommandEmpty>
-                          <Button 
-                            variant="ghost" 
-                            className="w-full justify-start h-auto p-2"
+                <Label htmlFor="packaging">Paketləşdirmə Üsulları</Label>
+                <div className="space-y-2">
+                  {newProduct.packaging.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {newProduct.packaging.map((pack, index) => (
+                        <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                          {pack}
+                          <button
+                            type="button"
                             onClick={() => {
-                              // Value is already set by CommandInput
+                              setNewProduct(prev => ({
+                                ...prev,
+                                packaging: prev.packaging.filter((_, i) => i !== index)
+                              }));
                             }}
+                            className="ml-1 hover:bg-destructive hover:text-destructive-foreground rounded-full w-4 h-4 flex items-center justify-center text-xs"
                           >
-                            "{newProduct.packaging}" əlavə et
-                          </Button>
-                        </CommandEmpty>
-                        <CommandGroup>
-                          {[
-                            "Plastik torba",
-                            "Plastik qab", 
-                            "Şüşə qab",
-                            "Şüşə şüşə",
-                            "Plastik şüşə",
-                            "Karton qutu",
-                            "Metal qutu",
-                            "Vakuum paket",
-                            "40",
-                            "40+(3)",
-                            "45",
-                            "45+3",
-                            "50",
-                            "50+(3)",
-                            "55",
-                            "55+(3)",
-                            "60",
-                            "60+(3)",
-                            "65",
-                            "65+(3)",
-                            "70",
-                            "70+(3)",
-                            "75",
-                            "75+(3)",
-                            "80",
-                            "80+(3)",
-                            "85",
-                            "85+(3)",
-                            "90",
-                            "90+(3)",
-                            "95",
-                            "95+(3)",
-                            "100",
-                            "100+(3)",
-                            "105",
-                            "105+(3)",
-                            "110",
-                            "110+(3)",
-                            "115",
-                            "115+(3)",
-                            "120",
-                            "120+(3)",
-                            "125",
-                            "125+(3)",
-                            "130",
-                            "130+(3)",
-                            "135",
-                            "135+(3)",
-                            "140",
-                            "140+(3)",
-                            "145",
-                            "145+(3)",
-                            "150",
-                            "150+(3)",
-                            "155",
-                            "155+(3)",
-                            "160",
-                            "160+(3)",
-                            "165",
-                            "165+(3)"
-                          ].map((option) => (
-                            <CommandItem
-                              key={option}
-                              onSelect={() => {
-                                setNewProduct(prev => ({ ...prev, packaging: option }));
-                              }}
-                            >
-                              {option}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                            ×
+                          </button>
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="w-full justify-start">
+                        {newProduct.packaging.length > 0 
+                          ? `${newProduct.packaging.length} paketləşdirmə üsulu seçildi` 
+                          : "Paketləşdirmə üsulunu seçin və ya yazın"
+                        }
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput placeholder="Paketləşdirmə üsulunu axtarın və ya yazın..." />
+                        <CommandList>
+                          <CommandEmpty>Nəticə tapılmadı</CommandEmpty>
+                          <CommandGroup>
+                            {[
+                              "Plastik torba",
+                              "Plastik qab", 
+                              "Şüşə qab",
+                              "Şüşə şüşə",
+                              "Plastik şüşə",
+                              "Karton qutu",
+                              "Metal qutu",
+                              "Vakuum paket",
+                              "40",
+                              "40+(3)",
+                              "45",
+                              "45+3",
+                              "50",
+                              "50+(3)",
+                              "55",
+                              "55+(3)",
+                              "60",
+                              "60+(3)",
+                              "65",
+                              "65+(3)",
+                              "70",
+                              "70+(3)",
+                              "75",
+                              "75+(3)",
+                              "80",
+                              "80+(3)",
+                              "85",
+                              "85+(3)",
+                              "90",
+                              "90+(3)",
+                              "95",
+                              "95+(3)",
+                              "100",
+                              "100+(3)",
+                              "105",
+                              "105+(3)",
+                              "110",
+                              "110+(3)",
+                              "115",
+                              "115+(3)",
+                              "120",
+                              "120+(3)",
+                              "125",
+                              "125+(3)",
+                              "130",
+                              "130+(3)",
+                              "135",
+                              "135+(3)",
+                              "140",
+                              "140+(3)",
+                              "145",
+                              "145+(3)",
+                              "150",
+                              "150+(3)",
+                              "155",
+                              "155+(3)",
+                              "160",
+                              "160+(3)",
+                              "165",
+                              "165+(3)"
+                            ].filter(option => !newProduct.packaging.includes(option)).map((option) => (
+                              <CommandItem
+                                key={option}
+                                onSelect={() => {
+                                  setNewProduct(prev => ({ 
+                                    ...prev, 
+                                    packaging: [...prev.packaging, option] 
+                                  }));
+                                }}
+                              >
+                                {option}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="description">Təsvir</Label>
@@ -451,6 +466,7 @@ export default function ProductsList() {
                 <TableHead>Kateqoriya</TableHead>
                 <TableHead>Stok</TableHead>
                 <TableHead>Vəziyyət</TableHead>
+                <TableHead>Paketləşdirmə</TableHead>
                 <TableHead>Anbarlar</TableHead>
                 <TableHead>Təsvir</TableHead>
                 <TableHead>Əməliyyatlar</TableHead>
@@ -467,6 +483,23 @@ export default function ProductsList() {
                   <TableCell>{product.stock} {product.unit}</TableCell>
                   <TableCell>
                     {getStatusBadge(product.status, product.stock)}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-1 flex-wrap">
+                      {product.packaging.length > 0 ? (
+                        product.packaging.map((pack, index) => (
+                          <Badge 
+                            key={index} 
+                            variant="outline" 
+                            className="text-xs"
+                          >
+                            {pack}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-muted-foreground text-sm">Paketləşdirmə yoxdur</span>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1 flex-wrap">
