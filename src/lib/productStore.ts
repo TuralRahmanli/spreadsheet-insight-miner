@@ -9,6 +9,7 @@ interface Product {
   status: string;
   stock: number;
   unit: string;
+  packaging: string;
   description?: string;
 }
 
@@ -30,6 +31,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 150,
     unit: "kg",
+    packaging: "Plastik qab",
     description: "Premium keyfiyyətli albalı məhsulu"
   },
   {
@@ -40,6 +42,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 200,
     unit: "kg",
+    packaging: "Plastik torba",
     description: "Standart keyfiyyətli albalı məhsulu"
   },
   {
@@ -50,6 +53,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 80,
     unit: "kg",
+    packaging: "Şüşə qab",
     description: "Deluxe keyfiyyətli albalı məhsulu"
   },
   {
@@ -60,6 +64,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 120,
     unit: "kg",
+    packaging: "Plastik qab",
     description: "Premium keyfiyyətli qarağat məhsulu"
   },
   {
@@ -70,6 +75,7 @@ const initialProducts: Product[] = [
     status: "low_stock",
     stock: 45,
     unit: "kg",
+    packaging: "Plastik torba",
     description: "Standart keyfiyyətli qarağat məhsulu"
   },
   {
@@ -80,6 +86,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 90,
     unit: "ədəd",
+    packaging: "Karton qutu",
     description: "Premium keyfiyyətli mango məhsulu"
   },
   {
@@ -90,6 +97,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 110,
     unit: "ədəd",
+    packaging: "Plastik torba",
     description: "Standart keyfiyyətli mango məhsulu"
   },
   {
@@ -100,6 +108,7 @@ const initialProducts: Product[] = [
     status: "out_of_stock",
     stock: 0,
     unit: "ədəd",
+    packaging: "Şüşə qab",
     description: "Lux keyfiyyətli mango məhsulu"
   },
   {
@@ -110,6 +119,7 @@ const initialProducts: Product[] = [
     status: "active", 
     stock: 75,
     unit: "litr",
+    packaging: "Şüşə şüşə",
     description: "Premium keyfiyyətli zeytun məhsulu"
   },
   {
@@ -120,6 +130,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 95,
     unit: "litr",
+    packaging: "Plastik şüşə",
     description: "Standart keyfiyyətli zeytun məhsulu"
   }
 ];

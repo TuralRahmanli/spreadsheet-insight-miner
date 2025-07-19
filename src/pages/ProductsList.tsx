@@ -36,6 +36,7 @@ export default function ProductsList() {
     category: "",
     stock: "",
     unit: "",
+    packaging: "",
     description: ""
   });
   const { toast } = useToast();
@@ -67,6 +68,7 @@ export default function ProductsList() {
       status: "active",
       stock: parseInt(newProduct.stock) || 0,
       unit: newProduct.unit || "",
+      packaging: newProduct.packaging || "",
       description: newProduct.description
     };
 
@@ -77,6 +79,7 @@ export default function ProductsList() {
       category: "",
       stock: "",
       unit: "",
+      packaging: "",
       description: ""
     });
     setIsDialogOpen(false);
@@ -208,6 +211,24 @@ export default function ProductsList() {
                     <SelectItem value="sm">Santimetr (sm)</SelectItem>
                     <SelectItem value="qutu">Qutu</SelectItem>
                     <SelectItem value="paket">Paket</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="packaging">Paketləşdirmə Üsulu</Label>
+                <Select value={newProduct.packaging} onValueChange={(value) => setNewProduct(prev => ({ ...prev, packaging: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Paketləşdirmə üsulunu seçin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Plastik torba">Plastik torba</SelectItem>
+                    <SelectItem value="Plastik qab">Plastik qab</SelectItem>
+                    <SelectItem value="Şüşə qab">Şüşə qab</SelectItem>
+                    <SelectItem value="Şüşə şüşə">Şüşə şüşə</SelectItem>
+                    <SelectItem value="Plastik şüşə">Plastik şüşə</SelectItem>
+                    <SelectItem value="Karton qutu">Karton qutu</SelectItem>
+                    <SelectItem value="Metal qutu">Metal qutu</SelectItem>
+                    <SelectItem value="Vakuum paket">Vakuum paket</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
