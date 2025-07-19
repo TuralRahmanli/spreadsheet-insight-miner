@@ -231,7 +231,7 @@ export default function ProductsList() {
                         value={newProduct.packaging}
                         onValueChange={(value) => setNewProduct(prev => ({ ...prev, packaging: value }))}
                       />
-                      <CommandList>
+                      <CommandList className="max-h-[200px] overflow-y-auto">
                         <CommandEmpty>
                           <Button 
                             variant="ghost" 
