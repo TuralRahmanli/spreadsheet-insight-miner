@@ -8,13 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Plus, Edit, Trash2, Package } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Package, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
 import { useProductStore } from "@/lib/productStore";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const getStatusBadge = (status: string, stock: number) => {
   if (status === "out_of_stock" || stock === 0) {
@@ -47,6 +48,17 @@ export default function ProductsList() {
   
   const categories = ["all", ...Array.from(new Set(products.map(p => p.category)))];
   const allWarehouses = Array.from(new Set(products.flatMap(p => p.warehouses || [])));
+  
+  const [columnVisibility, setColumnVisibility] = useState({
+    artikul: true,
+    name: true,
+    category: true,
+    warehouses: true,
+    total: true,
+    status: true,
+    packaging: true,
+    description: true
+  });
   
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -154,7 +166,102 @@ export default function ProductsList() {
           <h1 className="text-3xl font-bold tracking-tight">Məhsullar</h1>
           <p className="text-muted-foreground">Bütün məhsulların siyahısı və məlumatları</p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <div className="flex items-center gap-2">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Settings className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="end">
+              <div className="space-y-4">
+                <h4 className="font-medium leading-none">Sütun Tənzimləmələri</h4>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="artikul"
+                      checked={columnVisibility.artikul}
+                      onCheckedChange={(checked) => 
+                        setColumnVisibility(prev => ({ ...prev, artikul: checked as boolean }))
+                      }
+                    />
+                    <Label htmlFor="artikul">Artikul</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="name"
+                      checked={columnVisibility.name}
+                      onCheckedChange={(checked) => 
+                        setColumnVisibility(prev => ({ ...prev, name: checked as boolean }))
+                      }
+                    />
+                    <Label htmlFor="name">Məhsul Adı</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="category"
+                      checked={columnVisibility.category}
+                      onCheckedChange={(checked) => 
+                        setColumnVisibility(prev => ({ ...prev, category: checked as boolean }))
+                      }
+                    />
+                    <Label htmlFor="category">Kateqoriya</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="warehouses"
+                      checked={columnVisibility.warehouses}
+                      onCheckedChange={(checked) => 
+                        setColumnVisibility(prev => ({ ...prev, warehouses: checked as boolean }))
+                      }
+                    />
+                    <Label htmlFor="warehouses">Anbar Miqdarları</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="total"
+                      checked={columnVisibility.total}
+                      onCheckedChange={(checked) => 
+                        setColumnVisibility(prev => ({ ...prev, total: checked as boolean }))
+                      }
+                    />
+                    <Label htmlFor="total">Ümumi Miqdar</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="status"
+                      checked={columnVisibility.status}
+                      onCheckedChange={(checked) => 
+                        setColumnVisibility(prev => ({ ...prev, status: checked as boolean }))
+                      }
+                    />
+                    <Label htmlFor="status">Vəziyyət</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="packaging"
+                      checked={columnVisibility.packaging}
+                      onCheckedChange={(checked) => 
+                        setColumnVisibility(prev => ({ ...prev, packaging: checked as boolean }))
+                      }
+                    />
+                    <Label htmlFor="packaging">Paketləşdirmə</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="description"
+                      checked={columnVisibility.description}
+                      onCheckedChange={(checked) => 
+                        setColumnVisibility(prev => ({ ...prev, description: checked as boolean }))
+                      }
+                    />
+                    <Label htmlFor="description">Təsvir</Label>
+                  </div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2 h-4 w-4" />
@@ -240,7 +347,8 @@ export default function ProductsList() {
               </Button>
             </div>
           </DialogContent>
-        </Dialog>
+          </Dialog>
+        </div>
       </div>
 
       {/* Edit Product Dialog */}
@@ -342,59 +450,76 @@ export default function ProductsList() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Artikul</TableHead>
-                <TableHead>Məhsul Adı</TableHead>
-                <TableHead>Kateqoriya</TableHead>
-                {allWarehouses.map(warehouse => (
+                {columnVisibility.artikul && <TableHead>Artikul</TableHead>}
+                {columnVisibility.name && <TableHead>Məhsul Adı</TableHead>}
+                {columnVisibility.category && <TableHead>Kateqoriya</TableHead>}
+                {columnVisibility.warehouses && allWarehouses.map(warehouse => (
                   <TableHead key={warehouse}>{warehouse}</TableHead>
                 ))}
-                <TableHead>Ümumi Miqdar</TableHead>
-                <TableHead>Vəziyyət</TableHead>
-                <TableHead>Paketləşdirmə</TableHead>
-                <TableHead>Təsvir</TableHead>
+                {columnVisibility.total && <TableHead>Ümumi Miqdar</TableHead>}
+                {columnVisibility.status && <TableHead>Vəziyyət</TableHead>}
+                {columnVisibility.packaging && <TableHead>Paketləşdirmə</TableHead>}
+                {columnVisibility.description && <TableHead>Təsvir</TableHead>}
                 <TableHead>Əməliyyatlar</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredProducts.map((product) => (
                 <TableRow key={product.id}>
-                  <TableCell className="font-medium">{product.article}</TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{product.category}</Badge>
-                  </TableCell>
-                  {allWarehouses.map(warehouse => (
+                  {columnVisibility.artikul && (
+                    <TableCell className="font-medium">{product.article}</TableCell>
+                  )}
+                  {columnVisibility.name && (
+                    <TableCell>{product.name}</TableCell>
+                  )}
+                  {columnVisibility.category && (
+                    <TableCell>
+                      <Badge variant="outline">{product.category}</Badge>
+                    </TableCell>
+                  )}
+                  {columnVisibility.warehouses && allWarehouses.map(warehouse => (
                     <TableCell key={warehouse}>
                       <span className="font-medium">
                         {product.warehouses?.includes(warehouse) ? `0 ${product.unit}` : '-'}
                       </span>
                     </TableCell>
                   ))}
-                  <TableCell>
-                    <div className="font-medium">
-                      {product.stock} {product.unit}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-1 flex-wrap">
-                      {product.packaging.length > 0 ? (
-                        product.packaging.map((pack, index) => (
-                          <Badge 
-                            key={index} 
-                            variant="outline" 
-                            className="text-xs"
-                          >
-                            {pack}
-                          </Badge>
-                        ))
-                      ) : (
-                        <span className="text-muted-foreground text-sm">Paketləşdirmə yoxdur</span>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="max-w-xs truncate" title={product.description}>
-                    {product.description}
-                  </TableCell>
+                  {columnVisibility.total && (
+                    <TableCell>
+                      <div className="font-medium">
+                        {product.stock} {product.unit}
+                      </div>
+                    </TableCell>
+                  )}
+                  {columnVisibility.status && (
+                    <TableCell>
+                      {getStatusBadge(product.status, product.stock)}
+                    </TableCell>
+                  )}
+                  {columnVisibility.packaging && (
+                    <TableCell>
+                      <div className="flex gap-1 flex-wrap">
+                        {product.packaging.length > 0 ? (
+                          product.packaging.map((pack, index) => (
+                            <Badge 
+                              key={index} 
+                              variant="outline" 
+                              className="text-xs"
+                            >
+                              {pack}
+                            </Badge>
+                          ))
+                        ) : (
+                          <span className="text-muted-foreground text-sm">Paketləşdirmə yoxdur</span>
+                        )}
+                      </div>
+                    </TableCell>
+                  )}
+                  {columnVisibility.description && (
+                    <TableCell className="max-w-xs truncate" title={product.description}>
+                      {product.description}
+                    </TableCell>
+                  )}
                   <TableCell>
                     <div className="flex gap-1">
                       <Button 
