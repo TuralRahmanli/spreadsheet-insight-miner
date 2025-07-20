@@ -31,7 +31,7 @@ export function ThemeToggle() {
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")}>
           <Monitor className="mr-2 h-4 w-4" />
-          Sistem
+          Avto
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
