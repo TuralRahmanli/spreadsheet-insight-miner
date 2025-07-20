@@ -21,6 +21,8 @@ export default function AddOperation() {
   const { products } = useProductStore();
   const { packagingOptions, addPackagingOption } = usePackagingStore();
   const [operationType, setOperationType] = useState("");
+  const [selectedWarehouse, setSelectedWarehouse] = useState("");
+  const [batchName, setBatchName] = useState("");
   const [selectedProducts, setSelectedProducts] = useState<ProductEntry[]>([]);
   const [currentProduct, setCurrentProduct] = useState("");
   const [currentPackaging, setCurrentPackaging] = useState<{type: string, count: number}[]>([]);
@@ -117,6 +119,35 @@ export default function AddOperation() {
                 </SelectContent>
               </Select>
             </div>
+
+            {operationType === "incoming" && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="warehouse">Anbar</Label>
+                  <Select value={selectedWarehouse} onValueChange={setSelectedWarehouse}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Anbar seçin" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="warehouse-1">Anbar 1</SelectItem>
+                      <SelectItem value="warehouse-2">Anbar 2</SelectItem>
+                      <SelectItem value="warehouse-3">Anbar 3</SelectItem>
+                      <SelectItem value="warehouse-main">Əsas Anbar</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="batch-name">Partiya adı</Label>
+                  <Input
+                    id="batch-name"
+                    placeholder="Partiya adını daxil edin"
+                    value={batchName}
+                    onChange={(e) => setBatchName(e.target.value)}
+                  />
+                </div>
+              </>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="product">Məhsul əlavə et</Label>
@@ -319,6 +350,8 @@ export default function AddOperation() {
                   setCurrentPackaging([]);
                   setNotes("");
                   setOperationType("");
+                  setSelectedWarehouse("");
+                  setBatchName("");
                 }}
               >
                 Təmizlə
