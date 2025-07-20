@@ -22,6 +22,7 @@ export default function AddOperation() {
   const { packagingOptions, addPackagingOption } = usePackagingStore();
   const [operationType, setOperationType] = useState("");
   const [selectedWarehouse, setSelectedWarehouse] = useState("");
+  const [selectedDestinationWarehouse, setSelectedDestinationWarehouse] = useState("");
   const [batchName, setBatchName] = useState("");
   const [selectedProducts, setSelectedProducts] = useState<ProductEntry[]>([]);
   const [currentProduct, setCurrentProduct] = useState("");
@@ -115,6 +116,7 @@ export default function AddOperation() {
                   <SelectItem value="outgoing">Çıxış</SelectItem>
                   <SelectItem value="sale">Satış</SelectItem>
                   <SelectItem value="return">Geri qaytarma</SelectItem>
+                  <SelectItem value="transfer">Yerdəyişmə</SelectItem>
                   <SelectItem value="adjustment">Düzəliş</SelectItem>
                 </SelectContent>
               </Select>
@@ -145,6 +147,40 @@ export default function AddOperation() {
                     value={batchName}
                     onChange={(e) => setBatchName(e.target.value)}
                   />
+                </div>
+              </>
+            )}
+
+            {operationType === "transfer" && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="source-warehouse">Mənbə Anbar</Label>
+                  <Select value={selectedWarehouse} onValueChange={setSelectedWarehouse}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Mənbə anbarı seçin" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="warehouse-1">Anbar 1</SelectItem>
+                      <SelectItem value="warehouse-2">Anbar 2</SelectItem>
+                      <SelectItem value="warehouse-3">Anbar 3</SelectItem>
+                      <SelectItem value="warehouse-main">Əsas Anbar</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="destination-warehouse">Təyinat Anbar</Label>
+                  <Select value={selectedDestinationWarehouse} onValueChange={setSelectedDestinationWarehouse}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Təyinat anbarı seçin" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="warehouse-1">Anbar 1</SelectItem>
+                      <SelectItem value="warehouse-2">Anbar 2</SelectItem>
+                      <SelectItem value="warehouse-3">Anbar 3</SelectItem>
+                      <SelectItem value="warehouse-main">Əsas Anbar</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </>
             )}
@@ -351,7 +387,7 @@ export default function AddOperation() {
                   setNotes("");
                   setOperationType("");
                   setSelectedWarehouse("");
-                  setBatchName("");
+                  setSelectedDestinationWarehouse("");
                 }}
               >
                 Təmizlə
