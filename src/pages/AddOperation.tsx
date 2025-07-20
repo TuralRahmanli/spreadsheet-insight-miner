@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Plus, Save, Check, ChevronsUpDown, X } from "lucide-react";
+import { Plus, Save, Check, ChevronsUpDown, X, Download } from "lucide-react";
 import { useProductStore } from "@/lib/productStore";
 import { usePackagingStore } from "@/lib/packagingStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
@@ -419,13 +419,52 @@ export default function AddOperation() {
             </div>
 
             <div className="flex gap-2 pt-4">
-              <Button className="flex-1" disabled={selectedProducts.length === 0}>
+              <Button 
+                className="flex-1" 
+                disabled={!operationType || selectedProducts.length === 0}
+                title={!operationType ? "Əməliyyat növünü seçin" : selectedProducts.length === 0 ? "Ən azı bir məhsul əlavə edin" : "Əməliyyatı saxla"}
+              >
                 <Save className="mr-2 h-4 w-4" />
-                Yadda saxla
+                Əməliyyatı saxla
               </Button>
+              
+              {selectedProducts.length > 0 && (
+                <>
+                  <Button 
+                    type="button" 
+                    variant="outline"
+                    onClick={() => {
+                      const operationTitle = `${operationType} əməliyyatı`;
+                      const operationDate = new Date().toLocaleDateString('az-AZ');
+                      const productName = selectedProducts.map(p => getProductName(p.productId)).join(', ');
+                      const totalQuantity = selectedProducts.reduce((total, p) => total + getProductTotalQuantity(p.packaging), 0);
+                      handleDownloadPDF(operationTitle, operationDate, productName, totalQuantity);
+                    }}
+                    title="PDF formatında yüklə"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    PDF İxrac
+                  </Button>
+                  
+                  <Button 
+                    type="button" 
+                    variant="secondary"
+                    onClick={() => {
+                      const operationTitle = `${operationType} əməliyyatı`;
+                      const operationDate = new Date().toLocaleDateString('az-AZ');
+                      const productName = selectedProducts.map(p => getProductName(p.productId)).join(', ');
+                      const totalQuantity = selectedProducts.reduce((total, p) => total + getProductTotalQuantity(p.packaging), 0);
+                      handlePrint(operationTitle, operationDate, productName, totalQuantity);
+                    }}
+                    title="Çap et"
+                  >
+                    Print
+                  </Button>
+                </>
+              )}
+              
               <Button 
                 variant="outline" 
-                className="flex-1"
                 onClick={() => {
                   setSelectedProducts([]);
                   setCurrentProduct("");
@@ -434,7 +473,9 @@ export default function AddOperation() {
                   setOperationType("");
                   setSelectedWarehouse("");
                   setSelectedDestinationWarehouse("");
+                  setBatchName("");
                 }}
+                title="Bütün sahələri təmizlə"
               >
                 Təmizlə
               </Button>

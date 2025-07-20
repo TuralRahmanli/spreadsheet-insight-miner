@@ -134,5 +134,37 @@ All colors MUST be HSL.
     .overflow-x-auto {
       -webkit-overflow-scrolling: touch;
     }
+    
+    /* Better touch targets on mobile */
+    button, input, select, textarea {
+      min-height: 44px;
+    }
+    
+    /* Improve table readability on mobile */
+    table {
+      font-size: 14px;
+    }
+  }
+
+  /* Focus improvements for accessibility */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Ensure proper contrast for text */
+  .text-muted-foreground {
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Loading states */
+  .loading {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  /* Smooth animations */
+  * {
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
   }
 }
