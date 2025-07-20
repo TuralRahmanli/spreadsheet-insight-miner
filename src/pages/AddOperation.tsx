@@ -12,8 +12,23 @@ export default function AddOperation() {
   const { products } = useProductStore();
   const [operationType, setOperationType] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const [packagingType, setPackagingType] = useState("");
+  const [packageCount, setPackageCount] = useState("");
+  const [totalQuantity, setTotalQuantity] = useState("");
   const [notes, setNotes] = useState("");
+
+  const selectedProductData = products.find(p => p.id === selectedProduct);
+
+  const handlePackagingChange = (packaging: string, count: string) => {
+    const packagingSize = parseInt(packaging);
+    const countNum = parseInt(count);
+    
+    if (!isNaN(packagingSize) && !isNaN(countNum)) {
+      setTotalQuantity((packagingSize * countNum).toString());
+    } else {
+      setTotalQuantity("");
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -59,16 +74,59 @@ export default function AddOperation() {
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="quantity">Miqdar</Label>
-              <Input
-                id="quantity"
-                type="number"
-                placeholder="Miqdarı daxil edin"
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
-              />
-            </div>
+            {selectedProduct && (
+              <div className="space-y-2">
+                <Label htmlFor="packaging">Paketləşdirmə növü</Label>
+                <Select value={packagingType} onValueChange={(value) => {
+                  setPackagingType(value);
+                  handlePackagingChange(value, packageCount);
+                }}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Paketləşdirmə seçin" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {selectedProductData?.packaging.map((pkg) => (
+                      <SelectItem key={pkg} value={pkg}>
+                        {pkg} metr
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {packagingType && (
+              <div className="space-y-2">
+                <Label htmlFor="package-count">Paket sayı</Label>
+                <Input
+                  id="package-count"
+                  type="number"
+                  placeholder="Paket sayını daxil edin"
+                  value={packageCount}
+                  onChange={(e) => {
+                    setPackageCount(e.target.value);
+                    handlePackagingChange(packagingType, e.target.value);
+                  }}
+                />
+              </div>
+            )}
+
+            {totalQuantity && (
+              <div className="space-y-2">
+                <Label htmlFor="total-quantity">Ümumi miqdar</Label>
+                <Input
+                  id="total-quantity"
+                  type="number"
+                  placeholder="Ümumi miqdarı"
+                  value={totalQuantity}
+                  readOnly
+                  className="bg-muted"
+                />
+                <div className="text-sm text-muted-foreground">
+                  {packageCount} ədəd × {packagingType} metr = {totalQuantity} metr
+                </div>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="notes">Qeydlər</Label>

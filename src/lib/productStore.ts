@@ -32,7 +32,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 150,
     unit: "kg",
-    packaging: ["Plastik qab", "Vakuum paket"],
+    packaging: ["100", "120", "135"],
     warehouses: ["Anbar 1", "Anbar 2"],
     description: "Premium keyfiyyətli albalı məhsulu"
   },
@@ -44,7 +44,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 200,
     unit: "kg",
-    packaging: ["Plastik torba", "Karton qutu"],
+    packaging: ["100", "120"],
     warehouses: ["Anbar 1"],
     description: "Standart keyfiyyətli albalı məhsulu"
   },
@@ -56,7 +56,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 80,
     unit: "kg",
-    packaging: ["Şüşə qab", "Plastik qab"],
+    packaging: ["135", "120"],
     warehouses: ["Anbar 2", "Anbar 3"],
     description: "Deluxe keyfiyyətli albalı məhsulu"
   },
@@ -68,7 +68,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 120,
     unit: "kg",
-    packaging: ["Plastik qab"],
+    packaging: ["100", "110"],
     warehouses: ["Anbar 1", "Anbar 3"],
     description: "Premium keyfiyyətli qarağat məhsulu"
   },
@@ -80,7 +80,7 @@ const initialProducts: Product[] = [
     status: "low_stock",
     stock: 45,
     unit: "kg",
-    packaging: ["Plastik torba", "Metal qutu"],
+    packaging: ["100", "120"],
     warehouses: ["Anbar 2"],
     description: "Standart keyfiyyətli qarağat məhsulu"
   },
@@ -92,7 +92,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 90,
     unit: "ədəd",
-    packaging: ["Karton qutu", "Plastik torba"],
+    packaging: ["100", "120", "135"],
     warehouses: ["Anbar 1", "Anbar 2", "Anbar 3"],
     description: "Premium keyfiyyətli mango məhsulu"
   },
@@ -104,7 +104,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 110,
     unit: "ədəd",
-    packaging: ["Plastik torba"],
+    packaging: ["110", "120"],
     warehouses: ["Anbar 2"],
     description: "Standart keyfiyyətli mango məhsulu"
   },
@@ -116,7 +116,7 @@ const initialProducts: Product[] = [
     status: "out_of_stock",
     stock: 0,
     unit: "ədəd",
-    packaging: ["Şüşə qab", "Vakuum paket"],
+    packaging: ["100", "135"],
     warehouses: [],
     description: "Lux keyfiyyətli mango məhsulu"
   },
@@ -128,7 +128,7 @@ const initialProducts: Product[] = [
     status: "active", 
     stock: 75,
     unit: "litr",
-    packaging: ["Şüşə şüşə", "Plastik şüşə"],
+    packaging: ["100", "110", "120"],
     warehouses: ["Anbar 1"],
     description: "Premium keyfiyyətli zeytun məhsulu"
   },
@@ -140,7 +140,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 95,
     unit: "litr",
-    packaging: ["Plastik şüşə"],
+    packaging: ["120", "135"],
     warehouses: ["Anbar 3"],
     description: "Standart keyfiyyətli zeytun məhsulu"
   }
