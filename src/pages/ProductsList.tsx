@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Plus, Edit, Trash2, Package, Settings, GripVertical } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Package, Settings, GripVertical, Filter, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
@@ -32,6 +32,12 @@ export default function ProductsList() {
   const { products, addProduct, removeProduct, updateProduct } = useProductStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [filters, setFilters] = useState({
+    status: "all",
+    stockLevel: "all",
+    unit: "all"
+  });
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
@@ -73,12 +79,43 @@ export default function ProductsList() {
 
   const [draggedColumn, setDraggedColumn] = useState<string | null>(null);
   
+  // Get unique values for filter options
+  const allStatuses = ["all", "active", "out_of_stock", "low_stock"];
+  const allUnits = ["all", ...Array.from(new Set(products.map(p => p.unit).filter(Boolean)))];
+  const stockLevels = ["all", "in_stock", "low_stock", "out_of_stock"];
+
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          product.article.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    
+    // Apply filters
+    const matchesStatus = filters.status === "all" || 
+      (filters.status === "active" && product.status === "active") ||
+      (filters.status === "out_of_stock" && (product.status === "out_of_stock" || product.stock === 0)) ||
+      (filters.status === "low_stock" && (product.status === "low_stock" || (product.stock > 0 && product.stock < 50)));
+    
+    const matchesStockLevel = filters.stockLevel === "all" ||
+      (filters.stockLevel === "in_stock" && product.stock >= 50) ||
+      (filters.stockLevel === "low_stock" && product.stock > 0 && product.stock < 50) ||
+      (filters.stockLevel === "out_of_stock" && product.stock === 0);
+    
+    const matchesUnit = filters.unit === "all" || product.unit === filters.unit;
+    
+    return matchesSearch && matchesCategory && matchesStatus && matchesStockLevel && matchesUnit;
   });
+
+  const clearAllFilters = () => {
+    setFilters({
+      status: "all",
+      stockLevel: "all",
+      unit: "all"
+    });
+    setSelectedCategory("all");
+    setSearchTerm("");
+  };
+
+  const hasActiveFilters = filters.status !== "all" || filters.stockLevel !== "all" || filters.unit !== "all" || selectedCategory !== "all" || searchTerm !== "";
 
   const handleAddProduct = () => {
     if (!newProduct.article || !newProduct.name) {
@@ -483,16 +520,106 @@ export default function ProductsList() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <select 
-          className="px-3 py-2 border border-input bg-background rounded-md text-sm"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-        >
-          <option value="all">Bütün kateqoriyalar</option>
-          {categories.filter(cat => cat !== "all").map(category => (
-            <option key={category} value={category}>{category}</option>
-          ))}
-        </select>
+        <div className="flex items-center space-x-2">
+          <select 
+            className="px-3 py-2 border border-input bg-background rounded-md text-sm"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            <option value="all">Bütün kateqoriyalar</option>
+            {categories.filter(cat => cat !== "all").map(category => (
+              <option key={category} value={category}>{category}</option>
+            ))}
+          </select>
+          
+          <Popover open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Filter className="h-4 w-4" />
+                Filterlər
+                {hasActiveFilters && (
+                  <Badge variant="secondary" className="ml-1 h-5 w-5 p-0 text-xs">
+                    !
+                  </Badge>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="end">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium leading-none">Filterlər</h4>
+                  {hasActiveFilters && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={clearAllFilters}
+                      className="h-auto p-1 text-xs"
+                    >
+                      <X className="h-3 w-3 mr-1" />
+                      Təmizlə
+                    </Button>
+                  )}
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Vəziyyət</Label>
+                    <Select 
+                      value={filters.status} 
+                      onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Vəziyyət seçin" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Hamısı</SelectItem>
+                        <SelectItem value="active">Aktiv</SelectItem>
+                        <SelectItem value="low_stock">Az qalıb</SelectItem>
+                        <SelectItem value="out_of_stock">Bitib</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Stok Səviyyəsi</Label>
+                    <Select 
+                      value={filters.stockLevel} 
+                      onValueChange={(value) => setFilters(prev => ({ ...prev, stockLevel: value }))}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Stok səviyyəsi seçin" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Hamısı</SelectItem>
+                        <SelectItem value="in_stock">Mövcud (≥50)</SelectItem>
+                        <SelectItem value="low_stock">Az qalıb (1-49)</SelectItem>
+                        <SelectItem value="out_of_stock">Bitib (0)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Ölçü Vahidi</Label>
+                    <Select 
+                      value={filters.unit} 
+                      onValueChange={(value) => setFilters(prev => ({ ...prev, unit: value }))}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Ölçü vahidi seçin" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Hamısı</SelectItem>
+                        {allUnits.filter(unit => unit !== "all").map(unit => (
+                          <SelectItem key={unit} value={unit}>{unit}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
 
       <Card>
