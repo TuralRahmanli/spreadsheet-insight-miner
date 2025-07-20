@@ -4,9 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Settings as SettingsIcon, Save, Download, Upload } from "lucide-react";
+import { Settings as SettingsIcon, Save, Download, Upload, Cloud, HardDrive, CheckCircle } from "lucide-react";
+import { useStorageProvider } from "@/hooks/useStorageProvider";
 
 export default function Settings() {
+  const { config, switchToLocal, switchToGoogleDrive, connectGoogleDrive, disconnectGoogleDrive } = useStorageProvider();
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -108,6 +111,70 @@ export default function Settings() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Cloud className="h-5 w-5" />
+            Məlumat Saxlama
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Saxlama Növü</Label>
+            <p className="text-sm text-muted-foreground">
+              Məlumatlarınızı harada saxlamaq istədiyinizi seçin
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <Button
+              variant={config.provider === 'local' ? 'default' : 'outline'}
+              className="flex flex-col items-center gap-2 h-20"
+              onClick={switchToLocal}
+            >
+              <HardDrive className="h-6 w-6" />
+              <span>Lokal Cihaz</span>
+              {config.provider === 'local' && <CheckCircle className="h-4 w-4" />}
+            </Button>
+
+            <Button
+              variant={config.provider === 'google-drive' ? 'default' : 'outline'}
+              className="flex flex-col items-center gap-2 h-20"
+              onClick={config.googleDriveConnected ? switchToGoogleDrive : connectGoogleDrive}
+              disabled={config.provider === 'google-drive' && config.googleDriveConnected}
+            >
+              <Cloud className="h-6 w-6" />
+              <span>
+                {config.googleDriveConnected ? 'Google Drive' : 'Google Drive-a Qoşul'}
+              </span>
+              {config.provider === 'google-drive' && <CheckCircle className="h-4 w-4" />}
+            </Button>
+          </div>
+
+          {config.googleDriveConnected && (
+            <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
+              <div>
+                <p className="text-sm font-medium">Google Drive bağlandı</p>
+                <p className="text-xs text-muted-foreground">
+                  Məlumatlarınız Google Drive-da saxlanılır
+                </p>
+              </div>
+              <Button variant="outline" size="sm" onClick={disconnectGoogleDrive}>
+                Ayır
+              </Button>
+            </div>
+          )}
+
+          <div className="p-4 bg-muted rounded-lg">
+            <h4 className="font-medium mb-2">Saxlama Seçimləri</h4>
+            <div className="text-sm text-muted-foreground space-y-1">
+              <p><strong>Lokal Cihaz:</strong> Məlumatlar yalnız sizin cihazınızda saxlanılır</p>
+              <p><strong>Google Drive:</strong> Məlumatlar cloud-da saxlanılır və bütün cihazlarda sinxronlaşır</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
