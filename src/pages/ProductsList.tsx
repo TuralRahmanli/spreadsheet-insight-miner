@@ -31,11 +31,11 @@ export default function ProductsList() {
   const navigate = useNavigate();
   const { products, addProduct, removeProduct, updateProduct } = useProductStore();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
   const [filters, setFilters] = useState({
     status: "all",
     stockLevel: "all",
-    unit: "all"
+    unit: "all",
+    category: "all"
   });
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -87,7 +87,7 @@ export default function ProductsList() {
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          product.article.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
+    const matchesCategory = filters.category === "all" || product.category === filters.category;
     
     // Apply filters
     const matchesStatus = filters.status === "all" || 
@@ -109,13 +109,13 @@ export default function ProductsList() {
     setFilters({
       status: "all",
       stockLevel: "all",
-      unit: "all"
+      unit: "all",
+      category: "all"
     });
-    setSelectedCategory("all");
     setSearchTerm("");
   };
 
-  const hasActiveFilters = filters.status !== "all" || filters.stockLevel !== "all" || filters.unit !== "all" || selectedCategory !== "all" || searchTerm !== "";
+  const hasActiveFilters = filters.status !== "all" || filters.stockLevel !== "all" || filters.unit !== "all" || filters.category !== "all" || searchTerm !== "";
 
   const handleAddProduct = () => {
     if (!newProduct.article || !newProduct.name) {
@@ -521,17 +521,6 @@ export default function ProductsList() {
           />
         </div>
         <div className="flex items-center space-x-2">
-          <select 
-            className="px-3 py-2 border border-input bg-background rounded-md text-sm"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
-            <option value="all">Bütün kateqoriyalar</option>
-            {categories.filter(cat => cat !== "all").map(category => (
-              <option key={category} value={category}>{category}</option>
-            ))}
-          </select>
-          
           <Popover open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
             <PopoverTrigger asChild>
               <Button variant="outline" className="gap-2">
@@ -598,23 +587,41 @@ export default function ProductsList() {
                     </Select>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium">Ölçü Vahidi</Label>
-                    <Select 
-                      value={filters.unit} 
-                      onValueChange={(value) => setFilters(prev => ({ ...prev, unit: value }))}
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Ölçü vahidi seçin" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">Hamısı</SelectItem>
-                        {allUnits.filter(unit => unit !== "all").map(unit => (
-                          <SelectItem key={unit} value={unit}>{unit}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                   <div className="space-y-2">
+                     <Label className="text-sm font-medium">Ölçü Vahidi</Label>
+                     <Select 
+                       value={filters.unit} 
+                       onValueChange={(value) => setFilters(prev => ({ ...prev, unit: value }))}
+                     >
+                       <SelectTrigger className="w-full">
+                         <SelectValue placeholder="Ölçü vahidi seçin" />
+                       </SelectTrigger>
+                       <SelectContent>
+                         <SelectItem value="all">Hamısı</SelectItem>
+                         {allUnits.filter(unit => unit !== "all").map(unit => (
+                           <SelectItem key={unit} value={unit}>{unit}</SelectItem>
+                         ))}
+                       </SelectContent>
+                     </Select>
+                   </div>
+
+                   <div className="space-y-2">
+                     <Label className="text-sm font-medium">Kateqoriya</Label>
+                     <Select 
+                       value={filters.category} 
+                       onValueChange={(value) => setFilters(prev => ({ ...prev, category: value }))}
+                     >
+                       <SelectTrigger className="w-full">
+                         <SelectValue placeholder="Kateqoriya seçin" />
+                       </SelectTrigger>
+                       <SelectContent>
+                         <SelectItem value="all">Bütün kateqoriyalar</SelectItem>
+                         {categories.filter(cat => cat !== "all").map(category => (
+                           <SelectItem key={category} value={category}>{category}</SelectItem>
+                         ))}
+                       </SelectContent>
+                     </Select>
+                   </div>
                 </div>
               </div>
             </PopoverContent>
