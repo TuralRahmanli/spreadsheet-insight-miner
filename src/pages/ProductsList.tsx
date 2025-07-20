@@ -8,13 +8,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Plus, Edit, Trash2, Package } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Package, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
-import { useProductStore } from "@/lib/productStore";
+import { useProductStore, type PackagingEntry } from "@/lib/productStore";
 
 const getStatusBadge = (status: string, stock: number) => {
   if (status === "out_of_stock" || stock === 0) {
@@ -40,8 +38,14 @@ export default function ProductsList() {
     category: "",
     stock: "",
     unit: "",
-    packaging: [] as string[],
+    packaging: [] as PackagingEntry[],
     description: ""
+  });
+  const [packagingForm, setPackagingForm] = useState({
+    type: "",
+    unitSize: "",
+    quantity: "",
+    unit: ""
   });
   const { toast } = useToast();
   
@@ -54,6 +58,42 @@ export default function ProductsList() {
     return matchesSearch && matchesCategory;
   });
 
+  const handleAddPackagingEntry = () => {
+    if (!packagingForm.type || !packagingForm.unitSize || !packagingForm.quantity || !packagingForm.unit) {
+      toast({
+        title: "Xəta",
+        description: "Bütün paketləşdirmə sahələri doldurulmalıdır",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const entry: PackagingEntry = {
+      type: packagingForm.type,
+      unitSize: parseFloat(packagingForm.unitSize),
+      quantity: parseInt(packagingForm.quantity),
+      unit: packagingForm.unit
+    };
+
+    setNewProduct(prev => ({
+      ...prev,
+      packaging: [...prev.packaging, entry]
+    }));
+
+    setPackagingForm({ type: "", unitSize: "", quantity: "", unit: "" });
+  };
+
+  const handleRemovePackagingEntry = (index: number) => {
+    setNewProduct(prev => ({
+      ...prev,
+      packaging: prev.packaging.filter((_, i) => i !== index)
+    }));
+  };
+
+  const calculateTotalStock = (packaging: PackagingEntry[]) => {
+    return packaging.reduce((total, entry) => total + (entry.unitSize * entry.quantity), 0);
+  };
+
   const handleAddProduct = () => {
     if (!newProduct.article || !newProduct.name) {
       toast({
@@ -64,13 +104,15 @@ export default function ProductsList() {
       return;
     }
 
+    const totalStock = calculateTotalStock(newProduct.packaging);
+
     const product = {
       id: newProduct.article,
       article: newProduct.article,
       name: newProduct.name,
       category: newProduct.category || "",
       status: "active",
-      stock: parseInt(newProduct.stock) || 0,
+      stock: totalStock,
       unit: newProduct.unit || "",
       packaging: newProduct.packaging,
       warehouses: [],
@@ -160,7 +202,7 @@ export default function ProductsList() {
               Yeni Məhsul
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Yeni Məhsul Əlavə Et</DialogTitle>
             </DialogHeader>
@@ -193,16 +235,6 @@ export default function ProductsList() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="stock">Stok</Label>
-                <Input
-                  id="stock"
-                  type="number"
-                  value={newProduct.stock}
-                  onChange={(e) => setNewProduct(prev => ({ ...prev, stock: e.target.value }))}
-                  placeholder="0"
-                />
-              </div>
-              <div className="grid gap-2">
                 <Label htmlFor="unit">Ölçü Vahidi</Label>
                 <Select value={newProduct.unit} onValueChange={(value) => setNewProduct(prev => ({ ...prev, unit: value }))}>
                   <SelectTrigger>
@@ -219,126 +251,108 @@ export default function ProductsList() {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Packaging Entries Section */}
               <div className="grid gap-2">
-                <Label htmlFor="packaging">Paketləşdirmə Üsulları</Label>
-                <div className="space-y-2">
-                  {newProduct.packaging.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {newProduct.packaging.map((pack, index) => (
-                        <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                          {pack}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setNewProduct(prev => ({
-                                ...prev,
-                                packaging: prev.packaging.filter((_, i) => i !== index)
-                              }));
-                            }}
-                            className="ml-1 hover:bg-destructive hover:text-destructive-foreground rounded-full w-4 h-4 flex items-center justify-center text-xs"
-                          >
-                            ×
-                          </button>
-                        </Badge>
-                      ))}
+                <Label>Paketləşdirmə Üsulları</Label>
+                
+                {/* Existing packaging entries */}
+                {newProduct.packaging.length > 0 && (
+                  <div className="space-y-2 p-3 border rounded-lg bg-muted/20">
+                    <div className="font-medium text-sm">Əlavə edilmiş paketləşdirmələr:</div>
+                    {newProduct.packaging.map((entry, index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-background border rounded">
+                        <div className="text-sm">
+                          <span className="font-medium">{entry.type}</span> - 
+                          <span className="ml-1">{entry.quantity} ədəd × {entry.unitSize} {entry.unit}</span>
+                          <span className="ml-2 text-muted-foreground">
+                            (Cəmi: {entry.quantity * entry.unitSize} {entry.unit})
+                          </span>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemovePackagingEntry(index)}
+                          className="h-8 w-8 p-0"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                    <div className="text-sm font-medium border-t pt-2">
+                      Ümumi stok: {calculateTotalStock(newProduct.packaging)} {newProduct.unit}
                     </div>
-                  )}
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline" className="w-full justify-start">
-                        {newProduct.packaging.length > 0 
-                          ? `${newProduct.packaging.length} paketləşdirmə üsulu seçildi` 
-                          : "Paketləşdirmə üsulunu seçin və ya yazın"
-                        }
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-full p-0">
-                      <Command>
-                        <CommandInput placeholder="Paketləşdirmə üsulunu axtarın və ya yazın..." />
-                        <CommandList>
-                          <CommandEmpty>Nəticə tapılmadı</CommandEmpty>
-                          <CommandGroup>
-                            {[
-                              "Plastik torba",
-                              "Plastik qab", 
-                              "Şüşə qab",
-                              "Şüşə şüşə",
-                              "Plastik şüşə",
-                              "Karton qutu",
-                              "Metal qutu",
-                              "Vakuum paket",
-                              "40",
-                              "40+(3)",
-                              "45",
-                              "45+3",
-                              "50",
-                              "50+(3)",
-                              "55",
-                              "55+(3)",
-                              "60",
-                              "60+(3)",
-                              "65",
-                              "65+(3)",
-                              "70",
-                              "70+(3)",
-                              "75",
-                              "75+(3)",
-                              "80",
-                              "80+(3)",
-                              "85",
-                              "85+(3)",
-                              "90",
-                              "90+(3)",
-                              "95",
-                              "95+(3)",
-                              "100",
-                              "100+(3)",
-                              "105",
-                              "105+(3)",
-                              "110",
-                              "110+(3)",
-                              "115",
-                              "115+(3)",
-                              "120",
-                              "120+(3)",
-                              "125",
-                              "125+(3)",
-                              "130",
-                              "130+(3)",
-                              "135",
-                              "135+(3)",
-                              "140",
-                              "140+(3)",
-                              "145",
-                              "145+(3)",
-                              "150",
-                              "150+(3)",
-                              "155",
-                              "155+(3)",
-                              "160",
-                              "160+(3)",
-                              "165",
-                              "165+(3)"
-                            ].filter(option => !newProduct.packaging.includes(option)).map((option) => (
-                              <CommandItem
-                                key={option}
-                                onSelect={() => {
-                                  setNewProduct(prev => ({ 
-                                    ...prev, 
-                                    packaging: [...prev.packaging, option] 
-                                  }));
-                                }}
-                              >
-                                {option}
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
+                  </div>
+                )}
+
+                {/* Add new packaging entry form */}
+                <div className="space-y-3 p-3 border rounded-lg">
+                  <div className="font-medium text-sm">Yeni paketləşdirmə əlavə et:</div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label className="text-xs">Paketləşdirmə Tipi</Label>
+                      <Select value={packagingForm.type} onValueChange={(value) => setPackagingForm(prev => ({ ...prev, type: value }))}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Tip seçin" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Plastik torba">Plastik torba</SelectItem>
+                          <SelectItem value="Plastik qab">Plastik qab</SelectItem>
+                          <SelectItem value="Şüşə qab">Şüşə qab</SelectItem>
+                          <SelectItem value="Şüşə şüşə">Şüşə şüşə</SelectItem>
+                          <SelectItem value="Plastik şüşə">Plastik şüşə</SelectItem>
+                          <SelectItem value="Karton qutu">Karton qutu</SelectItem>
+                          <SelectItem value="Metal qutu">Metal qutu</SelectItem>
+                          <SelectItem value="Vakuum paket">Vakuum paket</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-xs">Vahid Ölçüsü</Label>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        value={packagingForm.unitSize}
+                        onChange={(e) => setPackagingForm(prev => ({ ...prev, unitSize: e.target.value }))}
+                        placeholder="Məs: 100"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Miqdar (Ədəd)</Label>
+                      <Input
+                        type="number"
+                        value={packagingForm.quantity}
+                        onChange={(e) => setPackagingForm(prev => ({ ...prev, quantity: e.target.value }))}
+                        placeholder="Məs: 10"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs">Vahid</Label>
+                      <Select value={packagingForm.unit} onValueChange={(value) => setPackagingForm(prev => ({ ...prev, unit: value }))}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Vahid" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="metr">Metr</SelectItem>
+                          <SelectItem value="kg">Kiloqram</SelectItem>
+                          <SelectItem value="litr">Litr</SelectItem>
+                          <SelectItem value="ədəd">Ədəd</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    onClick={handleAddPackagingEntry}
+                    className="w-full"
+                    type="button"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Paketləşdirmə Əlavə Et
+                  </Button>
                 </div>
               </div>
+
               <div className="grid gap-2">
                 <Label htmlFor="description">Təsvir</Label>
                 <Textarea
@@ -438,23 +452,25 @@ export default function ProductsList() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <select 
-          className="px-3 py-2 border border-input bg-background rounded-md text-sm"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-        >
-          <option value="all">Bütün kateqoriyalar</option>
-          {categories.filter(cat => cat !== "all").map(category => (
-            <option key={category} value={category}>{category}</option>
-          ))}
-        </select>
+        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Kateqoriya seç" />
+          </SelectTrigger>
+          <SelectContent>
+            {categories.map(category => (
+              <SelectItem key={category} value={category}>
+                {category === "all" ? "Bütün Kateqoriyalar" : category}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
-            Məhsullar Siyahısı ({filteredProducts.length})
+            Məhsullar ({filteredProducts.length})
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -465,10 +481,9 @@ export default function ProductsList() {
                 <TableHead>Məhsul Adı</TableHead>
                 <TableHead>Kateqoriya</TableHead>
                 <TableHead>Stok</TableHead>
-                <TableHead>Vəziyyət</TableHead>
                 <TableHead>Paketləşdirmə</TableHead>
                 <TableHead>Anbarlar</TableHead>
-                <TableHead>Təsvir</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Əməliyyatlar</TableHead>
               </TableRow>
             </TableHeader>
@@ -477,68 +492,40 @@ export default function ProductsList() {
                 <TableRow key={product.id}>
                   <TableCell className="font-medium">{product.article}</TableCell>
                   <TableCell>{product.name}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">{product.category}</Badge>
-                  </TableCell>
+                  <TableCell>{product.category}</TableCell>
                   <TableCell>{product.stock} {product.unit}</TableCell>
                   <TableCell>
-                    {getStatusBadge(product.status, product.stock)}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-1 flex-wrap">
-                      {product.packaging.length > 0 ? (
-                        product.packaging.map((pack, index) => (
-                          <Badge 
-                            key={index} 
-                            variant="outline" 
-                            className="text-xs"
-                          >
-                            {pack}
-                          </Badge>
-                        ))
-                      ) : (
-                        <span className="text-muted-foreground text-sm">Paketləşdirmə yoxdur</span>
-                      )}
+                    <div className="flex flex-wrap gap-1 max-w-[200px]">
+                      {product.packaging.map((entry, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {entry.type}: {entry.quantity}×{entry.unitSize} {entry.unit}
+                        </Badge>
+                      ))}
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1 flex-wrap">
-                      {product.warehouses.length > 0 ? (
-                        product.warehouses.map((warehouse, index) => (
-                          <Badge 
-                            key={index} 
-                            variant="secondary" 
-                            className="text-xs cursor-pointer hover:bg-secondary/80 transition-colors"
-                            onClick={() => navigate(`/warehouses/${encodeURIComponent(warehouse)}`)}
-                          >
-                            {warehouse}
-                          </Badge>
-                        ))
-                      ) : (
-                        <span className="text-muted-foreground text-sm">Anbar yoxdur</span>
-                      )}
+                    <div className="flex flex-wrap gap-1">
+                      {product.warehouses.map((warehouse, index) => (
+                        <Badge 
+                          key={index} 
+                          variant="secondary" 
+                          className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                          onClick={() => navigate(`/warehouses/${warehouse}`)}
+                        >
+                          {warehouse}
+                        </Badge>
+                      ))}
                     </div>
                   </TableCell>
-                  <TableCell className="max-w-xs truncate" title={product.description}>
-                    {product.description}
-                  </TableCell>
+                  <TableCell>{getStatusBadge(product.status, product.stock)}</TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8"
-                        onClick={() => handleEditProduct(product)}
-                      >
+                    <div className="flex items-center gap-2">
+                      <Button variant="ghost" size="sm" onClick={() => handleEditProduct(product)}>
                         <Edit className="h-4 w-4" />
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
-                          >
+                          <Button variant="ghost" size="sm">
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
@@ -546,7 +533,7 @@ export default function ProductsList() {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Məhsulu sil</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Bu məhsulu silmək istədiyinizə əminsiniz? Bu əməliyyat geri qaytarıla bilməz.
+                              Bu əməliyyat geri alına bilməz. Məhsul tamamilə silinəcək.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>

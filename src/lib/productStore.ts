@@ -1,6 +1,13 @@
 // Global product store for shared product data across pages
 import { create } from 'zustand';
 
+export interface PackagingEntry {
+  type: string;
+  unitSize: number;
+  quantity: number;
+  unit: string;
+}
+
 interface Product {
   id: string;
   article: string;
@@ -9,7 +16,7 @@ interface Product {
   status: string;
   stock: number;
   unit: string;
-  packaging: string[];
+  packaging: PackagingEntry[];
   warehouses: string[];
   description?: string;
 }
@@ -32,7 +39,10 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 150,
     unit: "kg",
-    packaging: ["Plastik qab", "Vakuum paket"],
+    packaging: [
+      { type: "Plastik qab", unitSize: 5, quantity: 20, unit: "kg" },
+      { type: "Vakuum paket", unitSize: 10, quantity: 10, unit: "kg" }
+    ],
     warehouses: ["Anbar 1", "Anbar 2"],
     description: "Premium keyfiyyətli albalı məhsulu"
   },
@@ -44,7 +54,10 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 200,
     unit: "kg",
-    packaging: ["Plastik torba", "Karton qutu"],
+    packaging: [
+      { type: "Plastik torba", unitSize: 25, quantity: 6, unit: "kg" },
+      { type: "Karton qutu", unitSize: 10, quantity: 5, unit: "kg" }
+    ],
     warehouses: ["Anbar 1"],
     description: "Standart keyfiyyətli albalı məhsulu"
   },
@@ -56,7 +69,10 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 80,
     unit: "kg",
-    packaging: ["Şüşə qab", "Plastik qab"],
+    packaging: [
+      { type: "Şüşə qab", unitSize: 2, quantity: 25, unit: "kg" },
+      { type: "Plastik qab", unitSize: 5, quantity: 6, unit: "kg" }
+    ],
     warehouses: ["Anbar 2", "Anbar 3"],
     description: "Deluxe keyfiyyətli albalı məhsulu"
   },
@@ -68,7 +84,9 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 120,
     unit: "kg",
-    packaging: ["Plastik qab"],
+    packaging: [
+      { type: "Plastik qab", unitSize: 3, quantity: 40, unit: "kg" }
+    ],
     warehouses: ["Anbar 1", "Anbar 3"],
     description: "Premium keyfiyyətli qarağat məhsulu"
   },
@@ -80,7 +98,10 @@ const initialProducts: Product[] = [
     status: "low_stock",
     stock: 45,
     unit: "kg",
-    packaging: ["Plastik torba", "Metal qutu"],
+    packaging: [
+      { type: "Plastik torba", unitSize: 15, quantity: 2, unit: "kg" },
+      { type: "Metal qutu", unitSize: 5, quantity: 3, unit: "kg" }
+    ],
     warehouses: ["Anbar 2"],
     description: "Standart keyfiyyətli qarağat məhsulu"
   },
@@ -92,7 +113,10 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 90,
     unit: "ədəd",
-    packaging: ["Karton qutu", "Plastik torba"],
+    packaging: [
+      { type: "Karton qutu", unitSize: 12, quantity: 5, unit: "ədəd" },
+      { type: "Plastik torba", unitSize: 6, quantity: 5, unit: "ədəd" }
+    ],
     warehouses: ["Anbar 1", "Anbar 2", "Anbar 3"],
     description: "Premium keyfiyyətli mango məhsulu"
   },
@@ -104,7 +128,9 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 110,
     unit: "ədəd",
-    packaging: ["Plastik torba"],
+    packaging: [
+      { type: "Plastik torba", unitSize: 10, quantity: 11, unit: "ədəd" }
+    ],
     warehouses: ["Anbar 2"],
     description: "Standart keyfiyyətli mango məhsulu"
   },
@@ -116,7 +142,10 @@ const initialProducts: Product[] = [
     status: "out_of_stock",
     stock: 0,
     unit: "ədəd",
-    packaging: ["Şüşə qab", "Vakuum paket"],
+    packaging: [
+      { type: "Şüşə qab", unitSize: 1, quantity: 0, unit: "ədəd" },
+      { type: "Vakuum paket", unitSize: 3, quantity: 0, unit: "ədəd" }
+    ],
     warehouses: [],
     description: "Lux keyfiyyətli mango məhsulu"
   },
@@ -128,7 +157,10 @@ const initialProducts: Product[] = [
     status: "active", 
     stock: 75,
     unit: "litr",
-    packaging: ["Şüşə şüşə", "Plastik şüşə"],
+    packaging: [
+      { type: "Şüşə şüşə", unitSize: 0.5, quantity: 100, unit: "litr" },
+      { type: "Plastik şüşə", unitSize: 1, quantity: 25, unit: "litr" }
+    ],
     warehouses: ["Anbar 1"],
     description: "Premium keyfiyyətli zeytun məhsulu"
   },
@@ -140,7 +172,9 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 95,
     unit: "litr",
-    packaging: ["Plastik şüşə"],
+    packaging: [
+      { type: "Plastik şüşə", unitSize: 1, quantity: 95, unit: "litr" }
+    ],
     warehouses: ["Anbar 3"],
     description: "Standart keyfiyyətli zeytun məhsulu"
   }
