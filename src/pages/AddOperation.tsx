@@ -24,8 +24,6 @@ export default function AddOperation() {
   const [currentPackagingType, setCurrentPackagingType] = useState("");
   const [currentPackageCount, setCurrentPackageCount] = useState("");
 
-  const selectedProductData = products.find(p => p.id === selectedProduct);
-
   const getTotalQuantity = () => {
     return selectedPackaging.reduce((total, item) => {
       const packagingSize = parseInt(item.type.split(/[+()]/)[0]);
