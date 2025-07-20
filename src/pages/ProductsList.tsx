@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Plus, Edit, Trash2, Package, Settings, GripVertical, Filter, X } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Package, Settings, GripVertical, Filter, X, Upload } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useToast } from "@/hooks/use-toast";
 import { useProductStore } from "@/lib/productStore";
 import { Checkbox } from "@/components/ui/checkbox";
+import * as XLSX from 'xlsx';
 
 const getStatusBadge = (status: string, stock: number) => {
   if (status === "out_of_stock" || stock === 0) {
@@ -310,6 +311,90 @@ export default function ProductsList() {
     }
   };
 
+  const handleExcelImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = e.target?.result;
+        const workbook = XLSX.read(data, { type: 'binary' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+        let importedCount = 0;
+        let errorCount = 0;
+
+        jsonData.forEach((row: any) => {
+          try {
+            // Excel sütun adları (Azərbaycan dilində)
+            const article = row['Artikul'] || row['artikul'] || row['ARTIKUL'];
+            const name = row['Məhsul Adı'] || row['Ad'] || row['ad'] || row['Name'] || row['name'];
+            const category = row['Kateqoriya'] || row['kateqoriya'] || row['Category'] || row['category'] || '';
+            const stock = parseInt(row['Stok'] || row['stok'] || row['Stock'] || row['stock'] || row['Miqdar'] || row['miqdar'] || '0');
+            const unit = row['Ölçü Vahidi'] || row['Vahid'] || row['vahid'] || row['Unit'] || row['unit'] || 'ədəd';
+            const description = row['Təsvir'] || row['təsvir'] || row['Description'] || row['description'] || '';
+
+            if (!article || !name) {
+              errorCount++;
+              return;
+            }
+
+            // Check if product already exists
+            const existingProduct = products.find(p => p.article === article);
+            if (existingProduct) {
+              // Update existing product
+              updateProduct(existingProduct.id, {
+                name,
+                category,
+                stock,
+                unit,
+                description
+              });
+            } else {
+              // Add new product
+              const newProduct = {
+                id: article,
+                article,
+                name,
+                category,
+                status: stock > 0 ? 'active' : 'out_of_stock',
+                stock,
+                unit,
+                packaging: [],
+                warehouses: [],
+                description
+              };
+              addProduct(newProduct);
+            }
+            importedCount++;
+          } catch (error) {
+            errorCount++;
+          }
+        });
+
+        toast({
+          title: "Import tamamlandı",
+          description: `${importedCount} məhsul uğurla import edildi. ${errorCount > 0 ? `${errorCount} məhsul xətası var.` : ''}`,
+          variant: errorCount > 0 ? "destructive" : "default"
+        });
+
+      } catch (error) {
+        toast({
+          title: "Xəta",
+          description: "Excel faylı oxunarkən xəta baş verdi. Fayl formatını yoxlayın.",
+          variant: "destructive"
+        });
+      }
+    };
+    reader.readAsBinaryString(file);
+    
+    // Reset input
+    event.target.value = '';
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -354,6 +439,24 @@ export default function ProductsList() {
               </div>
             </PopoverContent>
           </Popover>
+          
+          <div>
+            <input
+              type="file"
+              accept=".xlsx,.xls"
+              onChange={handleExcelImport}
+              style={{ display: 'none' }}
+              id="excel-upload"
+            />
+            <Button 
+              variant="outline" 
+              onClick={() => document.getElementById('excel-upload')?.click()}
+            >
+              <Upload className="mr-2 h-4 w-4" />
+              Excel Import
+            </Button>
+          </div>
+          
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button>
