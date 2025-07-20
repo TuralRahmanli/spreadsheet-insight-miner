@@ -98,7 +98,7 @@ export default function AddOperation() {
         <h1 className="text-3xl font-bold tracking-tight">Yeni Əməliyyat</h1>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Əməliyyat Məlumatları</CardTitle>
@@ -360,38 +360,6 @@ export default function AddOperation() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Tez Əməliyyatlar</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="text-sm text-muted-foreground mb-4">
-              Tez-tez istifadə olunan əməliyyatlar:
-            </div>
-
-            <Button variant="outline" className="w-full justify-start">
-              <Plus className="mr-2 h-4 w-4" />
-              Albalı 1 - Daxil olma
-            </Button>
-
-            <Button variant="outline" className="w-full justify-start">
-              <Plus className="mr-2 h-4 w-4" />
-              Mango 2 - Satış
-            </Button>
-
-            <Button variant="outline" className="w-full justify-start">
-              <Plus className="mr-2 h-4 w-4" />
-              Qarağat 3 - Daxil olma
-            </Button>
-
-            <div className="pt-4 border-t">
-              <h4 className="font-medium mb-2">Şablondan istifadə et:</h4>
-              <Button variant="secondary" className="w-full">
-                Qəbul Şablonu
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       <Card>
