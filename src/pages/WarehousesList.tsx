@@ -3,8 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Warehouse, Package, MapPin } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Search, Warehouse, Package, MapPin, Plus } from "lucide-react";
 import { useProductStore } from "@/lib/productStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
 import { useParams, useNavigate } from "react-router-dom";
@@ -13,8 +15,10 @@ export default function WarehousesList() {
   const { warehouse: selectedWarehouse } = useParams();
   const navigate = useNavigate();
   const { products } = useProductStore();
-  const { warehouses } = useWarehouseStore();
+  const { warehouses, addWarehouse } = useWarehouseStore();
   const [searchTerm, setSearchTerm] = useState("");
+  const [newWarehouseName, setNewWarehouseName] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Get warehouses from warehouse store
   const allWarehouses = warehouses.map(w => w.name).sort();
@@ -48,6 +52,18 @@ export default function WarehousesList() {
     return <Badge variant="secondary" className="bg-success text-success-foreground">Mövcud</Badge>;
   };
 
+  const handleAddWarehouse = () => {
+    if (newWarehouseName.trim()) {
+      const warehouseId = `warehouse-${Date.now()}`;
+      addWarehouse({
+        id: warehouseId,
+        name: newWarehouseName.trim()
+      });
+      setNewWarehouseName("");
+      setIsDialogOpen(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -62,12 +78,52 @@ export default function WarehousesList() {
             }
           </p>
         </div>
-        {selectedWarehouse && (
-          <Button variant="outline" onClick={() => navigate('/warehouses')}>
-            <MapPin className="mr-2 h-4 w-4" />
-            Bütün Anbarlara Qayıt
-          </Button>
-        )}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Yeni Anbar
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Yeni Anbar Əlavə Et</DialogTitle>
+              <DialogDescription>
+                Sistemə yeni anbar əlavə etmək üçün adını daxil edin.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="warehouse-name" className="text-right">
+                  Anbar Adı
+                </Label>
+                <Input
+                  id="warehouse-name"
+                  value={newWarehouseName}
+                  onChange={(e) => setNewWarehouseName(e.target.value)}
+                  placeholder="Anbar adını daxil edin"
+                  className="col-span-3"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleAddWarehouse();
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Ləğv Et
+              </Button>
+              <Button 
+                onClick={handleAddWarehouse}
+                disabled={!newWarehouseName.trim()}
+              >
+                Əlavə Et
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="flex items-center space-x-4">
@@ -82,7 +138,67 @@ export default function WarehousesList() {
         </div>
       </div>
 
-      {!selectedWarehouse && (
+      {!selectedWarehouse && allWarehouses.length === 0 && (
+        <Card>
+          <CardContent className="py-8">
+            <div className="text-center">
+              <Warehouse className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+              <h3 className="text-lg font-medium mb-2">Anbar tapılmadı</h3>
+              <p className="text-muted-foreground mb-4">
+                Sistemdə hələ heç bir anbar əlavə edilməyib. İlk anbarınızı əlavə edin.
+              </p>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="mr-2 h-4 w-4" />
+                    İlk Anbarı Əlavə Et
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Yeni Anbar Əlavə Et</DialogTitle>
+                    <DialogDescription>
+                      Sistemə yeni anbar əlavə etmək üçün adını daxil edin.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="warehouse-name" className="text-right">
+                        Anbar Adı
+                      </Label>
+                      <Input
+                        id="warehouse-name"
+                        value={newWarehouseName}
+                        onChange={(e) => setNewWarehouseName(e.target.value)}
+                        placeholder="Anbar adını daxil edin"
+                        className="col-span-3"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleAddWarehouse();
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                      Ləğv Et
+                    </Button>
+                    <Button 
+                      onClick={handleAddWarehouse}
+                      disabled={!newWarehouseName.trim()}
+                    >
+                      Əlavə Et
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {!selectedWarehouse && allWarehouses.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           {allWarehouses.map(warehouse => {
             const warehouseProducts = products.filter(p => p.warehouses.includes(warehouse));
