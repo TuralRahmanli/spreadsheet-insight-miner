@@ -133,7 +133,7 @@ export default function ProductsList() {
       article: newProduct.article,
       name: newProduct.name,
       category: newProduct.category || "",
-      status: "active",
+      status: "active" as const,
       stock: parseInt(newProduct.stock) || 0,
       unit: newProduct.unit || "",
       packaging: newProduct.packaging,
@@ -341,7 +341,9 @@ export default function ProductsList() {
         const firstRow = jsonData[0] as any;
         const availableColumns = Object.keys(firstRow);
         
-        console.log("Available columns:", availableColumns);
+        if (process.env.NODE_ENV === 'development') {
+          console.log("Available columns:", availableColumns);
+        }
 
         jsonData.forEach((row: any, index: number) => {
           try {
@@ -365,7 +367,9 @@ export default function ProductsList() {
             const unit = getColumnValue(['vahid', 'unit', 'ölçü', 'measure']) || 'ədəd';
             const description = getColumnValue(['təsvir', 'description', 'açıqlama', 'qeyd']);
 
-            console.log(`Row ${index + 1}:`, { article, name, category, stockValue, unit });
+            if (process.env.NODE_ENV === 'development') {
+              console.log(`Row ${index + 1}:`, { article, name, category, stockValue, unit });
+            }
 
             if (!article || !name) {
               errorMessages.push(`Sətir ${index + 2}: Artikul və ya məhsul adı boşdur`);
@@ -393,7 +397,7 @@ export default function ProductsList() {
                 article: String(article),
                 name: String(name),
                 category: category ? String(category) : '',
-                status: stock > 0 ? 'active' : 'out_of_stock',
+                status: stock > 0 ? 'active' as const : 'out_of_stock' as const,
                 stock: stock,
                 unit: String(unit),
                 packaging: [],
@@ -424,11 +428,15 @@ export default function ProductsList() {
         }
 
         if (errorMessages.length > 0 && errorMessages.length <= 5) {
-          console.log("Import xətaları:", errorMessages);
+          if (process.env.NODE_ENV === 'development') {
+            console.log("Import xətaları:", errorMessages);
+          }
         }
 
       } catch (error) {
-        console.error("Excel import error:", error);
+        if (process.env.NODE_ENV === 'development') {
+          console.error("Excel import error:", error);
+        }
         toast({
           title: "Xəta",
           description: "Excel faylı oxunarkən xəta baş verdi. Fayl formatını yoxlayın.",

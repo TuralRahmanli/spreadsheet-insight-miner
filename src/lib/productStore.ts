@@ -1,18 +1,7 @@
 // Global product store for shared product data across pages
 import { create } from 'zustand';
-
-interface Product {
-  id: string;
-  article: string;
-  name: string;
-  category: string;
-  status: string;
-  stock: number;
-  unit: string;
-  packaging: string[];
-  warehouses: string[];
-  description?: string;
-}
+import { persist } from 'zustand/middleware';
+import type { Product } from '@/types';
 
 interface ProductStore {
   products: Product[];
@@ -21,6 +10,8 @@ interface ProductStore {
   updateProduct: (productId: string, updates: Partial<Product>) => void;
   getProducts: () => Product[];
   clearAllProducts: () => void;
+  isLoading: boolean;
+  error: string | null;
 }
 
 // Initial product data
@@ -149,6 +140,8 @@ const initialProducts: Product[] = [
 
 export const useProductStore = create<ProductStore>((set, get) => ({
   products: initialProducts, // İlkin məlumatlarla başla
+  isLoading: false,
+  error: null,
   addProduct: (product) => 
     set((state) => ({ products: [...state.products, product] })),
   removeProduct: (productId) => 

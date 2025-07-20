@@ -4,17 +4,29 @@ import { Package, TrendingUp, AlertTriangle, Activity, Plus, ArrowRight } from "
 import { Link } from "react-router-dom";
 import { useProductStore } from "@/lib/productStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
+import { PerformanceCard } from "@/components/PerformanceCard";
+import { useMemo } from "react";
 
 const Index = () => {
   const { products } = useProductStore();
   const { warehouses } = useWarehouseStore();
   
-  // Calculate real statistics
-  const totalProducts = products.length;
-  const totalWarehouses = warehouses.length;
-  const lowStockProducts = products.filter(p => p.stock < 50 && p.stock > 0).length;
-  const outOfStockProducts = products.filter(p => p.stock === 0).length;
-  const totalStock = products.reduce((sum, p) => sum + p.stock, 0);
+  // Calculate real statistics with memoization
+  const statistics = useMemo(() => {
+    const totalProducts = products.length;
+    const totalWarehouses = warehouses.length;
+    const lowStockProducts = products.filter(p => p.stock < 50 && p.stock > 0).length;
+    const outOfStockProducts = products.filter(p => p.stock === 0).length;
+    const totalStock = products.reduce((sum, p) => sum + p.stock, 0);
+    
+    return {
+      totalProducts,
+      totalWarehouses,
+      lowStockProducts,
+      outOfStockProducts,
+      totalStock
+    };
+  }, [products, warehouses]);
   
   return (
     <div className="space-y-6">
@@ -32,57 +44,34 @@ const Index = () => {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ümumi Partiya</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalProducts}</div>
-            <p className="text-xs text-muted-foreground">
-              {totalWarehouses} anbarda bölünən
-            </p>
-          </CardContent>
-        </Card>
+        <PerformanceCard
+          title="Ümumi Partiya"
+          value={statistics.totalProducts}
+          description={`${statistics.totalWarehouses} anbarda bölünən`}
+          icon={<Package className="h-4 w-4 text-muted-foreground" />}
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">İşarələnmiş</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalStock}</div>
-            <p className="text-xs text-muted-foreground">
-              Ümumi stok miqdarı
-            </p>
-          </CardContent>
-        </Card>
+        <PerformanceCard
+          title="İşarələnmiş" 
+          value={statistics.totalStock}
+          description="Ümumi stok miqdarı"
+          icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />}
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Az Qalan</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-warning" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-warning">{lowStockProducts}</div>
-            <p className="text-xs text-muted-foreground">
-              Diqqət tələb edir
-            </p>
-          </CardContent>
-        </Card>
+        <PerformanceCard
+          title="Az Qalan"
+          value={statistics.lowStockProducts}
+          description="Diqqət tələb edir"
+          icon={<AlertTriangle className="h-4 w-4 text-warning" />}
+          className="text-warning"
+        />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Bu Həftə</CardTitle>
-            <Activity className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{outOfStockProducts}</div>
-            <p className="text-xs text-muted-foreground">
-              Bitmiş məhsul
-            </p>
-          </CardContent>
-        </Card>
+        <PerformanceCard
+          title="Bu Həftə"
+          value={statistics.outOfStockProducts}
+          description="Bitmiş məhsul"
+          icon={<Activity className="h-4 w-4 text-muted-foreground" />}
+        />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
