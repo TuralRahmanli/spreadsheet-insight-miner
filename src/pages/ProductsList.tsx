@@ -46,6 +46,7 @@ export default function ProductsList() {
   const { toast } = useToast();
   
   const categories = ["all", ...Array.from(new Set(products.map(p => p.category)))];
+  const allWarehouses = Array.from(new Set(products.flatMap(p => p.warehouses || [])));
   
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -344,7 +345,9 @@ export default function ProductsList() {
                 <TableHead>Artikul</TableHead>
                 <TableHead>Məhsul Adı</TableHead>
                 <TableHead>Kateqoriya</TableHead>
-                <TableHead>Anbar Miqdarları</TableHead>
+                {allWarehouses.map(warehouse => (
+                  <TableHead key={warehouse}>{warehouse}</TableHead>
+                ))}
                 <TableHead>Ümumi Miqdar</TableHead>
                 <TableHead>Vəziyyət</TableHead>
                 <TableHead>Paketləşdirmə</TableHead>
@@ -360,27 +363,17 @@ export default function ProductsList() {
                   <TableCell>
                     <Badge variant="outline">{product.category}</Badge>
                   </TableCell>
-                  <TableCell>
-                    <div className="space-y-1">
-                      {product.warehouses && product.warehouses.length > 0 ? (
-                        product.warehouses.map((warehouse, index) => (
-                          <div key={index} className="flex justify-between text-sm">
-                            <span className="text-muted-foreground">{warehouse}:</span>
-                            <span className="font-medium">0 {product.unit}</span>
-                          </div>
-                        ))
-                      ) : (
-                        <span className="text-muted-foreground text-sm">Anbar yoxdur</span>
-                      )}
-                    </div>
-                  </TableCell>
+                  {allWarehouses.map(warehouse => (
+                    <TableCell key={warehouse}>
+                      <span className="font-medium">
+                        {product.warehouses?.includes(warehouse) ? `0 ${product.unit}` : '-'}
+                      </span>
+                    </TableCell>
+                  ))}
                   <TableCell>
                     <div className="font-medium">
                       {product.stock} {product.unit}
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    {getStatusBadge(product.status, product.stock)}
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-1 flex-wrap">
