@@ -496,6 +496,7 @@ export default function ProductsList() {
           </Popover>
           
           <div>
+            <Label htmlFor="excel-upload" className="sr-only">Excel faylı yüklə</Label>
             <input
               type="file"
               accept=".xlsx,.xls"
@@ -671,7 +672,9 @@ export default function ProductsList() {
       <div className="flex items-center space-x-4">
         <div className="flex items-center space-x-2 flex-1">
           <Search className="h-4 w-4 text-muted-foreground" />
+          <Label htmlFor="search-input" className="sr-only">Məhsul axtarışı</Label>
           <Input 
+            id="search-input"
             placeholder="Məhsul adı və ya artikul axtar..." 
             className="max-w-sm"
             value={searchTerm}
