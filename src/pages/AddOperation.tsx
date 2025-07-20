@@ -39,6 +39,7 @@ export default function AddOperation() {
   const getCurrentProductTotalQuantity = () => {
     return currentPackaging.reduce((total, item) => {
       const packagingSize = parseInt(item.type.split(/[+()]/)[0]);
+      if (isNaN(packagingSize) || isNaN(item.count)) return total;
       return total + (packagingSize * item.count);
     }, 0);
   };
@@ -46,6 +47,7 @@ export default function AddOperation() {
   const getProductTotalQuantity = (packaging: {type: string, count: number}[]) => {
     return packaging.reduce((total, item) => {
       const packagingSize = parseInt(item.type.split(/[+()]/)[0]);
+      if (isNaN(packagingSize) || isNaN(item.count)) return total;
       return total + (packagingSize * item.count);
     }, 0);
   };
