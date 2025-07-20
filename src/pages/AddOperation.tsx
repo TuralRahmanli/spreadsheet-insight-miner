@@ -449,78 +449,8 @@ export default function AddOperation() {
           <CardTitle>Son Əməliyyatlar</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between py-2 border-b">
-              <div>
-                <p className="font-medium">Albalı 3 - Daxil olma</p>
-                <p className="text-sm text-muted-foreground">Bugün, 14:30 - Miqdar: 25</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => handleDownloadPDF("Albalı 3 - Daxil olma", "Bugün, 14:30", "Albalı 3 (ALB-003)", 25)}
-                >
-                  PDF
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => handlePrint("Albalı 3 - Daxil olma", "Bugün, 14:30", "Albalı 3 (ALB-003)", 25)}
-                >
-                  Çap
-                </Button>
-                <span className="text-success font-medium">Uğurla</span>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between py-2 border-b">
-              <div>
-                <p className="font-medium">Mango 2 - Satış</p>
-                <p className="text-sm text-muted-foreground">Bugün, 11:15 - Miqdar: 12</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => handleDownloadPDF("Mango 2 - Satış", "Bugün, 11:15", "Mango 2 (MNG-002)", 12)}
-                >
-                  PDF
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => handlePrint("Mango 2 - Satış", "Bugün, 11:15", "Mango 2 (MNG-002)", 12)}
-                >
-                  Çap
-                </Button>
-                <span className="text-success font-medium">Uğurla</span>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between py-2 border-b">
-              <div>
-                <p className="font-medium">Qarağat 1 - Daxil olma</p>
-                <p className="text-sm text-muted-foreground">Dünən, 16:45 - Miqdar: 40</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => handleDownloadPDF("Qarağat 1 - Daxil olma", "Dünən, 16:45", "Qarağat 1 (QAR-001)", 40)}
-                >
-                  PDF
-                </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline"
-                  onClick={() => handlePrint("Qarağat 1 - Daxil olma", "Dünən, 16:45", "Qarağat 1 (QAR-001)", 40)}
-                >
-                  Çap
-                </Button>
-                <span className="text-success font-medium">Uğurla</span>
-              </div>
-            </div>
+          <div className="text-center py-8 text-muted-foreground">
+            <p>Hələ ki heç bir əməliyyat yoxdur</p>
           </div>
         </CardContent>
       </Card>
