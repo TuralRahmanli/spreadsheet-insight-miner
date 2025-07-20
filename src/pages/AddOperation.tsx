@@ -12,6 +12,7 @@ import { useProductStore } from "@/lib/productStore";
 import { usePackagingStore } from "@/lib/packagingStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
 import { cn } from "@/lib/utils";
+import jsPDF from 'jspdf';
 
 type ProductEntry = {
   productId: string;
@@ -93,6 +94,46 @@ export default function AddOperation() {
   const getProductName = (productId: string) => {
     const product = products.find(p => p.id === productId);
     return product ? `${product.name} (${product.article})` : "";
+  };
+
+  const generateOperationPDF = (operationTitle: string, operationDate: string, productName: string, quantity: number) => {
+    const doc = new jsPDF();
+    
+    // PDF başlığı
+    doc.setFontSize(20);
+    doc.text('Əməliyyat Qaimə', 20, 30);
+    
+    // Əməliyyat məlumatları
+    doc.setFontSize(12);
+    doc.text(`Əməliyyat: ${operationTitle}`, 20, 50);
+    doc.text(`Tarix: ${operationDate}`, 20, 65);
+    
+    // Məhsul məlumatları
+    doc.setFontSize(14);
+    doc.text('Məhsul Məlumatları:', 20, 85);
+    doc.setFontSize(12);
+    doc.text(`Məhsul: ${productName}`, 20, 100);
+    doc.text(`Miqdar: ${quantity}`, 20, 115);
+    
+    return doc;
+  };
+
+  const handleDownloadPDF = (operationTitle: string, operationDate: string, productName: string, quantity: number) => {
+    const doc = generateOperationPDF(operationTitle, operationDate, productName, quantity);
+    doc.save(`${operationTitle.replace(/\s+/g, '_')}_${Date.now()}.pdf`);
+  };
+
+  const handlePrint = (operationTitle: string, operationDate: string, productName: string, quantity: number) => {
+    const doc = generateOperationPDF(operationTitle, operationDate, productName, quantity);
+    const pdfBlob = doc.output('blob');
+    const url = URL.createObjectURL(pdfBlob);
+    const printWindow = window.open(url);
+    if (printWindow) {
+      printWindow.onload = () => {
+        printWindow.print();
+        URL.revokeObjectURL(url);
+      };
+    }
   };
 
   return (
@@ -414,7 +455,23 @@ export default function AddOperation() {
                 <p className="font-medium">Albalı 3 - Daxil olma</p>
                 <p className="text-sm text-muted-foreground">Bugün, 14:30 - Miqdar: 25</p>
               </div>
-              <span className="text-success font-medium">Uğurla</span>
+              <div className="flex items-center gap-2">
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => handleDownloadPDF("Albalı 3 - Daxil olma", "Bugün, 14:30", "Albalı 3 (ALB-003)", 25)}
+                >
+                  PDF
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => handlePrint("Albalı 3 - Daxil olma", "Bugün, 14:30", "Albalı 3 (ALB-003)", 25)}
+                >
+                  Çap
+                </Button>
+                <span className="text-success font-medium">Uğurla</span>
+              </div>
             </div>
             
             <div className="flex items-center justify-between py-2 border-b">
@@ -422,7 +479,23 @@ export default function AddOperation() {
                 <p className="font-medium">Mango 2 - Satış</p>
                 <p className="text-sm text-muted-foreground">Bugün, 11:15 - Miqdar: 12</p>
               </div>
-              <span className="text-success font-medium">Uğurla</span>
+              <div className="flex items-center gap-2">
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => handleDownloadPDF("Mango 2 - Satış", "Bugün, 11:15", "Mango 2 (MNG-002)", 12)}
+                >
+                  PDF
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => handlePrint("Mango 2 - Satış", "Bugün, 11:15", "Mango 2 (MNG-002)", 12)}
+                >
+                  Çap
+                </Button>
+                <span className="text-success font-medium">Uğurla</span>
+              </div>
             </div>
             
             <div className="flex items-center justify-between py-2 border-b">
@@ -430,7 +503,23 @@ export default function AddOperation() {
                 <p className="font-medium">Qarağat 1 - Daxil olma</p>
                 <p className="text-sm text-muted-foreground">Dünən, 16:45 - Miqdar: 40</p>
               </div>
-              <span className="text-success font-medium">Uğurla</span>
+              <div className="flex items-center gap-2">
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => handleDownloadPDF("Qarağat 1 - Daxil olma", "Dünən, 16:45", "Qarağat 1 (QAR-001)", 40)}
+                >
+                  PDF
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => handlePrint("Qarağat 1 - Daxil olma", "Dünən, 16:45", "Qarağat 1 (QAR-001)", 40)}
+                >
+                  Çap
+                </Button>
+                <span className="text-success font-medium">Uğurla</span>
+              </div>
             </div>
           </div>
         </CardContent>
