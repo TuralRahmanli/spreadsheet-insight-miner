@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Search, Plus, Edit, Trash2, Package, Settings } from "lucide-react";
+import { Search, Plus, Edit, Trash2, Package, Settings, GripVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
@@ -59,6 +59,19 @@ export default function ProductsList() {
     packaging: true,
     description: true
   });
+
+  const [columnOrder, setColumnOrder] = useState([
+    'artikul',
+    'name', 
+    'category',
+    'warehouses',
+    'total',
+    'status',
+    'packaging',
+    'description'
+  ]);
+
+  const [draggedColumn, setDraggedColumn] = useState<string | null>(null);
   
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -106,6 +119,107 @@ export default function ProductsList() {
       title: "Uğur",
       description: "Məhsul uğurla əlavə edildi"
     });
+  };
+
+  const columnLabels = {
+    artikul: 'Artikul',
+    name: 'Məhsul Adı',
+    category: 'Kateqoriya',
+    warehouses: 'Anbar Miqdarları',
+    total: 'Ümumi Miqdar',
+    status: 'Vəziyyət',
+    packaging: 'Paketləşdirmə',
+    description: 'Təsvir'
+  };
+
+  const handleDragStart = (e: React.DragEvent, columnId: string) => {
+    setDraggedColumn(columnId);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e: React.DragEvent, targetColumnId: string) => {
+    e.preventDefault();
+    if (!draggedColumn || draggedColumn === targetColumnId) return;
+
+    const newOrder = [...columnOrder];
+    const draggedIndex = newOrder.indexOf(draggedColumn);
+    const targetIndex = newOrder.indexOf(targetColumnId);
+
+    newOrder.splice(draggedIndex, 1);
+    newOrder.splice(targetIndex, 0, draggedColumn);
+
+    setColumnOrder(newOrder);
+    setDraggedColumn(null);
+  };
+
+  const renderTableCell = (product: any, columnId: string) => {
+    switch (columnId) {
+      case 'artikul':
+        return <TableCell className="font-medium">{product.article}</TableCell>;
+      case 'name':
+        return <TableCell>{product.name}</TableCell>;
+      case 'category':
+        return (
+          <TableCell>
+            <Badge variant="outline">{product.category}</Badge>
+          </TableCell>
+        );
+      case 'warehouses':
+        return allWarehouses.map(warehouse => (
+          <TableCell key={warehouse}>
+            <span className="font-medium">
+              {product.warehouses?.includes(warehouse) ? `0 ${product.unit}` : '-'}
+            </span>
+          </TableCell>
+        ));
+      case 'total':
+        return (
+          <TableCell>
+            <div className="font-medium">
+              {product.stock} {product.unit}
+            </div>
+          </TableCell>
+        );
+      case 'status':
+        return (
+          <TableCell>
+            {getStatusBadge(product.status, product.stock)}
+          </TableCell>
+        );
+      case 'packaging':
+        return (
+          <TableCell>
+            <div className="flex gap-1 flex-wrap">
+              {product.packaging.length > 0 ? (
+                product.packaging.map((pack, index) => (
+                  <Badge 
+                    key={index} 
+                    variant="outline" 
+                    className="text-xs"
+                  >
+                    {pack}
+                  </Badge>
+                ))
+              ) : (
+                <span className="text-muted-foreground text-sm">Paketləşdirmə yoxdur</span>
+              )}
+            </div>
+          </TableCell>
+        );
+      case 'description':
+        return (
+          <TableCell className="max-w-xs truncate" title={product.description}>
+            {product.description}
+          </TableCell>
+        );
+      default:
+        return null;
+    }
   };
 
   const handleDeleteProduct = (productId: string) => {
@@ -177,86 +291,28 @@ export default function ProductsList() {
               <div className="space-y-4">
                 <h4 className="font-medium leading-none">Sütun Tənzimləmələri</h4>
                 <div className="space-y-3">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="artikul"
-                      checked={columnVisibility.artikul}
-                      onCheckedChange={(checked) => 
-                        setColumnVisibility(prev => ({ ...prev, artikul: checked as boolean }))
-                      }
-                    />
-                    <Label htmlFor="artikul">Artikul</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="name"
-                      checked={columnVisibility.name}
-                      onCheckedChange={(checked) => 
-                        setColumnVisibility(prev => ({ ...prev, name: checked as boolean }))
-                      }
-                    />
-                    <Label htmlFor="name">Məhsul Adı</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="category"
-                      checked={columnVisibility.category}
-                      onCheckedChange={(checked) => 
-                        setColumnVisibility(prev => ({ ...prev, category: checked as boolean }))
-                      }
-                    />
-                    <Label htmlFor="category">Kateqoriya</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="warehouses"
-                      checked={columnVisibility.warehouses}
-                      onCheckedChange={(checked) => 
-                        setColumnVisibility(prev => ({ ...prev, warehouses: checked as boolean }))
-                      }
-                    />
-                    <Label htmlFor="warehouses">Anbar Miqdarları</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="total"
-                      checked={columnVisibility.total}
-                      onCheckedChange={(checked) => 
-                        setColumnVisibility(prev => ({ ...prev, total: checked as boolean }))
-                      }
-                    />
-                    <Label htmlFor="total">Ümumi Miqdar</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="status"
-                      checked={columnVisibility.status}
-                      onCheckedChange={(checked) => 
-                        setColumnVisibility(prev => ({ ...prev, status: checked as boolean }))
-                      }
-                    />
-                    <Label htmlFor="status">Vəziyyət</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="packaging"
-                      checked={columnVisibility.packaging}
-                      onCheckedChange={(checked) => 
-                        setColumnVisibility(prev => ({ ...prev, packaging: checked as boolean }))
-                      }
-                    />
-                    <Label htmlFor="packaging">Paketləşdirmə</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox 
-                      id="description"
-                      checked={columnVisibility.description}
-                      onCheckedChange={(checked) => 
-                        setColumnVisibility(prev => ({ ...prev, description: checked as boolean }))
-                      }
-                    />
-                    <Label htmlFor="description">Təsvir</Label>
-                  </div>
+                  {columnOrder.map((columnId) => (
+                    <div 
+                      key={columnId}
+                      className="flex items-center space-x-2 p-2 rounded hover:bg-muted/50 cursor-move"
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, columnId)}
+                      onDragOver={handleDragOver}
+                      onDrop={(e) => handleDrop(e, columnId)}
+                    >
+                      <GripVertical className="h-4 w-4 text-muted-foreground" />
+                      <Checkbox 
+                        id={columnId}
+                        checked={columnVisibility[columnId as keyof typeof columnVisibility]}
+                        onCheckedChange={(checked) => 
+                          setColumnVisibility(prev => ({ ...prev, [columnId]: checked as boolean }))
+                        }
+                      />
+                      <Label htmlFor={columnId} className="flex-1 cursor-move">
+                        {columnLabels[columnId as keyof typeof columnLabels]}
+                      </Label>
+                    </div>
+                  ))}
                 </div>
               </div>
             </PopoverContent>
@@ -450,76 +506,27 @@ export default function ProductsList() {
           <Table>
             <TableHeader>
               <TableRow>
-                {columnVisibility.artikul && <TableHead>Artikul</TableHead>}
-                {columnVisibility.name && <TableHead>Məhsul Adı</TableHead>}
-                {columnVisibility.category && <TableHead>Kateqoriya</TableHead>}
-                {columnVisibility.warehouses && allWarehouses.map(warehouse => (
-                  <TableHead key={warehouse}>{warehouse}</TableHead>
-                ))}
-                {columnVisibility.total && <TableHead>Ümumi Miqdar</TableHead>}
-                {columnVisibility.status && <TableHead>Vəziyyət</TableHead>}
-                {columnVisibility.packaging && <TableHead>Paketləşdirmə</TableHead>}
-                {columnVisibility.description && <TableHead>Təsvir</TableHead>}
+                {columnOrder.map(columnId => {
+                  if (!columnVisibility[columnId as keyof typeof columnVisibility]) return null;
+                  
+                  if (columnId === 'warehouses') {
+                    return allWarehouses.map(warehouse => (
+                      <TableHead key={warehouse}>{warehouse}</TableHead>
+                    ));
+                  }
+                  
+                  return <TableHead key={columnId}>{columnLabels[columnId as keyof typeof columnLabels]}</TableHead>;
+                })}
                 <TableHead>Əməliyyatlar</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredProducts.map((product) => (
                 <TableRow key={product.id}>
-                  {columnVisibility.artikul && (
-                    <TableCell className="font-medium">{product.article}</TableCell>
-                  )}
-                  {columnVisibility.name && (
-                    <TableCell>{product.name}</TableCell>
-                  )}
-                  {columnVisibility.category && (
-                    <TableCell>
-                      <Badge variant="outline">{product.category}</Badge>
-                    </TableCell>
-                  )}
-                  {columnVisibility.warehouses && allWarehouses.map(warehouse => (
-                    <TableCell key={warehouse}>
-                      <span className="font-medium">
-                        {product.warehouses?.includes(warehouse) ? `0 ${product.unit}` : '-'}
-                      </span>
-                    </TableCell>
-                  ))}
-                  {columnVisibility.total && (
-                    <TableCell>
-                      <div className="font-medium">
-                        {product.stock} {product.unit}
-                      </div>
-                    </TableCell>
-                  )}
-                  {columnVisibility.status && (
-                    <TableCell>
-                      {getStatusBadge(product.status, product.stock)}
-                    </TableCell>
-                  )}
-                  {columnVisibility.packaging && (
-                    <TableCell>
-                      <div className="flex gap-1 flex-wrap">
-                        {product.packaging.length > 0 ? (
-                          product.packaging.map((pack, index) => (
-                            <Badge 
-                              key={index} 
-                              variant="outline" 
-                              className="text-xs"
-                            >
-                              {pack}
-                            </Badge>
-                          ))
-                        ) : (
-                          <span className="text-muted-foreground text-sm">Paketləşdirmə yoxdur</span>
-                        )}
-                      </div>
-                    </TableCell>
-                  )}
-                  {columnVisibility.description && (
-                    <TableCell className="max-w-xs truncate" title={product.description}>
-                      {product.description}
-                    </TableCell>
-                  )}
+                  {columnOrder.map(columnId => {
+                    if (!columnVisibility[columnId as keyof typeof columnVisibility]) return null;
+                    return renderTableCell(product, columnId);
+                  })}
                   <TableCell>
                     <div className="flex gap-1">
                       <Button 
