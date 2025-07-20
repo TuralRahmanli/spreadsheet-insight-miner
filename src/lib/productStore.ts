@@ -148,7 +148,7 @@ const initialProducts: Product[] = [
 ];
 
 export const useProductStore = create<ProductStore>((set, get) => ({
-  products: [],
+  products: initialProducts, // İlkin məlumatlarla başla
   addProduct: (product) => 
     set((state) => ({ products: [...state.products, product] })),
   removeProduct: (productId) => 

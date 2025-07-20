@@ -2,8 +2,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Package, TrendingUp, AlertTriangle, Activity, Plus, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useProductStore } from "@/lib/productStore";
+import { useWarehouseStore } from "@/lib/warehouseStore";
 
 const Index = () => {
+  const { products } = useProductStore();
+  const { warehouses } = useWarehouseStore();
+  
+  // Calculate real statistics
+  const totalProducts = products.length;
+  const totalWarehouses = warehouses.length;
+  const lowStockProducts = products.filter(p => p.stock < 50 && p.stock > 0).length;
+  const outOfStockProducts = products.filter(p => p.stock === 0).length;
+  const totalStock = products.reduce((sum, p) => sum + p.stock, 0);
+  
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -26,9 +38,9 @@ const Index = () => {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">19</div>
+            <div className="text-2xl font-bold">{totalProducts}</div>
             <p className="text-xs text-muted-foreground">
-              4 anbarda bölünən
+              {totalWarehouses} anbarda bölünən
             </p>
           </CardContent>
         </Card>
@@ -39,9 +51,9 @@ const Index = () => {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">142</div>
+            <div className="text-2xl font-bold">{totalStock}</div>
             <p className="text-xs text-muted-foreground">
-              Bu həftə çıxarılan
+              Ümumi stok miqdarı
             </p>
           </CardContent>
         </Card>
@@ -52,7 +64,7 @@ const Index = () => {
             <AlertTriangle className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-warning">4</div>
+            <div className="text-2xl font-bold text-warning">{lowStockProducts}</div>
             <p className="text-xs text-muted-foreground">
               Diqqət tələb edir
             </p>
@@ -65,9 +77,9 @@ const Index = () => {
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">23</div>
+            <div className="text-2xl font-bold">{outOfStockProducts}</div>
             <p className="text-xs text-muted-foreground">
-              Çıxarılmış məhsul
+              Bitmiş məhsul
             </p>
           </CardContent>
         </Card>
@@ -80,7 +92,7 @@ const Index = () => {
           </CardHeader>
           <CardContent className="space-y-2">
             <Button variant="outline" className="w-full justify-between" asChild>
-              <Link to="/products">
+              <Link to="/warehouses">
                 Anbarları görüntülə
                 <ArrowRight className="h-4 w-4" />
               </Link>

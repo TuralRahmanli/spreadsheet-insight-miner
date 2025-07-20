@@ -29,7 +29,7 @@ const SidebarContent = ({ isMobile = false, onItemClick }: { isMobile?: boolean;
       )}
     </div>
     <div className="flex-1 overflow-auto py-2">
-      <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
+      <nav className="grid items-start px-2 text-sm font-medium lg:px-4" role="navigation" aria-label="Ana menyü">
         {sidebarItems.map((item) => (
           <NavLink
             key={item.href}
@@ -37,13 +37,18 @@ const SidebarContent = ({ isMobile = false, onItemClick }: { isMobile?: boolean;
             onClick={onItemClick}
             className={({ isActive }) =>
               cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary",
                 isActive && "bg-muted text-primary"
               )
             }
           >
-            <item.icon className="h-4 w-4" />
-            {item.title}
+            {({ isActive }) => (
+              <>
+                <item.icon className="h-4 w-4" aria-hidden="true" />
+                {item.title}
+                {isActive && <span className="sr-only">(Cari səhifə)</span>}
+              </>
+            )}
           </NavLink>
         ))}
       </nav>
@@ -84,7 +89,7 @@ export default function Layout() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 lg:p-6 w-full min-w-0">
+        <main className="flex-1 p-4 lg:p-6 w-full min-w-0" role="main">
           <div className="w-full max-w-full overflow-x-auto">
             <Outlet />
           </div>

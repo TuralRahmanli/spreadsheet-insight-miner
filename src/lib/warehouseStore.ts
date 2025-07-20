@@ -9,8 +9,15 @@ interface WarehouseStore {
   getWarehouses: () => Array<{ id: string; name: string }>;
 }
 
+// Initial warehouse data
+const initialWarehouses = [
+  { id: "anbar-1", name: "Anbar 1" },
+  { id: "anbar-2", name: "Anbar 2" },
+  { id: "anbar-3", name: "Anbar 3" }
+];
+
 export const useWarehouseStore = create<WarehouseStore>((set, get) => ({
-  warehouses: [],
+  warehouses: initialWarehouses, // İlkin anbarlarla başla
   addWarehouse: (warehouse) => 
     set((state) => ({ warehouses: [...state.warehouses, warehouse] })),
   removeWarehouse: (warehouseId) => 

@@ -787,71 +787,98 @@ export default function ProductsList() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {columnOrder.map(columnId => {
-                  if (!columnVisibility[columnId as keyof typeof columnVisibility]) return null;
-                  
-                  if (columnId === 'warehouses') {
-                    return allWarehouses.map(warehouse => (
-                      <TableHead key={warehouse}>{warehouse}</TableHead>
-                    ));
-                  }
-                  
-                  return <TableHead key={columnId}>{columnLabels[columnId as keyof typeof columnLabels]}</TableHead>;
-                })}
-                <TableHead>Əməliyyatlar</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredProducts.map((product) => (
-                <TableRow key={product.id}>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
                   {columnOrder.map(columnId => {
                     if (!columnVisibility[columnId as keyof typeof columnVisibility]) return null;
-                    return renderTableCell(product, columnId);
-                  })}
-                  <TableCell>
-                    <div className="flex gap-1">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-8 w-8"
-                        onClick={() => handleEditProduct(product)}
+                    
+                    if (columnId === 'warehouses') {
+                      return allWarehouses.map(warehouse => (
+                        <TableHead key={warehouse} className="min-w-[120px]">{warehouse}</TableHead>
+                      ));
+                    }
+                    
+                    return (
+                      <TableHead 
+                        key={columnId} 
+                        className={
+                          columnId === 'name' ? 'min-w-[200px]' : 
+                          columnId === 'description' ? 'min-w-[150px]' : 
+                          'min-w-[100px]'
+                        }
                       >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
+                        {columnLabels[columnId as keyof typeof columnLabels]}
+                      </TableHead>
+                    );
+                  })}
+                  <TableHead className="min-w-[120px]">Əməliyyatlar</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredProducts.length === 0 ? (
+                  <TableRow>
+                    <TableCell 
+                      colSpan={columnOrder.filter(c => columnVisibility[c as keyof typeof columnVisibility]).length + allWarehouses.length + 1} 
+                      className="text-center py-8 text-muted-foreground"
+                    >
+                      <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>Axtarış şərtinə uyğun məhsul tapılmadı</p>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredProducts.map((product) => (
+                    <TableRow key={product.id}>
+                      {columnOrder.map(columnId => {
+                        if (!columnVisibility[columnId as keyof typeof columnVisibility]) return null;
+                        return renderTableCell(product, columnId);
+                      })}
+                      <TableCell>
+                        <div className="flex gap-1">
                           <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+                            className="h-8 w-8"
+                            onClick={() => handleEditProduct(product)}
+                            title="Məhsulu redaktə et"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Edit className="h-4 w-4" />
                           </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Məhsulu sil</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Bu məhsulu silmək istədiyinizə əminsiniz? Bu əməliyyat geri qaytarıla bilməz.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Ləğv et</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDeleteProduct(product.id)}>
-                              Sil
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"
+                                title="Məhsulu sil"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Məhsulu sil</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Bu məhsulu silmək istədiyinizə əminsiniz? Bu əməliyyat geri qaytarıla bilməz.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Ləğv et</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => handleDeleteProduct(product.id)}>
+                                  Sil
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

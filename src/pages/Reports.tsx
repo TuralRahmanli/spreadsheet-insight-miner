@@ -1,8 +1,18 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Download, TrendingUp, Package, AlertTriangle } from "lucide-react";
+import { useProductStore } from "@/lib/productStore";
 
 export default function Reports() {
+  const { products } = useProductStore();
+  
+  // Calculate real statistics
+  const totalProducts = products.length;
+  const activeProducts = products.filter(p => p.status === 'active').length;
+  const lowStockProducts = products.filter(p => p.stock < 50 && p.stock > 0).length;
+  const outOfStockProducts = products.filter(p => p.stock === 0).length;
+  const totalStock = products.reduce((sum, p) => sum + p.stock, 0);
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -26,7 +36,7 @@ export default function Reports() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">19</div>
+            <div className="text-2xl font-bold">{totalProducts}</div>
             <p className="text-xs text-muted-foreground">
               Fərqli məhsul növü
             </p>
@@ -39,9 +49,9 @@ export default function Reports() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">142</div>
+            <div className="text-2xl font-bold">{activeProducts}</div>
             <p className="text-xs text-muted-foreground">
-              Çıxarılmış məhsullar
+              Aktiv məhsullar
             </p>
           </CardContent>
         </Card>
@@ -52,7 +62,7 @@ export default function Reports() {
             <AlertTriangle className="h-4 w-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-warning">4</div>
+            <div className="text-2xl font-bold text-warning">{lowStockProducts}</div>
             <p className="text-xs text-muted-foreground">
               Diqqət tələb edir
             </p>
@@ -65,7 +75,7 @@ export default function Reports() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,105</div>
+            <div className="text-2xl font-bold">{totalStock}</div>
             <p className="text-xs text-muted-foreground">
               Anbarda qalan məhsul
             </p>
@@ -81,28 +91,36 @@ export default function Reports() {
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <span>Çıxarılmış</span>
-                <span className="font-medium">47 ədəd</span>
+                <span>Aktiv</span>
+                <span className="font-medium">{activeProducts} ədəd</span>
               </div>
               <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-success h-2 rounded-full" style={{ width: "47%" }}></div>
+                <div 
+                  className="bg-success h-2 rounded-full" 
+                  style={{ width: `${totalProducts > 0 ? (activeProducts / totalProducts) * 100 : 0}%` }}
+                ></div>
               </div>
-              
-              <div className="flex items-center justify-between">
-                <span>Qalan</span>
-                <span className="font-medium">53 ədəd</span>
-              </div>
-              <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-info h-2 rounded-full" style={{ width: "53%" }}></div>
-              </div>
-              
               
               <div className="flex items-center justify-between">
                 <span>Az qalan</span>
-                <span className="font-medium">4 ədəd</span>
+                <span className="font-medium">{lowStockProducts} ədəd</span>
               </div>
               <div className="w-full bg-muted rounded-full h-2">
-                <div className="bg-warning h-2 rounded-full" style={{ width: "8%" }}></div>
+                <div 
+                  className="bg-warning h-2 rounded-full" 
+                  style={{ width: `${totalProducts > 0 ? (lowStockProducts / totalProducts) * 100 : 0}%` }}
+                ></div>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span>Bitib</span>
+                <span className="font-medium">{outOfStockProducts} ədəd</span>
+              </div>
+              <div className="w-full bg-muted rounded-full h-2">
+                <div 
+                  className="bg-destructive h-2 rounded-full" 
+                  style={{ width: `${totalProducts > 0 ? (outOfStockProducts / totalProducts) * 100 : 0}%` }}
+                ></div>
               </div>
             </div>
           </CardContent>
