@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Plus, Save, Check, ChevronsUpDown } from "lucide-react";
+import { Plus, Save, Check, ChevronsUpDown, X } from "lucide-react";
 import { useProductStore } from "@/lib/productStore";
 import { usePackagingStore } from "@/lib/packagingStore";
 import { cn } from "@/lib/utils";
@@ -17,34 +17,43 @@ export default function AddOperation() {
   const { packagingOptions, addPackagingOption } = usePackagingStore();
   const [operationType, setOperationType] = useState("");
   const [selectedProduct, setSelectedProduct] = useState("");
-  const [packagingType, setPackagingType] = useState("");
-  const [packageCount, setPackageCount] = useState("");
-  const [totalQuantity, setTotalQuantity] = useState("");
+  const [selectedPackaging, setSelectedPackaging] = useState<{type: string, count: number}[]>([]);
   const [notes, setNotes] = useState("");
   const [packagingOpen, setPackagingOpen] = useState(false);
   const [customPackaging, setCustomPackaging] = useState("");
+  const [currentPackagingType, setCurrentPackagingType] = useState("");
+  const [currentPackageCount, setCurrentPackageCount] = useState("");
 
   const selectedProductData = products.find(p => p.id === selectedProduct);
 
-  const handlePackagingChange = (packaging: string, count: string) => {
-    // Extract numeric value from packaging (e.g., "100+(3)" -> 100)
-    const packagingSize = parseInt(packaging.split(/[+()]/)[0]);
-    const countNum = parseInt(count);
-    
-    if (!isNaN(packagingSize) && !isNaN(countNum)) {
-      setTotalQuantity((packagingSize * countNum).toString());
-    } else {
-      setTotalQuantity("");
+  const getTotalQuantity = () => {
+    return selectedPackaging.reduce((total, item) => {
+      const packagingSize = parseInt(item.type.split(/[+()]/)[0]);
+      return total + (packagingSize * item.count);
+    }, 0);
+  };
+
+  const handleAddPackaging = () => {
+    if (currentPackagingType && currentPackageCount) {
+      const countNum = parseInt(currentPackageCount);
+      if (!isNaN(countNum) && countNum > 0) {
+        setSelectedPackaging(prev => [...prev, { type: currentPackagingType, count: countNum }]);
+        setCurrentPackagingType("");
+        setCurrentPackageCount("");
+        setPackagingOpen(false);
+      }
     }
+  };
+
+  const handleRemovePackaging = (index: number) => {
+    setSelectedPackaging(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleAddCustomPackaging = () => {
     if (customPackaging.trim() && !packagingOptions.includes(customPackaging.trim())) {
       addPackagingOption(customPackaging.trim());
-      setPackagingType(customPackaging.trim());
+      setCurrentPackagingType(customPackaging.trim());
       setCustomPackaging("");
-      setPackagingOpen(false);
-      handlePackagingChange(customPackaging.trim(), packageCount);
     }
   };
 
@@ -93,114 +102,132 @@ export default function AddOperation() {
             </div>
 
             {selectedProduct && (
-              <div className="space-y-2">
-                <Label htmlFor="packaging">Paketləşdirmə növü</Label>
-                <Popover open={packagingOpen} onOpenChange={setPackagingOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={packagingOpen}
-                      className="w-full justify-between"
-                    >
-                      {packagingType
-                        ? `${packagingType} metr`
-                        : "Paketləşdirmə seçin"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Paketləşdirmə növü əlavə et</Label>
+                  <div className="flex gap-2">
+                    <Popover open={packagingOpen} onOpenChange={setPackagingOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={packagingOpen}
+                          className="flex-1 justify-between"
+                        >
+                          {currentPackagingType
+                            ? `${currentPackagingType} metr`
+                            : "Paketləşdirmə seçin"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-0">
+                        <Command>
+                          <CommandInput 
+                            placeholder="Paketləşdirmə axtarın və ya yeni əlavə edin..." 
+                            value={customPackaging}
+                            onValueChange={setCustomPackaging}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" && customPackaging.trim()) {
+                                e.preventDefault();
+                                handleAddCustomPackaging();
+                              }
+                            }}
+                          />
+                          <CommandList>
+                            <CommandEmpty>
+                              <div className="text-center py-2">
+                                <p className="text-sm text-muted-foreground mb-2">
+                                  Nəticə tapılmadı
+                                </p>
+                                {customPackaging.trim() && (
+                                  <Button 
+                                    size="sm" 
+                                    onClick={handleAddCustomPackaging}
+                                    className="text-xs"
+                                  >
+                                    "{customPackaging}" əlavə et
+                                  </Button>
+                                )}
+                              </div>
+                            </CommandEmpty>
+                            <CommandGroup>
+                              {packagingOptions
+                                .filter((option) =>
+                                  option.toLowerCase().includes(customPackaging.toLowerCase())
+                                )
+                                .map((option) => (
+                                  <CommandItem
+                                    key={option}
+                                    value={option}
+                                    onSelect={(currentValue) => {
+                                      setCurrentPackagingType(currentValue);
+                                      setPackagingOpen(false);
+                                    }}
+                                  >
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        currentPackagingType === option ? "opacity-100" : "opacity-0"
+                                      )}
+                                    />
+                                    {option} metr
+                                  </CommandItem>
+                                ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    <Input
+                      type="number"
+                      placeholder="Sayı"
+                      value={currentPackageCount}
+                      onChange={(e) => setCurrentPackageCount(e.target.value)}
+                      className="w-20"
+                    />
+                    <Button onClick={handleAddPackaging} disabled={!currentPackagingType || !currentPackageCount}>
+                      <Plus className="h-4 w-4" />
                     </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-0">
-                    <Command>
-                      <CommandInput 
-                        placeholder="Paketləşdirmə axtarın və ya yeni əlavə edin..." 
-                        value={customPackaging}
-                        onValueChange={setCustomPackaging}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && customPackaging.trim()) {
-                            e.preventDefault();
-                            handleAddCustomPackaging();
-                          }
-                        }}
-                      />
-                      <CommandList>
-                        <CommandEmpty>
-                          <div className="text-center py-2">
-                            <p className="text-sm text-muted-foreground mb-2">
-                              Nəticə tapılmadı
-                            </p>
-                            {customPackaging.trim() && (
-                              <Button 
-                                size="sm" 
-                                onClick={handleAddCustomPackaging}
-                                className="text-xs"
-                              >
-                                "{customPackaging}" əlavə et
-                              </Button>
-                            )}
-                          </div>
-                        </CommandEmpty>
-                        <CommandGroup>
-                          {packagingOptions
-                            .filter((option) =>
-                              option.toLowerCase().includes(customPackaging.toLowerCase())
-                            )
-                            .map((option) => (
-                              <CommandItem
-                                key={option}
-                                value={option}
-                                onSelect={(currentValue) => {
-                                  setPackagingType(currentValue);
-                                  setPackagingOpen(false);
-                                  handlePackagingChange(currentValue, packageCount);
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    packagingType === option ? "opacity-100" : "opacity-0"
-                                  )}
-                                />
-                                {option} metr
-                              </CommandItem>
-                            ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            )}
-
-            {packagingType && (
-              <div className="space-y-2">
-                <Label htmlFor="package-count">Paket sayı</Label>
-                <Input
-                  id="package-count"
-                  type="number"
-                  placeholder="Paket sayını daxil edin"
-                  value={packageCount}
-                  onChange={(e) => {
-                    setPackageCount(e.target.value);
-                    handlePackagingChange(packagingType, e.target.value);
-                  }}
-                />
-              </div>
-            )}
-
-            {totalQuantity && (
-              <div className="space-y-2">
-                <Label htmlFor="total-quantity">Ümumi miqdar</Label>
-                <Input
-                  id="total-quantity"
-                  type="number"
-                  placeholder="Ümumi miqdarı"
-                  value={totalQuantity}
-                  readOnly
-                  className="bg-muted"
-                />
-                <div className="text-sm text-muted-foreground">
-                  {packageCount} ədəd × {packagingType} metr = {totalQuantity} metr
+                  </div>
                 </div>
+
+                {selectedPackaging.length > 0 && (
+                  <div className="space-y-2">
+                    <Label>Seçilmiş paketləşdirmələr</Label>
+                    <div className="space-y-2 max-h-32 overflow-y-auto">
+                      {selectedPackaging.map((item, index) => (
+                        <div key={index} className="flex items-center justify-between bg-muted p-2 rounded">
+                          <span className="text-sm">
+                            {item.count} ədəd × {item.type} metr = {parseInt(item.type.split(/[+()]/)[0]) * item.count} metr
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRemovePackaging(index)}
+                            className="h-6 w-6 p-0"
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {selectedPackaging.length > 0 && (
+                  <div className="space-y-2">
+                    <Label>Ümumi miqdar</Label>
+                    <Input
+                      type="number"
+                      value={getTotalQuantity()}
+                      readOnly
+                      className="bg-muted font-medium"
+                    />
+                    <div className="text-sm text-muted-foreground">
+                      Ümumi: {getTotalQuantity()} metr
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
