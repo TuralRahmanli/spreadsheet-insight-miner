@@ -12,20 +12,33 @@ import { useProductStore } from "@/lib/productStore";
 import { usePackagingStore } from "@/lib/packagingStore";
 import { cn } from "@/lib/utils";
 
+type ProductEntry = {
+  productId: string;
+  packaging: {type: string, count: number}[];
+};
+
 export default function AddOperation() {
   const { products } = useProductStore();
   const { packagingOptions, addPackagingOption } = usePackagingStore();
   const [operationType, setOperationType] = useState("");
-  const [selectedProduct, setSelectedProduct] = useState("");
-  const [selectedPackaging, setSelectedPackaging] = useState<{type: string, count: number}[]>([]);
+  const [selectedProducts, setSelectedProducts] = useState<ProductEntry[]>([]);
+  const [currentProduct, setCurrentProduct] = useState("");
+  const [currentPackaging, setCurrentPackaging] = useState<{type: string, count: number}[]>([]);
   const [notes, setNotes] = useState("");
   const [packagingOpen, setPackagingOpen] = useState(false);
   const [customPackaging, setCustomPackaging] = useState("");
   const [currentPackagingType, setCurrentPackagingType] = useState("");
   const [currentPackageCount, setCurrentPackageCount] = useState("");
 
-  const getTotalQuantity = () => {
-    return selectedPackaging.reduce((total, item) => {
+  const getCurrentProductTotalQuantity = () => {
+    return currentPackaging.reduce((total, item) => {
+      const packagingSize = parseInt(item.type.split(/[+()]/)[0]);
+      return total + (packagingSize * item.count);
+    }, 0);
+  };
+
+  const getProductTotalQuantity = (packaging: {type: string, count: number}[]) => {
+    return packaging.reduce((total, item) => {
       const packagingSize = parseInt(item.type.split(/[+()]/)[0]);
       return total + (packagingSize * item.count);
     }, 0);
@@ -35,7 +48,7 @@ export default function AddOperation() {
     if (currentPackagingType && currentPackageCount) {
       const countNum = parseInt(currentPackageCount);
       if (!isNaN(countNum) && countNum > 0) {
-        setSelectedPackaging(prev => [...prev, { type: currentPackagingType, count: countNum }]);
+        setCurrentPackaging(prev => [...prev, { type: currentPackagingType, count: countNum }]);
         setCurrentPackagingType("");
         setCurrentPackageCount("");
         setPackagingOpen(false);
@@ -44,7 +57,7 @@ export default function AddOperation() {
   };
 
   const handleRemovePackaging = (index: number) => {
-    setSelectedPackaging(prev => prev.filter((_, i) => i !== index));
+    setCurrentPackaging(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleAddCustomPackaging = () => {
@@ -53,6 +66,26 @@ export default function AddOperation() {
       setCurrentPackagingType(customPackaging.trim());
       setCustomPackaging("");
     }
+  };
+
+  const handleAddProduct = () => {
+    if (currentProduct && currentPackaging.length > 0) {
+      setSelectedProducts(prev => [...prev, {
+        productId: currentProduct,
+        packaging: [...currentPackaging]
+      }]);
+      setCurrentProduct("");
+      setCurrentPackaging([]);
+    }
+  };
+
+  const handleRemoveProduct = (index: number) => {
+    setSelectedProducts(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const getProductName = (productId: string) => {
+    const product = products.find(p => p.id === productId);
+    return product ? `${product.name} (${product.article})` : "";
   };
 
   return (
@@ -84,8 +117,8 @@ export default function AddOperation() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="product">Məhsul</Label>
-              <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+              <Label htmlFor="product">Məhsul əlavə et</Label>
+              <Select value={currentProduct} onValueChange={setCurrentProduct}>
                 <SelectTrigger>
                   <SelectValue placeholder="Məhsul seçin" />
                 </SelectTrigger>
@@ -99,7 +132,7 @@ export default function AddOperation() {
               </Select>
             </div>
 
-            {selectedProduct && (
+            {currentProduct && (
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label>Paketləşdirmə növü əlavə et</Label>
@@ -189,11 +222,11 @@ export default function AddOperation() {
                   </div>
                 </div>
 
-                {selectedPackaging.length > 0 && (
+                {currentPackaging.length > 0 && (
                   <div className="space-y-2">
                     <Label>Seçilmiş paketləşdirmələr</Label>
                     <div className="space-y-2 max-h-32 overflow-y-auto">
-                      {selectedPackaging.map((item, index) => (
+                      {currentPackaging.map((item, index) => (
                         <div key={index} className="flex items-center justify-between bg-muted p-2 rounded">
                           <span className="text-sm">
                             {item.count} ədəd × {item.type} metr = {parseInt(item.type.split(/[+()]/)[0]) * item.count} metr
@@ -209,23 +242,53 @@ export default function AddOperation() {
                         </div>
                       ))}
                     </div>
-                  </div>
-                )}
-
-                {selectedPackaging.length > 0 && (
-                  <div className="space-y-2">
-                    <Label>Ümumi miqdar</Label>
-                    <Input
-                      type="number"
-                      value={getTotalQuantity()}
-                      readOnly
-                      className="bg-muted font-medium"
-                    />
                     <div className="text-sm text-muted-foreground">
-                      Ümumi: {getTotalQuantity()} metr
+                      Məhsul üçün ümumi: {getCurrentProductTotalQuantity()} metr
                     </div>
                   </div>
                 )}
+
+                {currentPackaging.length > 0 && (
+                  <Button onClick={handleAddProduct} className="w-full">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Məhsulu siyahıya əlavə et
+                  </Button>
+                )}
+              </div>
+            )}
+
+            {selectedProducts.length > 0 && (
+              <div className="space-y-2">
+                <Label>Əlavə edilmiş məhsullar</Label>
+                <div className="space-y-3 max-h-40 overflow-y-auto">
+                  {selectedProducts.map((productEntry, index) => (
+                    <div key={index} className="border p-3 rounded bg-muted/50">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium text-sm">
+                          {getProductName(productEntry.productId)}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveProduct(index)}
+                          className="h-6 w-6 p-0"
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                      <div className="space-y-1">
+                        {productEntry.packaging.map((pkg, pkgIndex) => (
+                          <div key={pkgIndex} className="text-xs text-muted-foreground">
+                            {pkg.count} ədəd × {pkg.type} metr
+                          </div>
+                        ))}
+                        <div className="text-xs font-medium">
+                          Ümumi: {getProductTotalQuantity(productEntry.packaging)} metr
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -241,11 +304,21 @@ export default function AddOperation() {
             </div>
 
             <div className="flex gap-2 pt-4">
-              <Button className="flex-1">
+              <Button className="flex-1" disabled={selectedProducts.length === 0}>
                 <Save className="mr-2 h-4 w-4" />
                 Yadda saxla
               </Button>
-              <Button variant="outline" className="flex-1">
+              <Button 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => {
+                  setSelectedProducts([]);
+                  setCurrentProduct("");
+                  setCurrentPackaging([]);
+                  setNotes("");
+                  setOperationType("");
+                }}
+              >
                 Təmizlə
               </Button>
             </div>
