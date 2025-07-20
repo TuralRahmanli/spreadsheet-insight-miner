@@ -254,9 +254,29 @@ export default function ProductsList() {
                     </PopoverTrigger>
                     <PopoverContent className="w-full p-0">
                       <Command>
-                        <CommandInput placeholder="Paketləşdirmə üsulunu axtarın və ya yazın..." />
+                        <CommandInput 
+                          placeholder="Paketləşdirmə üsulunu axtarın və ya yazın..." 
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              const value = e.currentTarget.value.trim();
+                              if (value && !newProduct.packaging.includes(value)) {
+                                setNewProduct(prev => ({ 
+                                  ...prev, 
+                                  packaging: [...prev.packaging, value] 
+                                }));
+                                e.currentTarget.value = '';
+                              }
+                            }
+                          }}
+                        />
                         <CommandList>
-                          <CommandEmpty>Nəticə tapılmadı</CommandEmpty>
+                          <CommandEmpty>
+                            <div className="py-2 px-4 text-center">
+                              <p className="text-sm text-muted-foreground">Nəticə tapılmadı</p>
+                              <p className="text-xs text-muted-foreground mt-1">Enter düyməsini basaraq yeni növ əlavə edin</p>
+                            </div>
+                          </CommandEmpty>
                           <CommandGroup>
                             {[
                               "Plastik torba",
