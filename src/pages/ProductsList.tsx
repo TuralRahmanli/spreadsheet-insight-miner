@@ -344,10 +344,10 @@ export default function ProductsList() {
                 <TableHead>Artikul</TableHead>
                 <TableHead>Məhsul Adı</TableHead>
                 <TableHead>Kateqoriya</TableHead>
-                <TableHead>Stok</TableHead>
+                <TableHead>Anbar Miqdarları</TableHead>
+                <TableHead>Ümumi Miqdar</TableHead>
                 <TableHead>Vəziyyət</TableHead>
                 <TableHead>Paketləşdirmə</TableHead>
-                <TableHead>Anbarlar</TableHead>
                 <TableHead>Təsvir</TableHead>
                 <TableHead>Əməliyyatlar</TableHead>
               </TableRow>
@@ -360,7 +360,25 @@ export default function ProductsList() {
                   <TableCell>
                     <Badge variant="outline">{product.category}</Badge>
                   </TableCell>
-                  <TableCell>{product.stock} {product.unit}</TableCell>
+                  <TableCell>
+                    <div className="space-y-1">
+                      {product.warehouses && product.warehouses.length > 0 ? (
+                        product.warehouses.map((warehouse, index) => (
+                          <div key={index} className="flex justify-between text-sm">
+                            <span className="text-muted-foreground">{warehouse}:</span>
+                            <span className="font-medium">0 {product.unit}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <span className="text-muted-foreground text-sm">Anbar yoxdur</span>
+                      )}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="font-medium">
+                      {product.stock} {product.unit}
+                    </div>
+                  </TableCell>
                   <TableCell>
                     {getStatusBadge(product.status, product.stock)}
                   </TableCell>
@@ -378,24 +396,6 @@ export default function ProductsList() {
                         ))
                       ) : (
                         <span className="text-muted-foreground text-sm">Paketləşdirmə yoxdur</span>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-1 flex-wrap">
-                      {product.warehouses.length > 0 ? (
-                        product.warehouses.map((warehouse, index) => (
-                          <Badge 
-                            key={index} 
-                            variant="secondary" 
-                            className="text-xs cursor-pointer hover:bg-secondary/80 transition-colors"
-                            onClick={() => navigate(`/warehouses/${encodeURIComponent(warehouse)}`)}
-                          >
-                            {warehouse}
-                          </Badge>
-                        ))
-                      ) : (
-                        <span className="text-muted-foreground text-sm">Anbar yoxdur</span>
                       )}
                     </div>
                   </TableCell>
