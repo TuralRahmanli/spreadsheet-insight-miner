@@ -4,6 +4,7 @@ import { Package, Home, FileText, Settings, BarChart3, Plus, Menu, ShoppingCart 
 import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
 const sidebarItems = [
@@ -18,11 +19,14 @@ const sidebarItems = [
 
 const SidebarContent = ({ isMobile = false, onItemClick }: { isMobile?: boolean; onItemClick?: () => void }) => (
   <div className="flex h-full flex-col">
-    <div className="flex h-14 items-center border-b px-4 lg:px-6">
+    <div className="flex h-14 items-center justify-between border-b px-4 lg:px-6">
       <div className="flex items-center gap-2 font-semibold">
         <Package className="h-6 w-6 text-primary" />
         <span>İnventar Sistemi</span>
       </div>
+      {!isMobile && (
+        <ThemeToggle />
+      )}
     </div>
     <div className="flex-1 overflow-auto py-2">
       <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
@@ -72,10 +76,11 @@ export default function Layout() {
               <SidebarContent isMobile onItemClick={() => setSidebarOpen(false)} />
             </SheetContent>
           </Sheet>
-          <div className="flex items-center gap-2 font-semibold">
+          <div className="flex items-center gap-2 font-semibold flex-1">
             <Package className="h-6 w-6 text-primary" />
             <span className="text-sm sm:text-base">İnventar Sistemi</span>
           </div>
+          <ThemeToggle />
         </header>
 
         {/* Main Content */}
