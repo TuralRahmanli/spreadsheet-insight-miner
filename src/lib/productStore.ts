@@ -20,6 +20,7 @@ interface ProductStore {
   removeProduct: (productId: string) => void;
   updateProduct: (productId: string, updates: Partial<Product>) => void;
   getProducts: () => Product[];
+  clearAllProducts: () => void;
 }
 
 // Initial product data
@@ -147,7 +148,7 @@ const initialProducts: Product[] = [
 ];
 
 export const useProductStore = create<ProductStore>((set, get) => ({
-  products: initialProducts,
+  products: [],
   addProduct: (product) => 
     set((state) => ({ products: [...state.products, product] })),
   removeProduct: (productId) => 
@@ -159,4 +160,5 @@ export const useProductStore = create<ProductStore>((set, get) => ({
       ) 
     })),
   getProducts: () => get().products,
+  clearAllProducts: () => set({ products: [] }),
 }));

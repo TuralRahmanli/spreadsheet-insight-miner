@@ -6,16 +6,18 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Search, Warehouse, Package, MapPin } from "lucide-react";
 import { useProductStore } from "@/lib/productStore";
+import { useWarehouseStore } from "@/lib/warehouseStore";
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function WarehousesList() {
   const { warehouse: selectedWarehouse } = useParams();
   const navigate = useNavigate();
   const { products } = useProductStore();
+  const { warehouses } = useWarehouseStore();
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Get all unique warehouses from products
-  const allWarehouses = Array.from(new Set(products.flatMap(p => p.warehouses))).sort();
+  // Get warehouses from warehouse store
+  const allWarehouses = warehouses.map(w => w.name).sort();
   
   // Filter products by selected warehouse or show all warehouses
   const filteredData = selectedWarehouse 

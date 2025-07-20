@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Plus, Save, Check, ChevronsUpDown, X } from "lucide-react";
 import { useProductStore } from "@/lib/productStore";
 import { usePackagingStore } from "@/lib/packagingStore";
+import { useWarehouseStore } from "@/lib/warehouseStore";
 import { cn } from "@/lib/utils";
 
 type ProductEntry = {
@@ -20,6 +21,7 @@ type ProductEntry = {
 export default function AddOperation() {
   const { products } = useProductStore();
   const { packagingOptions, addPackagingOption } = usePackagingStore();
+  const { warehouses } = useWarehouseStore();
   const [operationType, setOperationType] = useState("");
   const [selectedWarehouse, setSelectedWarehouse] = useState("");
   const [selectedDestinationWarehouse, setSelectedDestinationWarehouse] = useState("");
@@ -131,10 +133,11 @@ export default function AddOperation() {
                       <SelectValue placeholder="Anbar seçin" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="warehouse-1">Anbar 1</SelectItem>
-                      <SelectItem value="warehouse-2">Anbar 2</SelectItem>
-                      <SelectItem value="warehouse-3">Anbar 3</SelectItem>
-                      <SelectItem value="warehouse-main">Əsas Anbar</SelectItem>
+                      {warehouses.map((warehouse) => (
+                        <SelectItem key={warehouse.id} value={warehouse.id}>
+                          {warehouse.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -160,10 +163,11 @@ export default function AddOperation() {
                       <SelectValue placeholder="Mənbə anbarı seçin" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="warehouse-1">Anbar 1</SelectItem>
-                      <SelectItem value="warehouse-2">Anbar 2</SelectItem>
-                      <SelectItem value="warehouse-3">Anbar 3</SelectItem>
-                      <SelectItem value="warehouse-main">Əsas Anbar</SelectItem>
+                      {warehouses.map((warehouse) => (
+                        <SelectItem key={warehouse.id} value={warehouse.id}>
+                          {warehouse.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -175,10 +179,11 @@ export default function AddOperation() {
                       <SelectValue placeholder="Təyinat anbarı seçin" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="warehouse-1">Anbar 1</SelectItem>
-                      <SelectItem value="warehouse-2">Anbar 2</SelectItem>
-                      <SelectItem value="warehouse-3">Anbar 3</SelectItem>
-                      <SelectItem value="warehouse-main">Əsas Anbar</SelectItem>
+                      {warehouses.map((warehouse) => (
+                        <SelectItem key={warehouse.id} value={warehouse.id}>
+                          {warehouse.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
