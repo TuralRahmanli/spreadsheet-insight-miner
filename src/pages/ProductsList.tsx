@@ -324,64 +324,111 @@ export default function ProductsList() {
         const worksheet = workbook.Sheets[firstSheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
+        if (jsonData.length === 0) {
+          toast({
+            title: "Xəta",
+            description: "Excel faylında məlumat tapılmadı.",
+            variant: "destructive"
+          });
+          return;
+        }
+
         let importedCount = 0;
         let errorCount = 0;
+        const errorMessages: string[] = [];
 
-        jsonData.forEach((row: any) => {
+        // Check first row to understand column structure
+        const firstRow = jsonData[0] as any;
+        const availableColumns = Object.keys(firstRow);
+        
+        console.log("Available columns:", availableColumns);
+
+        jsonData.forEach((row: any, index: number) => {
           try {
-            // Excel sütun adları (Azərbaycan dilində)
-            const article = row['Artikul'] || row['artikul'] || row['ARTIKUL'];
-            const name = row['Məhsul Adı'] || row['Ad'] || row['ad'] || row['Name'] || row['name'];
-            const category = row['Kateqoriya'] || row['kateqoriya'] || row['Category'] || row['category'] || '';
-            const stock = parseInt(row['Stok'] || row['stok'] || row['Stock'] || row['stock'] || row['Miqdar'] || row['miqdar'] || '0');
-            const unit = row['Ölçü Vahidi'] || row['Vahid'] || row['vahid'] || row['Unit'] || row['unit'] || 'ədəd';
-            const description = row['Təsvir'] || row['təsvir'] || row['Description'] || row['description'] || '';
+            // More flexible column matching (case insensitive and multiple variations)
+            const getColumnValue = (possibleNames: string[]) => {
+              for (const name of possibleNames) {
+                for (const col of availableColumns) {
+                  if (col.toLowerCase().includes(name.toLowerCase()) || 
+                      name.toLowerCase().includes(col.toLowerCase())) {
+                    return row[col];
+                  }
+                }
+              }
+              return null;
+            };
+
+            const article = getColumnValue(['artikul', 'artikel', 'article', 'kod', 'code']);
+            const name = getColumnValue(['ad', 'adı', 'name', 'məhsul', 'product', 'başlıq']);
+            const category = getColumnValue(['kateqoriya', 'category', 'tip', 'type', 'növ']);
+            const stockValue = getColumnValue(['stok', 'stock', 'miqdar', 'quantity', 'say']);
+            const unit = getColumnValue(['vahid', 'unit', 'ölçü', 'measure']) || 'ədəd';
+            const description = getColumnValue(['təsvir', 'description', 'açıqlama', 'qeyd']);
+
+            console.log(`Row ${index + 1}:`, { article, name, category, stockValue, unit });
 
             if (!article || !name) {
+              errorMessages.push(`Sətir ${index + 2}: Artikul və ya məhsul adı boşdur`);
               errorCount++;
               return;
             }
 
+            const stock = stockValue ? parseInt(String(stockValue)) : 0;
+
             // Check if product already exists
-            const existingProduct = products.find(p => p.article === article);
+            const existingProduct = products.find(p => p.article === String(article));
             if (existingProduct) {
               // Update existing product
               updateProduct(existingProduct.id, {
-                name,
-                category,
-                stock,
-                unit,
-                description
+                name: String(name),
+                category: category ? String(category) : existingProduct.category,
+                stock: stock,
+                unit: String(unit),
+                description: description ? String(description) : existingProduct.description
               });
             } else {
               // Add new product
               const newProduct = {
-                id: article,
-                article,
-                name,
-                category,
+                id: String(article),
+                article: String(article),
+                name: String(name),
+                category: category ? String(category) : '',
                 status: stock > 0 ? 'active' : 'out_of_stock',
-                stock,
-                unit,
+                stock: stock,
+                unit: String(unit),
                 packaging: [],
                 warehouses: [],
-                description
+                description: description ? String(description) : ''
               };
               addProduct(newProduct);
             }
             importedCount++;
           } catch (error) {
+            errorMessages.push(`Sətir ${index + 2}: ${error}`);
             errorCount++;
           }
         });
 
-        toast({
-          title: "Import tamamlandı",
-          description: `${importedCount} məhsul uğurla import edildi. ${errorCount > 0 ? `${errorCount} məhsul xətası var.` : ''}`,
-          variant: errorCount > 0 ? "destructive" : "default"
-        });
+        if (importedCount === 0) {
+          toast({
+            title: "Import uğursuz",
+            description: `Heç bir məhsul import edilmədi. Mövcud sütunlar: ${availableColumns.join(', ')}. Gözlənilən sütunlar: Artikul, Ad/Məhsul Adı`,
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Import tamamlandı",
+            description: `${importedCount} məhsul uğurla import edildi. ${errorCount > 0 ? `${errorCount} xəta oldu.` : ''}`,
+            variant: errorCount > 0 ? "destructive" : "default"
+          });
+        }
+
+        if (errorMessages.length > 0 && errorMessages.length <= 5) {
+          console.log("Import xətaları:", errorMessages);
+        }
 
       } catch (error) {
+        console.error("Excel import error:", error);
         toast({
           title: "Xəta",
           description: "Excel faylı oxunarkən xəta baş verdi. Fayl formatını yoxlayın.",
