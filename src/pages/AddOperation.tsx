@@ -74,8 +74,10 @@ export default function AddOperation() {
         productId: currentProduct,
         packaging: [...currentPackaging]
       }]);
-      setCurrentProduct("");
+      // Reset only packaging, keep product selection for easy adding of more packaging
       setCurrentPackaging([]);
+      setCurrentPackagingType("");
+      setCurrentPackageCount("");
     }
   };
 
