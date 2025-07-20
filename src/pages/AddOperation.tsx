@@ -369,17 +369,49 @@ export default function AddOperation() {
               Tez-tez istifadə olunan əməliyyatlar:
             </div>
 
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                setOperationType("incoming");
+                setSelectedWarehouse("warehouse-1");
+                const albaProduct = products.find(p => p.name.toLowerCase().includes("albalı"));
+                if (albaProduct) {
+                  setCurrentProduct(albaProduct.id);
+                }
+              }}
+            >
               <Plus className="mr-2 h-4 w-4" />
               Albalı 1 - Daxil olma
             </Button>
 
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                setOperationType("sale");
+                const mangoProduct = products.find(p => p.name.toLowerCase().includes("mango"));
+                if (mangoProduct) {
+                  setCurrentProduct(mangoProduct.id);
+                }
+              }}
+            >
               <Plus className="mr-2 h-4 w-4" />
               Mango 2 - Satış
             </Button>
 
-            <Button variant="outline" className="w-full justify-start">
+            <Button 
+              variant="outline" 
+              className="w-full justify-start"
+              onClick={() => {
+                setOperationType("incoming");
+                setSelectedWarehouse("warehouse-3");
+                const qaraqatProduct = products.find(p => p.name.toLowerCase().includes("qarağat"));
+                if (qaraqatProduct) {
+                  setCurrentProduct(qaraqatProduct.id);
+                }
+              }}
+            >
               <Plus className="mr-2 h-4 w-4" />
               Qarağat 3 - Daxil olma
             </Button>
