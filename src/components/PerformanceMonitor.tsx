@@ -27,7 +27,7 @@ export function usePerformanceMonitor() {
         setPerformanceData(prev => ({
           ...prev,
           fps,
-          memoryUsage: (performance as any).memory?.usedJSHeapSize
+          memoryUsage: (performance as any).memory?.usedJSHeapSize || 0
         }));
 
         frameCount = 0;

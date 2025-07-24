@@ -117,6 +117,7 @@ export function AccessibilityOverlay() {
     <div className="fixed bottom-4 right-4 z-50">
       <button
         onClick={() => setShowIssues(!showIssues)}
+        aria-label={`Əlçatımlılıq xətaları: ${issues.length} məsələ`}
         className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
           errorCount > 0 
             ? 'bg-destructive text-destructive-foreground' 

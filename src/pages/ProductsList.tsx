@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -86,26 +86,28 @@ export default function ProductsList() {
   const allUnits = ["all", ...Array.from(new Set(products.map(p => p.unit).filter(Boolean)))];
   const stockLevels = ["all", "in_stock", "low_stock", "out_of_stock"];
 
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.article.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filters.category === "all" || product.category === filters.category;
-    
-    // Apply filters
-    const matchesStatus = filters.status === "all" || 
-      (filters.status === "active" && product.status === "active") ||
-      (filters.status === "out_of_stock" && (product.status === "out_of_stock" || product.stock === 0)) ||
-      (filters.status === "low_stock" && (product.status === "low_stock" || (product.stock > 0 && product.stock < 50)));
-    
-    const matchesStockLevel = filters.stockLevel === "all" ||
-      (filters.stockLevel === "in_stock" && product.stock >= 50) ||
-      (filters.stockLevel === "low_stock" && product.stock > 0 && product.stock < 50) ||
-      (filters.stockLevel === "out_of_stock" && product.stock === 0);
-    
-    const matchesUnit = filters.unit === "all" || product.unit === filters.unit;
-    
-    return matchesSearch && matchesCategory && matchesStatus && matchesStockLevel && matchesUnit;
-  });
+  const filteredProducts = useMemo(() => {
+    return products.filter(product => {
+      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           product.article.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = filters.category === "all" || product.category === filters.category;
+      
+      // Apply filters
+      const matchesStatus = filters.status === "all" || 
+        (filters.status === "active" && product.status === "active") ||
+        (filters.status === "out_of_stock" && (product.status === "out_of_stock" || product.stock === 0)) ||
+        (filters.status === "low_stock" && (product.status === "low_stock" || (product.stock > 0 && product.stock < 50)));
+      
+      const matchesStockLevel = filters.stockLevel === "all" ||
+        (filters.stockLevel === "in_stock" && product.stock >= 50) ||
+        (filters.stockLevel === "low_stock" && product.stock > 0 && product.stock < 50) ||
+        (filters.stockLevel === "out_of_stock" && product.stock === 0);
+      
+      const matchesUnit = filters.unit === "all" || product.unit === filters.unit;
+      
+      return matchesSearch && matchesCategory && matchesStatus && matchesStockLevel && matchesUnit;
+    });
+  }, [products, searchTerm, filters]);
 
   const clearAllFilters = () => {
     setFilters({
@@ -242,7 +244,7 @@ export default function ProductsList() {
               {product.packaging.length > 0 ? (
                 product.packaging.map((pack, index) => (
                   <Badge 
-                    key={index} 
+                    key={`${product.id}-pack-${pack}-${index}`} 
                     variant="outline" 
                     className="text-xs"
                   >
