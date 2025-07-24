@@ -138,20 +138,29 @@ const initialProducts: Product[] = [
   }
 ];
 
-export const useProductStore = create<ProductStore>((set, get) => ({
-  products: initialProducts, // İlkin məlumatlarla başla
-  isLoading: false,
-  error: null,
-  addProduct: (product) => 
-    set((state) => ({ products: [...state.products, product] })),
-  removeProduct: (productId) => 
-    set((state) => ({ products: state.products.filter(p => p.id !== productId) })),
-  updateProduct: (productId, updates) =>
-    set((state) => ({ 
-      products: state.products.map(p => 
-        p.id === productId ? { ...p, ...updates } : p
-      ) 
-    })),
-  getProducts: () => get().products,
-  clearAllProducts: () => set({ products: [] }),
-}));
+export const useProductStore = create<ProductStore>()(
+  persist(
+    (set, get) => ({
+      products: initialProducts, // İlkin məlumatlarla başla
+      isLoading: false,
+      error: null,
+      addProduct: (product) => 
+        set((state) => ({ products: [...state.products, product] })),
+      removeProduct: (productId) => 
+        set((state) => ({ products: state.products.filter(p => p.id !== productId) })),
+      updateProduct: (productId, updates) =>
+        set((state) => ({ 
+          products: state.products.map(p => 
+            p.id === productId ? { ...p, ...updates } : p
+          ) 
+        })),
+      getProducts: () => get().products,
+      clearAllProducts: () => set({ products: [] }),
+    }),
+    {
+      name: 'product-storage',
+      // Only persist products, not loading/error states
+      partialize: (state) => ({ products: state.products }),
+    }
+  )
+);

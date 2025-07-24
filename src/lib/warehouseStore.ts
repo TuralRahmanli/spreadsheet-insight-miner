@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface WarehouseStore {
   warehouses: Array<{ id: string; name: string }>;
@@ -16,18 +17,25 @@ const initialWarehouses = [
   { id: "anbar-3", name: "Anbar 3" }
 ];
 
-export const useWarehouseStore = create<WarehouseStore>((set, get) => ({
-  warehouses: initialWarehouses, // İlkin anbarlarla başla
-  addWarehouse: (warehouse) => 
-    set((state) => ({ warehouses: [...state.warehouses, warehouse] })),
-  removeWarehouse: (warehouseId) => 
-    set((state) => ({ warehouses: state.warehouses.filter(w => w.id !== warehouseId) })),
-  updateWarehouse: (warehouseId, updates) =>
-    set((state) => ({ 
-      warehouses: state.warehouses.map(w => 
-        w.id === warehouseId ? { ...w, ...updates } : w
-      ) 
-    })),
-  clearAllWarehouses: () => set({ warehouses: [] }),
-  getWarehouses: () => get().warehouses,
-}));
+export const useWarehouseStore = create<WarehouseStore>()(
+  persist(
+    (set, get) => ({
+      warehouses: initialWarehouses, // İlkin anbarlarla başla
+      addWarehouse: (warehouse) => 
+        set((state) => ({ warehouses: [...state.warehouses, warehouse] })),
+      removeWarehouse: (warehouseId) => 
+        set((state) => ({ warehouses: state.warehouses.filter(w => w.id !== warehouseId) })),
+      updateWarehouse: (warehouseId, updates) =>
+        set((state) => ({ 
+          warehouses: state.warehouses.map(w => 
+            w.id === warehouseId ? { ...w, ...updates } : w
+          ) 
+        })),
+      clearAllWarehouses: () => set({ warehouses: [] }),
+      getWarehouses: () => get().warehouses,
+    }),
+    {
+      name: 'warehouse-storage',
+    }
+  )
+);

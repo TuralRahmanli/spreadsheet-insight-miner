@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface PackagingStore {
   packagingOptions: string[];
@@ -17,20 +18,27 @@ const initialPackagingOptions = [
   "160", "160+(3)", "165", "165+(3)"
 ];
 
-export const usePackagingStore = create<PackagingStore>((set, get) => ({
-  packagingOptions: initialPackagingOptions,
-  addPackagingOption: (option) => 
-    set((state) => ({ 
-      packagingOptions: state.packagingOptions.includes(option) 
-        ? state.packagingOptions 
-        : [...state.packagingOptions, option].sort((a, b) => {
-          const numA = parseInt(a.split(/[+()]/)[0]);
-          const numB = parseInt(b.split(/[+()]/)[0]);
-          return numA - numB;
-        })
-    })),
-  removePackagingOption: (option) =>
-    set((state) => ({ 
-      packagingOptions: state.packagingOptions.filter(opt => opt !== option) 
-    })),
-}));
+export const usePackagingStore = create<PackagingStore>()(
+  persist(
+    (set, get) => ({
+      packagingOptions: initialPackagingOptions,
+      addPackagingOption: (option) => 
+        set((state) => ({ 
+          packagingOptions: state.packagingOptions.includes(option) 
+            ? state.packagingOptions 
+            : [...state.packagingOptions, option].sort((a, b) => {
+              const numA = parseInt(a.split(/[+()]/)[0]);
+              const numB = parseInt(b.split(/[+()]/)[0]);
+              return numA - numB;
+            })
+        })),
+      removePackagingOption: (option) =>
+        set((state) => ({ 
+          packagingOptions: state.packagingOptions.filter(opt => opt !== option) 
+        })),
+    }),
+    {
+      name: 'packaging-storage',
+    }
+  )
+);

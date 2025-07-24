@@ -15,6 +15,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
 import { useProductStore } from "@/lib/productStore";
+import { sanitizeString, sanitizeNumber } from "@/lib/validation";
 import { Checkbox } from "@/components/ui/checkbox";
 import * as XLSX from 'xlsx';
 
@@ -119,7 +120,12 @@ export default function ProductsList() {
   const hasActiveFilters = filters.status !== "all" || filters.stockLevel !== "all" || filters.unit !== "all" || filters.category !== "all" || searchTerm !== "";
 
   const handleAddProduct = () => {
-    if (!newProduct.article || !newProduct.name) {
+    const sanitizedArticle = sanitizeString(newProduct.article);
+    const sanitizedName = sanitizeString(newProduct.name);
+    const sanitizedCategory = sanitizeString(newProduct.category);
+    const sanitizedDescription = sanitizeString(newProduct.description);
+
+    if (!sanitizedArticle || !sanitizedName) {
       toast({
         title: "Xəta",
         description: "Artikul və Məhsul Adı sahələri məcburidir",
@@ -129,16 +135,16 @@ export default function ProductsList() {
     }
 
     const product = {
-      id: newProduct.article,
-      article: newProduct.article,
-      name: newProduct.name,
-      category: newProduct.category || "",
+      id: sanitizedArticle,
+      article: sanitizedArticle,
+      name: sanitizedName,
+      category: sanitizedCategory || "",
       status: "active" as const,
-      stock: parseInt(newProduct.stock) || 0,
-      unit: newProduct.unit || "",
+      stock: sanitizeNumber(newProduct.stock),
+      unit: sanitizeString(newProduct.unit) || "",
       packaging: newProduct.packaging,
       warehouses: [],
-      description: newProduct.description
+      description: sanitizedDescription
     };
 
     addProduct(product);
@@ -208,8 +214,8 @@ export default function ProductsList() {
           </TableCell>
         );
       case 'warehouses':
-        return allWarehouses.map(warehouse => (
-          <TableCell key={warehouse}>
+        return allWarehouses.map((warehouse, warehouseIndex) => (
+          <TableCell key={`${product.id}-${warehouse}-${warehouseIndex}`}>
             <span className="font-medium">
               {product.warehouses?.includes(warehouse) ? `0 ${product.unit}` : '-'}
             </span>
@@ -280,7 +286,12 @@ export default function ProductsList() {
   };
 
   const handleUpdateProduct = () => {
-    if (!editingProduct?.article || !editingProduct?.name) {
+    const sanitizedArticle = sanitizeString(editingProduct?.article || "");
+    const sanitizedName = sanitizeString(editingProduct?.name || "");
+    const sanitizedCategory = sanitizeString(editingProduct?.category || "");
+    const sanitizedDescription = sanitizeString(editingProduct?.description || "");
+
+    if (!sanitizedArticle || !sanitizedName) {
       toast({
         title: "Xəta",
         description: "Artikul və Məhsul Adı sahələri məcburidir",
@@ -290,11 +301,11 @@ export default function ProductsList() {
     }
 
     const updates = {
-      article: editingProduct.article,
-      name: editingProduct.name,
-      category: editingProduct.category || "",
-      stock: parseInt(editingProduct.stock) || 0,
-      description: editingProduct.description
+      article: sanitizedArticle,
+      name: sanitizedName,
+      category: sanitizedCategory,
+      stock: sanitizeNumber(editingProduct?.stock || "0"),
+      description: sanitizedDescription
     };
 
     // Find the original product to get its ID
