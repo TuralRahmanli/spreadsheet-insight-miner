@@ -8,6 +8,7 @@ import { NetworkStatus } from "./components/NetworkStatus";
 import { OfflineIndicator } from "./components/OfflineIndicator";
 import { PerformanceOverlay } from "./components/PerformanceMonitor";
 import { AccessibilityOverlay } from "./components/AccessibilityChecker";
+import { useAppIntents } from "./hooks/useAppIntents";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
@@ -21,34 +22,43 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+const AppContent = () => {
+  // Initialize app intents handling for file associations
+  useAppIntents();
+
+  return (
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <NetworkStatus />
+      <OfflineIndicator />
+      <PerformanceOverlay />
+      <AccessibilityOverlay />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Index />} />
+            <Route path="products" element={<Products />} />
+            <Route path="products-list" element={<ProductsList />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="templates" element={<Templates />} />
+            <Route path="warehouses" element={<WarehousesList />} />
+            <Route path="warehouses/:warehouse" element={<WarehousesList />} />
+            <Route path="add" element={<AddOperation />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
+  );
+};
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <NetworkStatus />
-        <OfflineIndicator />
-        <PerformanceOverlay />
-        <AccessibilityOverlay />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Index />} />
-              <Route path="products" element={<Products />} />
-              <Route path="products-list" element={<ProductsList />} />
-              <Route path="reports" element={<Reports />} />
-              <Route path="templates" element={<Templates />} />
-              <Route path="warehouses" element={<WarehousesList />} />
-              <Route path="warehouses/:warehouse" element={<WarehousesList />} />
-              <Route path="add" element={<AddOperation />} />
-              <Route path="settings" element={<Settings />} />
-            </Route>
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <AppContent />
     </QueryClientProvider>
   </ErrorBoundary>
 );
