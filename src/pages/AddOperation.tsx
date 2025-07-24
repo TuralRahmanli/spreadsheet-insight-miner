@@ -386,8 +386,8 @@ export default function AddOperation() {
                   <div className="space-y-2">
                     <Label>Seçilmiş paketləşdirmələr</Label>
                     <div className="space-y-2 max-h-32 overflow-y-auto">
-                      {currentPackaging.map((item, index) => (
-                        <div key={index} className="flex items-center justify-between bg-muted p-2 rounded">
+                       {currentPackaging.map((item, index) => (
+                        <div key={`packaging-${item.type}-${item.count}-${index}`} className="flex items-center justify-between bg-muted p-2 rounded">
                           <span className="text-sm">
                             {item.count} ədəd × {item.type} metr = {parseInt(item.type.split(/[+()]/)[0]) * item.count} metr
                           </span>
@@ -421,8 +421,8 @@ export default function AddOperation() {
               <div className="space-y-2">
                 <Label>Əlavə edilmiş məhsullar</Label>
                 <div className="space-y-3 max-h-40 overflow-y-auto">
-                  {selectedProducts.map((productEntry, index) => (
-                    <div key={index} className="border p-3 rounded bg-muted/50">
+                   {selectedProducts.map((productEntry, index) => (
+                    <div key={`selected-product-${productEntry.productId}-${index}`} className="border p-3 rounded bg-muted/50">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium text-sm">
                           {getProductName(productEntry.productId)}
@@ -437,8 +437,8 @@ export default function AddOperation() {
                         </Button>
                       </div>
                       <div className="space-y-1">
-                        {productEntry.packaging.map((pkg, pkgIndex) => (
-                          <div key={pkgIndex} className="text-xs text-muted-foreground">
+                         {productEntry.packaging.map((pkg, pkgIndex) => (
+                          <div key={`product-packaging-${pkg.type}-${pkg.count}-${pkgIndex}`} className="text-xs text-muted-foreground">
                             {pkg.count} ədəd × {pkg.type} metr
                           </div>
                         ))}

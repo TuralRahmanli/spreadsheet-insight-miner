@@ -280,9 +280,9 @@ export default function WarehousesList() {
                         <div className="flex gap-1 flex-wrap">
                           {product.warehouses
                             .filter(w => w !== warehouse.name)
-                            .map((otherWarehouse, index) => (
+                             .map((otherWarehouse, index) => (
                               <Badge 
-                                key={index} 
+                                key={`${product.id}-other-warehouse-${otherWarehouse}-${index}`} 
                                 variant="secondary" 
                                 className="text-xs cursor-pointer hover:bg-secondary/80"
                                 onClick={() => navigate(`/warehouses/${encodeURIComponent(otherWarehouse)}`)}

@@ -136,9 +136,9 @@ export function AccessibilityOverlay() {
 
       {showIssues && issues.length > 0 && (
         <div className="absolute bottom-12 right-0 w-80 max-h-60 overflow-auto space-y-2">
-          {issues.map((issue, index) => (
+           {issues.map((issue, index) => (
             <Alert 
-              key={index}
+              key={`accessibility-issue-${issue.type}-${index}`}
               variant={issue.type === 'error' ? 'destructive' : 'default'}
               className="text-sm"
             >
