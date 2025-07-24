@@ -471,7 +471,7 @@ export default function ProductsList() {
         <div className="flex items-center gap-2">
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" size="icon">
+              <Button variant="outline" size="icon" aria-label="Sütun tənzimləmələri">
                 <Settings className="h-4 w-4" />
               </Button>
             </PopoverTrigger>
