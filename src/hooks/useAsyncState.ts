@@ -16,7 +16,7 @@ export function useAsyncState<T>(
   });
 
   const execute = useCallback(async (promise: Promise<T>): Promise<T> => {
-    setState({ data: state.data, loading: true, error: null });
+    setState(prevState => ({ ...prevState, loading: true, error: null }));
     
     try {
       const result = await promise;
@@ -24,10 +24,10 @@ export function useAsyncState<T>(
       return result;
     } catch (error) {
       const errorObj = error instanceof Error ? error : new Error('Unknown error');
-      setState({ data: state.data, loading: false, error: errorObj });
+      setState(prevState => ({ ...prevState, loading: false, error: errorObj }));
       throw errorObj;
     }
-  }, [state.data]);
+  }, []);
 
   return [state, execute];
 }

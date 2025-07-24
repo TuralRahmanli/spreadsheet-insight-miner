@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useProductStore } from "@/lib/productStore";
 import { sanitizeString, sanitizeNumber } from "@/lib/validation";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Product } from "@/types";
 import * as XLSX from 'xlsx';
 
 const getStatusBadge = (status: string, stock: number) => {
@@ -42,7 +43,13 @@ export default function ProductsList() {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [editingProduct, setEditingProduct] = useState<{
+    article: string;
+    name: string;
+    category: string;
+    stock: string;
+    description: string;
+  } | null>(null);
   const [newProduct, setNewProduct] = useState({
     article: "",
     name: "",
@@ -203,7 +210,7 @@ export default function ProductsList() {
     setDraggedColumn(null);
   };
 
-  const renderTableCell = (product: any, columnId: string) => {
+  const renderTableCell = (product: Product, columnId: string) => {
     switch (columnId) {
       case 'artikul':
         return <TableCell className="font-medium">{product.article}</TableCell>;
@@ -276,7 +283,7 @@ export default function ProductsList() {
     });
   };
 
-  const handleEditProduct = (product: any) => {
+  const handleEditProduct = (product: Product) => {
     setEditingProduct({
       article: product.article,
       name: product.name,
@@ -324,16 +331,35 @@ export default function ProductsList() {
     }
   };
 
-  const handleExcelImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleExcelImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       try {
         const data = e.target?.result;
+        if (!data) {
+          toast({
+            title: "Xəta",
+            description: "Fayl oxuna bilmədi",
+            variant: "destructive"
+          });
+          return;
+        }
+
         const workbook = XLSX.read(data, { type: 'binary' });
         const firstSheetName = workbook.SheetNames[0];
+        
+        if (!firstSheetName) {
+          toast({
+            title: "Xəta", 
+            description: "Excel faylında sheet tapılmadı",
+            variant: "destructive"
+          });
+          return;
+        }
+
         const worksheet = workbook.Sheets[firstSheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
@@ -351,22 +377,24 @@ export default function ProductsList() {
         const errorMessages: string[] = [];
 
         // Check first row to understand column structure
-        const firstRow = jsonData[0] as any;
+        const firstRow = jsonData[0] as Record<string, unknown>;
         const availableColumns = Object.keys(firstRow);
         
         if (process.env.NODE_ENV === 'development' && import.meta.env.DEV) {
           console.log("Available columns:", availableColumns);
         }
 
-        jsonData.forEach((row: any, index: number) => {
+        for (let index = 0; index < jsonData.length; index++) {
+          const row = jsonData[index] as Record<string, unknown>;
+          
           try {
             // More flexible column matching (case insensitive and multiple variations)
-            const getColumnValue = (possibleNames: string[]) => {
+            const getColumnValue = (possibleNames: string[]): string | null => {
               for (const name of possibleNames) {
                 for (const col of availableColumns) {
                   if (col.toLowerCase().includes(name.toLowerCase()) || 
                       name.toLowerCase().includes(col.toLowerCase())) {
-                    return row[col];
+                    return row[col] ? String(row[col]) : null;
                   }
                 }
               }
@@ -387,44 +415,49 @@ export default function ProductsList() {
             if (!article || !name) {
               errorMessages.push(`Sətir ${index + 2}: Artikul və ya məhsul adı boşdur`);
               errorCount++;
-              return;
+              continue;
             }
 
-            const stock = stockValue ? parseInt(String(stockValue)) : 0;
+            const stock = stockValue ? parseInt(stockValue) : 0;
+            if (isNaN(stock)) {
+              errorMessages.push(`Sətir ${index + 2}: Stock dəyəri düzgün deyil`);
+              errorCount++;
+              continue;
+            }
 
             // Check if product already exists
-            const existingProduct = products.find(p => p.article === String(article));
+            const existingProduct = products.find(p => p.article === article);
             if (existingProduct) {
               // Update existing product
               updateProduct(existingProduct.id, {
-                name: String(name),
-                category: category ? String(category) : existingProduct.category,
+                name: name,
+                category: category || existingProduct.category,
                 stock: stock,
-                unit: String(unit),
-                description: description ? String(description) : existingProduct.description
+                unit: unit,
+                description: description || existingProduct.description
               });
             } else {
               // Add new product
-              const newProduct = {
-                id: String(article),
-                article: String(article),
-                name: String(name),
-                category: category ? String(category) : '',
+              const newProduct: Product = {
+                id: article,
+                article: article,
+                name: name,
+                category: category || '',
                 status: stock > 0 ? 'active' as const : 'out_of_stock' as const,
                 stock: stock,
-                unit: String(unit),
+                unit: unit,
                 packaging: [],
                 warehouses: [],
-                description: description ? String(description) : ''
+                description: description || ''
               };
               addProduct(newProduct);
             }
             importedCount++;
           } catch (error) {
-            errorMessages.push(`Sətir ${index + 2}: ${error}`);
+            errorMessages.push(`Sətir ${index + 2}: ${error instanceof Error ? error.message : 'Unknown error'}`);
             errorCount++;
           }
-        });
+        }
 
         if (importedCount === 0) {
           toast({
