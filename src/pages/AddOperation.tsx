@@ -11,6 +11,7 @@ import { Plus, Save, Check, ChevronsUpDown, X, Download } from "lucide-react";
 import { useProductStore } from "@/lib/productStore";
 import { usePackagingStore } from "@/lib/packagingStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
+import { useOperationHistory } from "@/hooks/useOperationHistory";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import jsPDF from 'jspdf';
@@ -24,6 +25,7 @@ export default function AddOperation() {
   const { products } = useProductStore();
   const { packagingOptions, addPackagingOption } = usePackagingStore();
   const { warehouses } = useWarehouseStore();
+  const { addOperation } = useOperationHistory();
   const [operationType, setOperationType] = useState("");
   const [selectedWarehouse, setSelectedWarehouse] = useState("");
   const [selectedDestinationWarehouse, setSelectedDestinationWarehouse] = useState("");
@@ -149,9 +151,23 @@ export default function AddOperation() {
       return;
     }
 
+    // Add operations to history for each product
+    selectedProducts.forEach(productEntry => {
+      const product = products.find(p => p.id === productEntry.productId);
+      if (product) {
+        const totalQuantity = getProductTotalQuantity(productEntry.packaging);
+        addOperation({
+          type: operationType as 'daxil' | 'xaric' | 'satış' | 'transfer',
+          productName: product.name,
+          quantity: totalQuantity,
+          warehouse: selectedWarehouse || 'Anbar 1'
+        });
+      }
+    });
+
     toast({
       title: "Əməliyyat saxlanıldı",
-      description: `${operationType} əməliyyatı uğurla saxlanıldı`,
+      description: `${operationType} əməliyyatı uğurla saxlanıldı və tarixçəyə əlavə edildi`,
     });
 
     // Clear form after save

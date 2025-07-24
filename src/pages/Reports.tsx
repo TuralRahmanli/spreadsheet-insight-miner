@@ -2,10 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Download, TrendingUp, Package, AlertTriangle } from "lucide-react";
 import { useProductStore } from "@/lib/productStore";
+import { useOperationHistory } from "@/hooks/useOperationHistory";
 import { toast } from "@/hooks/use-toast";
 
 export default function Reports() {
   const { products } = useProductStore();
+  const { operations, formatTimestamp, getOperationIcon, getOperationColor } = useOperationHistory();
   
   // Calculate real statistics
   const totalProducts = products.length;
@@ -146,31 +148,29 @@ export default function Reports() {
             <CardTitle>Son Əməliyyatlar</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between py-2 border-b">
-                <div>
-                  <p className="font-medium">Albalı 3 - Çıxarıldı</p>
-                  <p className="text-sm text-muted-foreground">Bugün, 14:30</p>
-                </div>
-                <span className="text-success font-medium">✓ 25 ədəd</span>
+            {operations.length > 0 ? (
+              <div className="space-y-3">
+                {operations.map((operation) => (
+                  <div key={operation.id} className="flex items-center justify-between py-2 border-b last:border-b-0">
+                    <div>
+                      <p className="font-medium">
+                        {getOperationIcon(operation.type)} {operation.productName} - {operation.type}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {formatTimestamp(operation.timestamp)}
+                      </p>
+                    </div>
+                    <span className={`font-medium ${getOperationColor(operation.type)}`}>
+                      {operation.quantity} ədəd
+                    </span>
+                  </div>
+                ))}
               </div>
-              
-              <div className="flex items-center justify-between py-2 border-b">
-                <div>
-                  <p className="font-medium">Mango 2 - Çıxarıldı</p>
-                  <p className="text-sm text-muted-foreground">Bugün, 11:15</p>
-                </div>
-                <span className="text-success font-medium">✓ 12 ədəd</span>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>Hələ ki heç bir əməliyyat yoxdur</p>
               </div>
-              
-              <div className="flex items-center justify-between py-2 border-b">
-                <div>
-                  <p className="font-medium">Qarağat 1 - Çıxarıldı</p>
-                  <p className="text-sm text-muted-foreground">Dünən, 16:45</p>
-                </div>
-                <span className="text-success font-medium">✓ 40 ədəd</span>
-              </div>
-            </div>
+            )}
           </CardContent>
         </Card>
       </div>

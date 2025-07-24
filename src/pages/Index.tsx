@@ -5,11 +5,13 @@ import { Link } from "react-router-dom";
 import { useProductStore } from "@/lib/productStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
 import { PerformanceCard } from "@/components/PerformanceCard";
+import { useOperationHistory } from "@/hooks/useOperationHistory";
 import { useMemo } from "react";
 
 const Index = () => {
   const { products } = useProductStore();
   const { warehouses } = useWarehouseStore();
+  const { operations, formatTimestamp, getOperationIcon, getOperationColor } = useOperationHistory();
   
   // Calculate real statistics with memoization
   const statistics = useMemo(() => {
@@ -106,31 +108,29 @@ const Index = () => {
             <CardTitle>Son Fəaliyyətlər</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <p className="font-medium">Albalı 3 - Çıxarıldı</p>
-                  <p className="text-sm text-muted-foreground">Bugün, 14:30</p>
-                </div>
-                <span className="text-success font-medium">✓ 25 ədəd</span>
+            {operations.length > 0 ? (
+              <div className="space-y-3">
+                {operations.slice(0, 3).map((operation) => (
+                  <div key={operation.id} className="flex items-center justify-between py-2">
+                    <div>
+                      <p className="font-medium">
+                        {getOperationIcon(operation.type)} {operation.productName} - {operation.type}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {formatTimestamp(operation.timestamp)}
+                      </p>
+                    </div>
+                    <span className={`font-medium ${getOperationColor(operation.type)}`}>
+                      {operation.quantity} ədəd
+                    </span>
+                  </div>
+                ))}
               </div>
-              
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <p className="font-medium">Mango 2 - Çıxarıldı</p>
-                  <p className="text-sm text-muted-foreground">Bugün, 11:15</p>
-                </div>
-                <span className="text-success font-medium">✓ 12 ədəd</span>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>Hələ ki heç bir əməliyyat yoxdur</p>
               </div>
-              
-              <div className="flex items-center justify-between py-2">
-                <div>
-                  <p className="font-medium">Qarağat 1 - Çıxarıldı</p>
-                  <p className="text-sm text-muted-foreground">Dünən, 16:45</p>
-                </div>
-                <span className="text-success font-medium">✓ 40 ədəd</span>
-              </div>
-            </div>
+            )}
           </CardContent>
         </Card>
       </div>
