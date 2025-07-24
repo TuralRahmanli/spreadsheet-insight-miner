@@ -134,6 +134,7 @@ export default function Settings() {
               <Switch 
                 checked={settings.lowStockAlert}
                 onCheckedChange={(checked) => updateSetting('lowStockAlert', checked)}
+                aria-label="Az qalan məhsul xəbərdarlığını aç/bağla"
               />
             </div>
 
@@ -147,6 +148,7 @@ export default function Settings() {
               <Switch 
                 checked={settings.emailNotifications}
                 onCheckedChange={(checked) => updateSetting('emailNotifications', checked)}
+                aria-label="Email bildirişlərini aç/bağla"
               />
             </div>
 
@@ -160,6 +162,7 @@ export default function Settings() {
               <Switch 
                 checked={settings.dailyReport}
                 onCheckedChange={(checked) => updateSetting('dailyReport', checked)}
+                aria-label="Günlük hesabatı aç/bağla"
               />
             </div>
 
