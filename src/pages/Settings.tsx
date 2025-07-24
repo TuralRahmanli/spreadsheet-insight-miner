@@ -18,7 +18,7 @@ export default function Settings() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Parametrlər</h1>
-        <Button>
+        <Button aria-label="Dəyişiklikləri saxla">
           <Save className="mr-2 h-4 w-4" />
           Dəyişiklikləri saxla
         </Button>
@@ -136,6 +136,7 @@ export default function Settings() {
               variant={config.provider === 'local' ? 'default' : 'outline'}
               className="flex flex-col items-center gap-2 h-20"
               onClick={switchToLocal}
+              aria-label="Lokal cihazda saxla"
             >
               <HardDrive className="h-6 w-6" />
               <span>Lokal Cihaz</span>
@@ -147,6 +148,7 @@ export default function Settings() {
               className="flex flex-col items-center gap-2 h-20"
               onClick={config.googleDriveConnected ? switchToGoogleDrive : connectGoogleDrive}
               disabled={config.provider === 'google-drive' && config.googleDriveConnected}
+              aria-label={config.googleDriveConnected ? 'Google Drive istifadə et' : 'Google Drive-a qoşul'}
             >
               <Cloud className="h-6 w-6" />
               <span>
@@ -164,7 +166,12 @@ export default function Settings() {
                   Məlumatlarınız Google Drive-da saxlanılır
                 </p>
               </div>
-              <Button variant="outline" size="sm" onClick={disconnectGoogleDrive}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={disconnectGoogleDrive}
+                aria-label="Google Drive bağlantısını ayır"
+              >
                 Ayır
               </Button>
             </div>
@@ -190,6 +197,7 @@ export default function Settings() {
               variant="outline" 
               className="flex flex-col items-center gap-2 h-20"
               onClick={exportToFile}
+              aria-label="Məlumatları JSON faylı kimi yüklə"
             >
               <Download className="h-6 w-6" />
               <span>Məlumatları İxrac Et</span>
@@ -199,6 +207,7 @@ export default function Settings() {
               variant="outline" 
               className="flex flex-col items-center gap-2 h-20"
               onClick={shareData}
+              aria-label="Məlumatları digər cihazlara paylaş"
             >
               <Share className="h-6 w-6" />
               <span>Məlumatları Paylaş</span>
@@ -208,12 +217,17 @@ export default function Settings() {
               variant="outline" 
               className="flex flex-col items-center gap-2 h-20"
               onClick={triggerFileSelect}
+              aria-label="Digər cihazdan gələn məlumatları idxal et"
             >
               <Upload className="h-6 w-6" />
               <span>Məlumatları İdxal Et</span>
             </Button>
 
-            <Button variant="destructive" className="flex flex-col items-center gap-2 h-20">
+            <Button 
+              variant="destructive" 
+              className="flex flex-col items-center gap-2 h-20"
+              aria-label="Bütün məlumatları sil və sistemi sıfırla"
+            >
               <SettingsIcon className="h-6 w-6" />
               <span>Sistemə Sıfırla</span>
             </Button>
