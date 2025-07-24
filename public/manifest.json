@@ -1,32 +1,38 @@
 {
+  "id": "anbar-idareetme-sistemi",
   "name": "Anbar İdarəetmə Sistemi",
   "short_name": "Anbar Sistemi",
-  "description": "Anbar və inventar idarəetmə sistemi",
+  "description": "Anbar və inventar idarəetmə sistemi - məhsulları, anbarları və əməliyyatları idarə edin",
   "theme_color": "#16a34a",
-  "background_color": "#ffffff", 
+  "background_color": "#ffffff",
   "display": "standalone",
   "orientation": "portrait",
   "scope": "/",
   "start_url": "/",
   "lang": "az",
+  "dir": "ltr",
   "categories": ["business", "productivity"],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "screenshots": [],
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "/placeholder.svg",
-      "type": "image/svg+xml",
+      "src": "/icon-192x192.png",
       "sizes": "192x192",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/placeholder.svg", 
-      "type": "image/svg+xml",
+      "src": "/icon-512x512.png",
+      "sizes": "512x512", 
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "type": "image/png", 
+      "purpose": "any"
     }
   ]
 }
