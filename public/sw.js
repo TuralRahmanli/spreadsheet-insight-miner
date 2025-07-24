@@ -155,6 +155,19 @@ function storeOfflineAction(actionData) {
   });
 }
 
+// Message handler for storing offline actions
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'STORE_OFFLINE_ACTION') {
+    storeOfflineAction(event.data.action)
+      .then(() => {
+        console.log('Offline action stored successfully');
+      })
+      .catch(error => {
+        console.error('Failed to store offline action:', error);
+      });
+  }
+});
+
 // Push notifications
 self.addEventListener('push', (event) => {
   const options = {

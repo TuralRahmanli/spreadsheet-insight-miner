@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { NetworkStatus } from "./components/NetworkStatus";
+import { OfflineIndicator } from "./components/OfflineIndicator";
 import { PerformanceOverlay } from "./components/PerformanceMonitor";
 import { AccessibilityOverlay } from "./components/AccessibilityChecker";
 import Layout from "./components/Layout";
@@ -27,6 +28,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <NetworkStatus />
+        <OfflineIndicator />
         <PerformanceOverlay />
         <AccessibilityOverlay />
         <BrowserRouter>
