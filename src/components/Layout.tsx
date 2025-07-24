@@ -67,7 +67,7 @@ export default function Layout() {
   });
 
   return (
-    <div ref={swipeRef as any} className="min-h-screen w-full bg-muted/40">
+    <div ref={swipeRef as React.RefObject<HTMLDivElement>} className="min-h-screen w-full bg-muted/40">
       {/* Desktop Sidebar */}
       <div className="hidden border-r bg-muted/40 md:block md:w-64 md:fixed md:inset-y-0">
         <SidebarContent />

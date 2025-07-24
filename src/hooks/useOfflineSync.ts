@@ -4,7 +4,7 @@ import { useErrorHandler } from './useErrorHandler';
 interface OfflineAction {
   id?: number;
   type: string;
-  data: any;
+  data: Record<string, unknown>;
   timestamp: number;
   synced: boolean;
 }
@@ -17,7 +17,9 @@ export const useOfflineSync = () => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
         .then((registration) => {
-          console.log('Service Worker registered successfully:', registration);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Service Worker registered successfully:', registration);
+          }
           
           // Request persistent notification permission for background sync
           if ('Notification' in window && Notification.permission === 'default') {
@@ -32,7 +34,7 @@ export const useOfflineSync = () => {
   }, [handleError]);
 
   // Store action for offline sync
-  const storeOfflineAction = useCallback(async (type: string, data: any) => {
+  const storeOfflineAction = useCallback(async (type: string, data: Record<string, unknown>) => {
     try {
       if ('serviceWorker' in navigator) {
         const registration = await navigator.serviceWorker.ready;
@@ -58,10 +60,12 @@ export const useOfflineSync = () => {
           try {
             // Check if background sync is supported
             if ('sync' in registration) {
-              await (registration as any).sync.register('background-sync');
+              await (registration as ServiceWorkerRegistration & { sync: { register: (tag: string) => Promise<void> } }).sync.register('background-sync');
             }
           } catch (syncError) {
-            console.log('Background sync registration failed, will try on next online event');
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Background sync registration failed, will try on next online event');
+            }
           }
         }
       }
@@ -77,7 +81,7 @@ export const useOfflineSync = () => {
         const registration = await navigator.serviceWorker.ready;
         // Check if background sync is supported
         if ('sync' in registration) {
-          await (registration as any).sync.register('background-sync');
+          await (registration as ServiceWorkerRegistration & { sync: { register: (tag: string) => Promise<void> } }).sync.register('background-sync');
         }
       }
     } catch (error) {

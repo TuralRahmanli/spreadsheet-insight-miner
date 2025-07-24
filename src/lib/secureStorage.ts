@@ -25,7 +25,7 @@ export class SecureStorage {
     }
   }
 
-  static setItem(key: string, value: any, options: SecureStorageOptions = {}): boolean {
+  static setItem(key: string, value: unknown, options: SecureStorageOptions = {}): boolean {
     try {
       const { expiry } = options;
       
@@ -41,12 +41,14 @@ export class SecureStorage {
       localStorage.setItem(`${STORAGE_KEY}_${key}`, encodedData);
       return true;
     } catch (error) {
-      console.error(`Failed to store ${key}:`, error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error(`Failed to store ${key}:`, error);
+      }
       return false;
     }
   }
 
-  static getItem<T = any>(key: string): T | null {
+  static getItem<T = unknown>(key: string): T | null {
     try {
       const storedData = localStorage.getItem(`${STORAGE_KEY}_${key}`);
       
@@ -73,7 +75,9 @@ export class SecureStorage {
       localStorage.removeItem(`${STORAGE_KEY}_${key}`);
       return true;
     } catch (error) {
-      console.error(`Failed to remove ${key}:`, error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error(`Failed to remove ${key}:`, error);
+      }
       return false;
     }
   }
@@ -87,7 +91,9 @@ export class SecureStorage {
       keys.forEach(key => localStorage.removeItem(key));
       return true;
     } catch (error) {
-      console.error('Failed to clear storage:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to clear storage:', error);
+      }
       return false;
     }
   }

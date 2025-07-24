@@ -56,7 +56,7 @@ export default function Settings() {
     });
   };
 
-  const updateSetting = (key: keyof AppSettings, value: any) => {
+  const updateSetting = (key: keyof AppSettings, value: string | boolean | number) => {
     setSettings(prev => ({ ...prev, [key]: value }));
   };
 
@@ -309,7 +309,9 @@ export default function Settings() {
                     localStorage.clear();
                     window.location.reload();
                   } catch (error) {
-                    console.error("System reset failed:", error);
+                    if (process.env.NODE_ENV === 'development') {
+                      console.error("System reset failed:", error);
+                    }
                   }
                 }
               }}

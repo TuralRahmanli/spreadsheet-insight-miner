@@ -5,7 +5,7 @@ import { toast } from '@/hooks/use-toast';
 interface QueuedAction {
   id: string;
   type: 'ADD_PRODUCT' | 'UPDATE_PRODUCT' | 'DELETE_PRODUCT' | 'ADD_WAREHOUSE' | 'UPDATE_WAREHOUSE' | 'DELETE_WAREHOUSE' | 'ADD_OPERATION';
-  data: any;
+  data: Record<string, unknown>;
   timestamp: number;
   status: 'pending' | 'syncing' | 'failed';
 }
@@ -45,7 +45,7 @@ export const useOfflineQueue = () => {
   }, [triggerSync]);
 
   // Add action to offline queue
-  const addToQueue = useCallback(async (type: QueuedAction['type'], data: any) => {
+  const addToQueue = useCallback(async (type: QueuedAction['type'], data: Record<string, unknown>) => {
     const action: QueuedAction = {
       id: `${type}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       type,

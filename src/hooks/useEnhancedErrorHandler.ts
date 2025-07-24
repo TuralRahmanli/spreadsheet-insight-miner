@@ -82,9 +82,9 @@ export const useEnhancedErrorHandler = () => {
   const validateAndExecute = useCallback(async <T>(
     data: unknown,
     validator: (data: unknown) => data is T,
-    asyncFn: (validData: T) => Promise<any>,
+    asyncFn: (validData: T) => Promise<unknown>,
     details?: ErrorDetails
-  ): Promise<AsyncErrorResult<any>> => {
+  ): Promise<AsyncErrorResult<unknown>> => {
     try {
       if (!validator(data)) {
         throw new Error('Validation failed: Invalid data format');

@@ -35,7 +35,9 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       }
     } catch (error) {
       // A more advanced implementation would handle the error case
-      console.error(`Error setting localStorage key "${key}":`, error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error(`Error setting localStorage key "${key}":`, error);
+      }
     }
   };
 
@@ -47,7 +49,9 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
         window.localStorage.removeItem(key);
       }
     } catch (error) {
-      console.error(`Error clearing localStorage key "${key}":`, error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error(`Error clearing localStorage key "${key}":`, error);
+      }
     }
   };
 

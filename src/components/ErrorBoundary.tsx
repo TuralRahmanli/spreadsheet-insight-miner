@@ -23,8 +23,10 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: any) {
-    console.error("Error Boundary yakaladı:", error, errorInfo);
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error("Error Boundary yakaladı:", error, errorInfo);
+    }
   }
 
   handleReset = () => {

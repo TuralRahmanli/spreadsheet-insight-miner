@@ -8,7 +8,7 @@ import { toast } from '@/hooks/use-toast';
 export const useAppIntents = () => {
   const { processImportFile } = useAutoImport();
 
-  const handleAppUrlOpen = useCallback(async (data: any) => {
+  const handleAppUrlOpen = useCallback(async (data: { url: string }) => {
     try {
       const url = data.url;
       
@@ -49,10 +49,12 @@ export const useAppIntents = () => {
     }
   }, [processImportFile]);
 
-  const handleAppStateChange = useCallback(async (state: any) => {
+  const handleAppStateChange = useCallback(async (state: { isActive: boolean }) => {
     if (state.isActive) {
       // App became active, check for any pending file intents
-      console.log('App became active');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('App became active');
+      }
     }
   }, []);
 
