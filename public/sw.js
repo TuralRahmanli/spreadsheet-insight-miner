@@ -1,12 +1,34 @@
-const CACHE_NAME = 'anbar-sistemi-v1';
+const CACHE_NAME = 'anbar-sistemi-v2';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
+  '/manifest.json',
   '/icon-192x192.png',
-  '/icon-512x512.png'
+  '/icon-512x512.png',
+  '/src/main.tsx',
+  '/src/index.css'
 ];
+
+// IndexedDB setup for offline data
+const DB_NAME = 'anbar-offline-db';
+const DB_VERSION = 1;
+const STORE_NAME = 'offline-actions';
+
+function initDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result);
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+        store.createIndex('timestamp', 'timestamp', { unique: false });
+        store.createIndex('action', 'action', { unique: false });
+      }
+    };
+  });
+}
 
 // Install event - cache resources
 self.addEventListener('install', (event) => {
@@ -68,29 +90,68 @@ self.addEventListener('sync', (event) => {
 });
 
 function doBackgroundSync() {
-  return new Promise((resolve) => {
-    // Sync offline data when connection is restored
-    console.log('Background sync triggered - syncing offline data');
-    
-    // Get offline data from IndexedDB and sync with server
-    if ('indexedDB' in window) {
-      const request = indexedDB.open('anbar-offline-db', 1);
-      request.onsuccess = (event) => {
-        const db = event.target.result;
-        const transaction = db.transaction(['offline-actions'], 'readonly');
-        const store = transaction.objectStore('offline-actions');
-        const getAllRequest = store.getAll();
+  return initDB().then(db => {
+    return new Promise((resolve, reject) => {
+      console.log('Background sync triggered - syncing offline data');
+      
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const store = transaction.objectStore('offline-actions');
+      const getAllRequest = store.getAll();
+      
+      getAllRequest.onsuccess = () => {
+        const offlineActions = getAllRequest.result;
+        console.log('Syncing', offlineActions.length, 'offline actions');
         
-        getAllRequest.onsuccess = () => {
-          const offlineActions = getAllRequest.result;
-          // Process offline actions here
-          console.log('Syncing', offlineActions.length, 'offline actions');
-          resolve();
-        };
+        // Process each offline action
+        const syncPromises = offlineActions.map(action => {
+          return syncOfflineAction(action).then(() => {
+            // Remove synced action from offline store
+            return store.delete(action.id);
+          });
+        });
+        
+        Promise.all(syncPromises)
+          .then(() => resolve())
+          .catch(error => {
+            console.error('Sync failed:', error);
+            reject(error);
+          });
       };
-    } else {
-      resolve();
+      
+      getAllRequest.onerror = () => reject(getAllRequest.error);
+    });
+  });
+}
+
+// Function to sync individual offline actions
+function syncOfflineAction(action) {
+  return fetch('/api/sync-action', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(action)
+  }).then(response => {
+    if (!response.ok) {
+      throw new Error(`Sync failed: ${response.status}`);
     }
+    return response.json();
+  });
+}
+
+// Function to store offline actions
+function storeOfflineAction(actionData) {
+  return initDB().then(db => {
+    const transaction = db.transaction([STORE_NAME], 'readwrite');
+    const store = transaction.objectStore('offline-actions');
+    
+    const offlineAction = {
+      ...actionData,
+      timestamp: Date.now(),
+      synced: false
+    };
+    
+    return store.add(offlineAction);
   });
 }
 

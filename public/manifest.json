@@ -14,8 +14,29 @@
   "dir": "ltr",
   "categories": ["business", "productivity"],
   "prefer_related_applications": false,
-  "related_applications": [],
-  "screenshots": [],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.anbar.sistem",
+      "id": "com.anbar.sistem"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Anbar sistemi əsas səhifə"
+    },
+    {
+      "src": "/icon-512x512.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "Məhsul siyahısı"
+    }
+  ],
   "iarc_rating_id": "e84b072d-71de-4725-a5dd-a7d2343e5f0e",
   "scope_extensions": [{"origin": "*"}],
   "launch_handler": {
