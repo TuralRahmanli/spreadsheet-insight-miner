@@ -354,7 +354,7 @@ export default function ProductsList() {
         const firstRow = jsonData[0] as any;
         const availableColumns = Object.keys(firstRow);
         
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === 'development' && import.meta.env.DEV) {
           console.log("Available columns:", availableColumns);
         }
 
@@ -380,7 +380,7 @@ export default function ProductsList() {
             const unit = getColumnValue(['vahid', 'unit', 'ölçü', 'measure']) || 'ədəd';
             const description = getColumnValue(['təsvir', 'description', 'açıqlama', 'qeyd']);
 
-            if (process.env.NODE_ENV === 'development') {
+            if (process.env.NODE_ENV === 'development' && import.meta.env.DEV) {
               console.log(`Row ${index + 1}:`, { article, name, category, stockValue, unit });
             }
 
@@ -441,13 +441,13 @@ export default function ProductsList() {
         }
 
         if (errorMessages.length > 0 && errorMessages.length <= 5) {
-          if (process.env.NODE_ENV === 'development') {
+          if (process.env.NODE_ENV === 'development' && import.meta.env.DEV) {
             console.log("Import xətaları:", errorMessages);
           }
         }
 
       } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === 'development' && import.meta.env.DEV) {
           console.error("Excel import error:", error);
         }
         toast({
@@ -519,7 +519,10 @@ export default function ProductsList() {
             />
             <Button 
               variant="outline" 
-              onClick={() => document.getElementById('excel-upload')?.click()}
+              onClick={() => {
+                const uploadElement = document.getElementById('excel-upload') as HTMLInputElement;
+                uploadElement?.click();
+              }}
             >
               <Upload className="mr-2 h-4 w-4" />
               Excel Import

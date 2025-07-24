@@ -303,9 +303,14 @@ export default function Settings() {
               className="flex flex-col items-center gap-2 h-20"
               aria-label="Bütün məlumatları sil və sistemi sıfırla"
               onClick={() => {
-                if (confirm("Sistemi sıfırlamaq istədiyinizə əminsiniz? Bu əməliyyat geri alına bilməz!")) {
-                  localStorage.clear();
-                  window.location.reload();
+                const confirmed = window.confirm?.("Sistemi sıfırlamaq istədiyinizə əminsiniz? Bu əməliyyat geri alına bilməz!");
+                if (confirmed) {
+                  try {
+                    localStorage.clear();
+                    window.location.reload();
+                  } catch (error) {
+                    console.error("System reset failed:", error);
+                  }
                 }
               }}
             >
