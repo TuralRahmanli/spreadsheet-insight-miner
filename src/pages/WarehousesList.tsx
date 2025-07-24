@@ -28,7 +28,7 @@ export default function WarehousesList() {
     ? [{
         name: selectedWarehouse,
         products: products.filter(p => 
-          p.warehouses.includes(selectedWarehouse) &&
+          p.warehouses?.includes(selectedWarehouse) &&
           (p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
            p.article.toLowerCase().includes(searchTerm.toLowerCase()))
         )
@@ -36,7 +36,7 @@ export default function WarehousesList() {
     : allWarehouses.map(warehouse => ({
         name: warehouse,
         products: products.filter(p => 
-          p.warehouses.includes(warehouse) &&
+          p.warehouses?.includes(warehouse) &&
           (p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
            p.article.toLowerCase().includes(searchTerm.toLowerCase()))
         )
@@ -205,7 +205,7 @@ export default function WarehousesList() {
       {!selectedWarehouse && allWarehouses.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           {allWarehouses.map(warehouse => {
-            const warehouseProducts = products.filter(p => p.warehouses.includes(warehouse));
+            const warehouseProducts = products.filter(p => p.warehouses?.includes(warehouse));
             const totalStock = warehouseProducts.reduce((sum, p) => sum + p.stock, 0);
             
             return (
@@ -279,8 +279,8 @@ export default function WarehousesList() {
                       <TableCell>
                         <div className="flex gap-1 flex-wrap">
                           {product.warehouses
-                            .filter(w => w !== warehouse.name)
-                             .map((otherWarehouse, index) => (
+                            ?.filter(w => w !== warehouse.name)
+                            .map((otherWarehouse, index) => (
                               <Badge 
                                 key={`${product.id}-other-warehouse-${otherWarehouse}-${index}`} 
                                 variant="secondary" 
@@ -290,7 +290,7 @@ export default function WarehousesList() {
                                 {otherWarehouse}
                               </Badge>
                             ))}
-                          {product.warehouses.filter(w => w !== warehouse.name).length === 0 && (
+                          {(product.warehouses?.filter(w => w !== warehouse.name).length || 0) === 0 && (
                             <span className="text-muted-foreground text-sm">Yalnız bu anbarda</span>
                           )}
                         </div>
