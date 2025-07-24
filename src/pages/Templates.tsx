@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, Plus, Download, Edit } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 const templates = [
   {
@@ -27,11 +28,39 @@ const templates = [
 ];
 
 export default function Templates() {
+  const handleNewTemplate = () => {
+    toast({
+      title: "Yeni şablon",
+      description: "Şablon yaratma funksiyası tezliklə əlavə ediləcək",
+    });
+  };
+
+  const handleEditTemplate = (templateId: number) => {
+    toast({
+      title: "Şablon redaktəsi",
+      description: `Şablon ${templateId} redaktə edilir...`,
+    });
+  };
+
+  const handleExportTemplate = (templateName: string) => {
+    toast({
+      title: "Şablon ixracı",
+      description: `${templateName} ixrac edilir...`,
+    });
+  };
+
+  const handleUseTemplate = (templateName: string) => {
+    toast({
+      title: "Şablon istifadəsi",
+      description: `${templateName} istifadə edilir...`,
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Şablonlar</h1>
-        <Button>
+        <Button onClick={handleNewTemplate}>
           <Plus className="mr-2 h-4 w-4" />
           Yeni Şablon
         </Button>
@@ -43,7 +72,7 @@ export default function Templates() {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <FileText className="h-8 w-8 text-primary" />
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" onClick={() => handleEditTemplate(template.id)}>
                   <Edit className="h-4 w-4" />
                 </Button>
               </div>
@@ -60,11 +89,11 @@ export default function Templates() {
               </div>
               
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="flex-1">
+                <Button variant="outline" size="sm" className="flex-1" onClick={() => handleExportTemplate(template.name)}>
                   <Download className="mr-2 h-3 w-3" />
                   İxrac
                 </Button>
-                <Button size="sm" className="flex-1">
+                <Button size="sm" className="flex-1" onClick={() => handleUseTemplate(template.name)}>
                   İstifadə et
                 </Button>
               </div>

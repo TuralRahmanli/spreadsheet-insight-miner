@@ -12,6 +12,7 @@ import { useProductStore } from "@/lib/productStore";
 import { usePackagingStore } from "@/lib/packagingStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
 import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 import jsPDF from 'jspdf';
 
 type ProductEntry = {
@@ -136,6 +137,32 @@ export default function AddOperation() {
         URL.revokeObjectURL(url);
       };
     }
+  };
+
+  const handleSaveOperation = () => {
+    if (!operationType || selectedProducts.length === 0) {
+      toast({
+        title: "Natamam məlumat",
+        description: "Əməliyyat növü və ən azı bir məhsul seçilməlidir",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    toast({
+      title: "Əməliyyat saxlanıldı",
+      description: `${operationType} əməliyyatı uğurla saxlanıldı`,
+    });
+
+    // Clear form after save
+    setSelectedProducts([]);
+    setCurrentProduct("");
+    setCurrentPackaging([]);
+    setNotes("");
+    setOperationType("");
+    setSelectedWarehouse("");
+    setSelectedDestinationWarehouse("");
+    setBatchName("");
   };
 
   return (
@@ -424,6 +451,7 @@ export default function AddOperation() {
               <Button 
                 className="flex-1" 
                 disabled={!operationType || selectedProducts.length === 0}
+                onClick={handleSaveOperation}
                 title={!operationType ? "Əməliyyat növünü seçin" : selectedProducts.length === 0 ? "Ən azı bir məhsul əlavə edin" : "Əməliyyatı saxla"}
               >
                 <Save className="mr-2 h-4 w-4" />

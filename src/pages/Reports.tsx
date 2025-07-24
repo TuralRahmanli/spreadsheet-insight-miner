@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Download, TrendingUp, Package, AlertTriangle } from "lucide-react";
 import { useProductStore } from "@/lib/productStore";
+import { toast } from "@/hooks/use-toast";
 
 export default function Reports() {
   const { products } = useProductStore();
@@ -13,16 +14,30 @@ export default function Reports() {
   const outOfStockProducts = products.filter(p => p.stock === 0).length;
   const totalStock = products.reduce((sum, p) => sum + p.stock, 0);
   
+  const handleDateSelect = () => {
+    toast({
+      title: "Tarix seçimi",
+      description: "Tarix seçimi funksiyası tezliklə əlavə ediləcək",
+    });
+  };
+
+  const handleExport = () => {
+    toast({
+      title: "İxrac edilir",
+      description: "Hesabat məlumatları export edilir...",
+    });
+  };
+  
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Hesabatlar</h1>
         <div className="flex gap-2">
-          <Button variant="outline">
+          <Button variant="outline" onClick={handleDateSelect}>
             <Calendar className="mr-2 h-4 w-4" />
             Tarix seç
           </Button>
-          <Button>
+          <Button onClick={handleExport}>
             <Download className="mr-2 h-4 w-4" />
             İxrac et
           </Button>

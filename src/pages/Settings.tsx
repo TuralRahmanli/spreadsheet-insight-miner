@@ -299,6 +299,12 @@ export default function Settings() {
               variant="destructive" 
               className="flex flex-col items-center gap-2 h-20"
               aria-label="Bütün məlumatları sil və sistemi sıfırla"
+              onClick={() => {
+                if (confirm("Sistemi sıfırlamaq istədiyinizə əminsiniz? Bu əməliyyat geri alına bilməz!")) {
+                  localStorage.clear();
+                  window.location.reload();
+                }
+              }}
             >
               <SettingsIcon className="h-6 w-6" />
               <span>Sistemə Sıfırla</span>
