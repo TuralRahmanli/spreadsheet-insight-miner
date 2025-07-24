@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,17 +9,62 @@ import { Settings as SettingsIcon, Save, Download, Upload, Cloud, HardDrive, Che
 import { useStorageProvider } from "@/hooks/useStorageProvider";
 import { useDataExport } from "@/hooks/useDataExport";
 import { useAutoImport } from "@/hooks/useAutoImport";
+import { toast } from "@/hooks/use-toast";
+
+interface AppSettings {
+  companyName: string;
+  language: string;
+  timezone: string;
+  lowStockAlert: boolean;
+  emailNotifications: boolean;
+  dailyReport: boolean;
+  email: string;
+  lowStockLimit: number;
+}
 
 export default function Settings() {
   const { config, switchToLocal, switchToGoogleDrive, connectGoogleDrive, disconnectGoogleDrive } = useStorageProvider();
   const { exportToFile, shareData } = useDataExport();
   const { triggerFileSelect } = useAutoImport();
 
+  // Settings state
+  const [settings, setSettings] = useState<AppSettings>({
+    companyName: "",
+    language: "az",
+    timezone: "baku",
+    lowStockAlert: true,
+    emailNotifications: false,
+    dailyReport: true,
+    email: "",
+    lowStockLimit: 10,
+  });
+
+  // Load settings from localStorage on mount
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('app-settings');
+    if (savedSettings) {
+      setSettings(JSON.parse(savedSettings));
+    }
+  }, []);
+
+  // Save settings function
+  const saveSettings = () => {
+    localStorage.setItem('app-settings', JSON.stringify(settings));
+    toast({
+      title: "Parametrlər saxlanıldı",
+      description: "Bütün dəyişikliklər uğurla saxlanıldı",
+    });
+  };
+
+  const updateSetting = (key: keyof AppSettings, value: any) => {
+    setSettings(prev => ({ ...prev, [key]: value }));
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Parametrlər</h1>
-        <Button aria-label="Dəyişiklikləri saxla">
+        <Button aria-label="Dəyişiklikləri saxla" onClick={saveSettings}>
           <Save className="mr-2 h-4 w-4" />
           Dəyişiklikləri saxla
         </Button>
@@ -35,12 +81,17 @@ export default function Settings() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="company-name">Şirkət Adı</Label>
-              <Input id="company-name" placeholder="Şirkət adınızı daxil edin" />
+              <Input 
+                id="company-name" 
+                placeholder="Şirkət adınızı daxil edin"
+                value={settings.companyName}
+                onChange={(e) => updateSetting('companyName', e.target.value)}
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="language">Dil</Label>
-              <Select defaultValue="az">
+              <Select value={settings.language} onValueChange={(value) => updateSetting('language', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -54,7 +105,7 @@ export default function Settings() {
 
             <div className="space-y-2">
               <Label htmlFor="timezone">Vaxt Zonası</Label>
-              <Select defaultValue="baku">
+              <Select value={settings.timezone} onValueChange={(value) => updateSetting('timezone', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -80,7 +131,10 @@ export default function Settings() {
                   Məhsul azaldıqda bildiriş göndər
                 </p>
               </div>
-              <Switch defaultChecked />
+              <Switch 
+                checked={settings.lowStockAlert}
+                onCheckedChange={(checked) => updateSetting('lowStockAlert', checked)}
+              />
             </div>
 
             <div className="flex items-center justify-between">
@@ -90,7 +144,10 @@ export default function Settings() {
                   Email vasitəsilə xəbərdarlıq al
                 </p>
               </div>
-              <Switch />
+              <Switch 
+                checked={settings.emailNotifications}
+                onCheckedChange={(checked) => updateSetting('emailNotifications', checked)}
+              />
             </div>
 
             <div className="flex items-center justify-between">
@@ -100,17 +157,32 @@ export default function Settings() {
                   Hər gün inventar hesabatı al
                 </p>
               </div>
-              <Switch defaultChecked />
+              <Switch 
+                checked={settings.dailyReport}
+                onCheckedChange={(checked) => updateSetting('dailyReport', checked)}
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="email">Email ünvanı</Label>
-              <Input id="email" type="email" placeholder="email@example.com" />
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="email@example.com"
+                value={settings.email}
+                onChange={(e) => updateSetting('email', e.target.value)}
+              />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="low-stock-limit">Az qalma həddi</Label>
-              <Input id="low-stock-limit" type="number" placeholder="10" />
+              <Input 
+                id="low-stock-limit" 
+                type="number" 
+                placeholder="10"
+                value={settings.lowStockLimit}
+                onChange={(e) => updateSetting('lowStockLimit', parseInt(e.target.value) || 0)}
+              />
             </div>
           </CardContent>
         </Card>
