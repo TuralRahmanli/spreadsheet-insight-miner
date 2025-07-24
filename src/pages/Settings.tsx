@@ -4,11 +4,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Settings as SettingsIcon, Save, Download, Upload, Cloud, HardDrive, CheckCircle } from "lucide-react";
+import { Settings as SettingsIcon, Save, Download, Upload, Cloud, HardDrive, CheckCircle, Share } from "lucide-react";
 import { useStorageProvider } from "@/hooks/useStorageProvider";
+import { useDataExport } from "@/hooks/useDataExport";
+import { useAutoImport } from "@/hooks/useAutoImport";
 
 export default function Settings() {
   const { config, switchToLocal, switchToGoogleDrive, connectGoogleDrive, disconnectGoogleDrive } = useStorageProvider();
+  const { exportToFile, shareData } = useDataExport();
+  const { triggerFileSelect } = useAutoImport();
 
   return (
     <div className="space-y-6">
@@ -181,13 +185,30 @@ export default function Settings() {
           <CardTitle>Məlumatların İdarə Edilməsi</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
-            <Button variant="outline" className="flex flex-col items-center gap-2 h-20">
+          <div className="grid gap-4 md:grid-cols-4">
+            <Button 
+              variant="outline" 
+              className="flex flex-col items-center gap-2 h-20"
+              onClick={exportToFile}
+            >
               <Download className="h-6 w-6" />
               <span>Məlumatları İxrac Et</span>
             </Button>
 
-            <Button variant="outline" className="flex flex-col items-center gap-2 h-20">
+            <Button 
+              variant="outline" 
+              className="flex flex-col items-center gap-2 h-20"
+              onClick={shareData}
+            >
+              <Share className="h-6 w-6" />
+              <span>Məlumatları Paylaş</span>
+            </Button>
+
+            <Button 
+              variant="outline" 
+              className="flex flex-col items-center gap-2 h-20"
+              onClick={triggerFileSelect}
+            >
               <Upload className="h-6 w-6" />
               <span>Məlumatları İdxal Et</span>
             </Button>
@@ -199,11 +220,12 @@ export default function Settings() {
           </div>
 
           <div className="mt-6 p-4 bg-muted rounded-lg">
-            <h4 className="font-medium mb-2">Məlumat Təhlükəsizliyi</h4>
-            <p className="text-sm text-muted-foreground">
-              Bütün məlumatlarınız yerli cihazınızda saxlanılır və heç bir xarici serverlə paylaşılmır. 
-              Məlumatlarınızın təhlükəsizliyi bizim əsas prioritetimizdir.
-            </p>
+            <h4 className="font-medium mb-2">Məlumat Paylaşması</h4>
+            <div className="text-sm text-muted-foreground space-y-1">
+              <p><strong>İxrac Et:</strong> Məlumatları JSON faylı kimi yüklə</p>
+              <p><strong>Paylaş:</strong> Android Quick Share, Bluetooth və ya WiFi vasitəsilə başqa cihaza göndər</p>
+              <p><strong>İdxal Et:</strong> Başqa cihazdan gələn JSON faylını avtomatik tanıyıb import et</p>
+            </div>
           </div>
         </CardContent>
       </Card>
