@@ -79,11 +79,11 @@ export const useOperationHistory = () => {
 
   const getOperationIcon = (type: string) => {
     switch (type) {
-      case 'daxil': return '📥';
-      case 'xaric': return '📤'; 
-      case 'satış': return '💰';
-      case 'transfer': return '🔄';
-      default: return '📋';
+      case 'daxil': return 'daxil';
+      case 'xaric': return 'xaric'; 
+      case 'satış': return 'satış';
+      case 'transfer': return 'transfer';
+      default: return 'default';
     }
   };
 

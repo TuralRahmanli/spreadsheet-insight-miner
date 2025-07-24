@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useProductStore } from "@/lib/productStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
 import { PerformanceCard } from "@/components/PerformanceCard";
+import { OperationIcon } from "@/components/OperationIcon";
 import { useOperationHistory } from "@/hooks/useOperationHistory";
 import { useMemo } from "react";
 
@@ -113,9 +114,9 @@ const Index = () => {
                 {operations.slice(0, 3).map((operation) => (
                   <div key={operation.id} className="flex items-center justify-between py-2">
                     <div>
-                      <p className="font-medium">
-                        {getOperationIcon(operation.type)} {operation.productName} - {operation.type}
-                      </p>
+                       <p className="font-medium">
+                         <OperationIcon type={operation.type} /> {operation.productName} - {operation.type}
+                       </p>
                       <p className="text-sm text-muted-foreground">
                         {formatTimestamp(operation.timestamp)}
                       </p>
