@@ -79,6 +79,33 @@
   "edge_side_panel": {
     "preferred_width": 400
   },
+  "widgets": [
+    {
+      "name": "Anbar Özəti",
+      "short_name": "Özət",
+      "description": "Anbar vəziyyətinin qısa özəti",
+      "tag": "anbar_summary",
+      "template": "anbar_summary",
+      "ms_ac_template": "anbar_summary",
+      "data": "/api/widget-data",
+      "type": "application/json",
+      "auth": false,
+      "update": 300,
+      "icons": [
+        {
+          "src": "/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ],
+      "screenshots": [
+        {
+          "src": "/icon-512x512.png",
+          "sizes": "512x512",
+          "label": "Anbar widget görünümü"
+        }
+      ]
+    }
+  ],
   "icons": [
     {
       "src": "/icon-192x192.png",

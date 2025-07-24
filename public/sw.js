@@ -68,8 +68,30 @@ self.addEventListener('sync', (event) => {
 });
 
 function doBackgroundSync() {
-  // Handle offline data synchronization
-  console.log('Background sync triggered');
+  return new Promise((resolve) => {
+    // Sync offline data when connection is restored
+    console.log('Background sync triggered - syncing offline data');
+    
+    // Get offline data from IndexedDB and sync with server
+    if ('indexedDB' in window) {
+      const request = indexedDB.open('anbar-offline-db', 1);
+      request.onsuccess = (event) => {
+        const db = event.target.result;
+        const transaction = db.transaction(['offline-actions'], 'readonly');
+        const store = transaction.objectStore('offline-actions');
+        const getAllRequest = store.getAll();
+        
+        getAllRequest.onsuccess = () => {
+          const offlineActions = getAllRequest.result;
+          // Process offline actions here
+          console.log('Syncing', offlineActions.length, 'offline actions');
+          resolve();
+        };
+      };
+    } else {
+      resolve();
+    }
+  });
 }
 
 // Push notifications
