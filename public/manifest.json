@@ -6,6 +6,7 @@
   "theme_color": "#16a34a",
   "background_color": "#ffffff",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "portrait",
   "scope": "/",
   "start_url": "/",
@@ -15,6 +16,69 @@
   "prefer_related_applications": false,
   "related_applications": [],
   "screenshots": [],
+  "iarc_rating_id": "e84b072d-71de-4725-a5dd-a7d2343e5f0e",
+  "scope_extensions": [{"origin": "*"}],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+        "text/csv": [".csv"]
+      }
+    }
+  ],
+  "handle_links": "preferred",
+  "protocol_handlers": [
+    {
+      "protocol": "web+anbar",
+      "url": "/?protocol=%s"
+    }
+  ],
+  "share_target": {
+    "action": "/",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "file",
+          "accept": ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "text/csv"]
+        }
+      ]
+    }
+  },
+  "shortcuts": [
+    {
+      "name": "Məhsullar",
+      "short_name": "Məhsullar",
+      "description": "Məhsul siyahısını aç",
+      "url": "/products-list",
+      "icons": [{"src": "/icon-192x192.png", "sizes": "192x192"}]
+    },
+    {
+      "name": "Anbarlar",
+      "short_name": "Anbarlar", 
+      "description": "Anbar siyahısını aç",
+      "url": "/warehouses",
+      "icons": [{"src": "/icon-192x192.png", "sizes": "192x192"}]
+    },
+    {
+      "name": "Əməliyyat əlavə et",
+      "short_name": "Əlavə et",
+      "description": "Yeni əməliyyat əlavə et",
+      "url": "/add",
+      "icons": [{"src": "/icon-192x192.png", "sizes": "192x192"}]
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
   "icons": [
     {
       "src": "/icon-192x192.png",
