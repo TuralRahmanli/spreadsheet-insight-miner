@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
-import { useSwipeGesture } from "@/hooks/useSwipeGesture";
+
 
 const sidebarItems = [
   { title: "Ana Səhifə", href: "/", icon: Home },
@@ -60,14 +60,8 @@ const SidebarContent = ({ isMobile = false, onItemClick }: { isMobile?: boolean;
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const swipeRef = useSwipeGesture({
-    onSwipeRight: () => setSidebarOpen(true),
-    onSwipeLeft: () => setSidebarOpen(false),
-    threshold: 50
-  });
-
   return (
-    <div ref={swipeRef as React.RefObject<HTMLDivElement>} className="min-h-screen w-full bg-muted/40">
+    <div className="min-h-screen w-full bg-muted/40">
       {/* Desktop Sidebar */}
       <div className="hidden border-r bg-muted/40 md:block md:w-64 md:fixed md:inset-y-0">
         <SidebarContent />
