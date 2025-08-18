@@ -68,7 +68,7 @@ export default function ProductsList() {
     artikul: true,
     name: true,
     category: true,
-    warehouses: true,
+    location: true,
     total: true,
     status: true,
     packaging: true,
@@ -79,7 +79,7 @@ export default function ProductsList() {
     'artikul',
     'name', 
     'category',
-    'warehouses',
+    'location',
     'total',
     'status',
     'packaging',
@@ -178,7 +178,7 @@ export default function ProductsList() {
     artikul: 'Artikul',
     name: 'Məhsul Adı',
     category: 'Kateqoriya',
-    warehouses: 'Anbar Miqdarları',
+    location: 'Yerləşmə',
     total: 'Ümumi Miqdar',
     status: 'Vəziyyət',
     packaging: 'Paketləşdirmə',
@@ -222,14 +222,28 @@ export default function ProductsList() {
             <Badge variant="outline">{product.category}</Badge>
           </TableCell>
         );
-      case 'warehouses':
-        return allWarehouses.map((warehouse, warehouseIndex) => (
-          <TableCell key={`${product.id}-${warehouse}-${warehouseIndex}`}>
-            <span className="font-medium">
-              {product.warehouses?.includes(warehouse) ? `0 ${product.unit}` : '-'}
-            </span>
+      case 'location':
+        return (
+          <TableCell>
+            <div className="flex gap-1 flex-wrap">
+              {product.warehouses && product.warehouses.length > 0 ? (
+                product.warehouses.map((warehouse, index) => (
+                  <Button
+                    key={`${product.id}-warehouse-${warehouse}-${index}`}
+                    variant="outline"
+                    size="sm"
+                    className="h-6 px-2 text-xs cursor-pointer hover:bg-primary hover:text-primary-foreground"
+                    onClick={() => navigate(`/warehouses/${warehouse}`)}
+                  >
+                    {warehouse}
+                  </Button>
+                ))
+              ) : (
+                <span className="text-muted-foreground text-sm">Anbar təyin edilməyib</span>
+              )}
+            </div>
           </TableCell>
-        ));
+        );
       case 'total':
         return (
           <TableCell>
@@ -854,18 +868,13 @@ export default function ProductsList() {
                   {columnOrder.map(columnId => {
                     if (!columnVisibility[columnId as keyof typeof columnVisibility]) return null;
                     
-                    if (columnId === 'warehouses') {
-                      return allWarehouses.map(warehouse => (
-                        <TableHead key={warehouse} className="min-w-[120px]">{warehouse}</TableHead>
-                      ));
-                    }
-                    
                     return (
                       <TableHead 
                         key={columnId} 
                         className={
                           columnId === 'name' ? 'min-w-[200px]' : 
                           columnId === 'description' ? 'min-w-[150px]' : 
+                          columnId === 'location' ? 'min-w-[180px]' :
                           'min-w-[100px]'
                         }
                       >
@@ -880,7 +889,7 @@ export default function ProductsList() {
                 {filteredProducts.length === 0 ? (
                   <TableRow>
                     <TableCell 
-                      colSpan={columnOrder.filter(c => columnVisibility[c as keyof typeof columnVisibility]).length + allWarehouses.length + 1} 
+                      colSpan={columnOrder.filter(c => columnVisibility[c as keyof typeof columnVisibility]).length + 1} 
                       className="text-center py-8 text-muted-foreground"
                     >
                       <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
