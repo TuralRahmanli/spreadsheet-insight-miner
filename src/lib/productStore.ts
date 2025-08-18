@@ -2,12 +2,14 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Product } from '@/types';
+import { useWarehouseStockStore } from './warehouseStockStore';
 
 interface ProductStore {
   products: Product[];
   addProduct: (product: Product) => void;
   removeProduct: (productId: string) => void;
   updateProduct: (productId: string, updates: Partial<Product>) => void;
+  updateWarehouseStock: (productId: string, warehouseName: string, quantity: number, operation: 'increase' | 'decrease') => void;
   getProducts: () => Product[];
   clearAllProducts: () => void;
   isLoading: boolean;
@@ -154,6 +156,39 @@ export const useProductStore = create<ProductStore>()(
             p.id === productId ? { ...p, ...updates } : p
           ) 
         })),
+      updateWarehouseStock: (productId, warehouseName, quantity, operation) =>
+        set((state) => {
+          // Update warehouse stock store
+          const warehouseStockStore = useWarehouseStockStore.getState();
+          const currentStock = warehouseStockStore.getProductStock(productId, warehouseName);
+          const newWarehouseStock = operation === 'increase' 
+            ? currentStock + quantity 
+            : Math.max(0, currentStock - quantity);
+          warehouseStockStore.updateStock(productId, warehouseName, newWarehouseStock);
+
+          return {
+            products: state.products.map(p => {
+              if (p.id === productId) {
+                // Add warehouse to product if not already present
+                const updatedWarehouses = p.warehouses?.includes(warehouseName) 
+                  ? p.warehouses 
+                  : [...(p.warehouses || []), warehouseName];
+                
+                // Update total stock based on operation
+                const newStock = operation === 'increase' 
+                  ? p.stock + quantity 
+                  : Math.max(0, p.stock - quantity);
+                
+                return {
+                  ...p,
+                  warehouses: updatedWarehouses,
+                  stock: newStock
+                };
+              }
+              return p;
+            })
+          };
+        }),
       getProducts: () => get().products,
       clearAllProducts: () => set({ products: [] }),
     }),

@@ -22,7 +22,7 @@ type ProductEntry = {
 };
 
 export default function AddOperation() {
-  const { products } = useProductStore();
+  const { products, updateWarehouseStock } = useProductStore();
   const { packagingOptions, addPackagingOption } = usePackagingStore();
   const { warehouses } = useWarehouseStore();
   const { addOperation } = useOperationHistory();
@@ -151,23 +151,39 @@ export default function AddOperation() {
       return;
     }
 
-    // Add operations to history for each product
+    // Add operations to history and update product store for each product
     selectedProducts.forEach(productEntry => {
       const product = products.find(p => p.id === productEntry.productId);
       if (product) {
         const totalQuantity = getProductTotalQuantity(productEntry.packaging);
+        const warehouse = selectedWarehouse || 'Anbar 1';
+        
+        // Add to operation history
         addOperation({
           type: operationType as 'daxil' | 'xaric' | 'satış' | 'transfer' | 'əvvəldən_qalıq',
           productName: product.name,
           quantity: totalQuantity,
-          warehouse: selectedWarehouse || 'Anbar 1'
+          warehouse: warehouse
         });
+
+        // Update product stock based on operation type
+        if (operationType === 'incoming' || operationType === 'əvvəldən_qalıq') {
+          updateWarehouseStock(product.id, warehouse, totalQuantity, 'increase');
+        } else if (operationType === 'outgoing' || operationType === 'sale') {
+          updateWarehouseStock(product.id, warehouse, totalQuantity, 'decrease');
+        } else if (operationType === 'transfer') {
+          // Transfer from source to destination
+          if (selectedDestinationWarehouse) {
+            updateWarehouseStock(product.id, warehouse, totalQuantity, 'decrease');
+            updateWarehouseStock(product.id, selectedDestinationWarehouse, totalQuantity, 'increase');
+          }
+        }
       }
     });
 
     toast({
       title: "Əməliyyat saxlanıldı",
-      description: `${operationType} əməliyyatı uğurla saxlanıldı və tarixçəyə əlavə edildi`,
+      description: `${operationType} əməliyyatı uğurla saxlanıldı və məhsul miqdarları yeniləndi`,
     });
 
     // Clear form after save

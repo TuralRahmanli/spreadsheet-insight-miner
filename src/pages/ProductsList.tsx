@@ -15,6 +15,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from "@/hooks/use-toast";
 import { useProductStore } from "@/lib/productStore";
+import { useWarehouseStockStore } from "@/lib/warehouseStockStore";
 import { sanitizeString, sanitizeNumber } from "@/lib/validation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Product } from "@/types";
@@ -33,6 +34,7 @@ const getStatusBadge = (status: string, stock: number) => {
 export default function ProductsList() {
   const navigate = useNavigate();
   const { products, addProduct, removeProduct, updateProduct } = useProductStore();
+  const { getProductStock } = useWarehouseStockStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
     status: "all",
@@ -268,10 +270,9 @@ export default function ProductsList() {
       const warehouseName = columnId.replace('warehouse_', '');
       const isProductInWarehouse = product.warehouses?.includes(warehouseName);
       
-      // For demo purposes, distribute stock evenly across warehouses
-      // In a real app, this would come from a separate warehouse-stock mapping
+      // Get actual stock from warehouse stock store
       const warehouseQuantity = isProductInWarehouse 
-        ? Math.floor(product.stock / Math.max(product.warehouses.length, 1))
+        ? getProductStock(product.id, warehouseName)
         : 0;
       
       return (
