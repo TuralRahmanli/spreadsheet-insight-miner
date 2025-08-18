@@ -70,10 +70,11 @@ const Index = () => {
         />
 
         <PerformanceCard
-          title="Bu Həftə"
+          title="Bitmiş"
           value={statistics.outOfStockProducts}
-          description="Bitmiş məhsul"
-          icon={<Activity className="h-4 w-4 text-muted-foreground" />}
+          description="Stokda qalmayan"
+          icon={<Activity className="h-4 w-4 text-destructive" />}
+          className="text-destructive"
         />
       </div>
 
@@ -96,8 +97,8 @@ const Index = () => {
               </Link>
             </Button>
             <Button variant="outline" className="w-full justify-between" asChild>
-              <Link to="/templates">
-                Şablonları idarə et
+              <Link to="/settings">
+                Sistem parametrləri
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>

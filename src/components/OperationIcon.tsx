@@ -1,23 +1,23 @@
-import { Download, Upload, DollarSign, ArrowRightLeft, FileText, Package } from 'lucide-react';
+import { ArrowDown, ArrowUp, ShoppingCart, ArrowRightLeft, Package } from "lucide-react";
 
 interface OperationIconProps {
   type: string;
   className?: string;
 }
 
-export const OperationIcon = ({ type, className = "h-4 w-4 inline mr-1" }: OperationIconProps) => {
+export const OperationIcon = ({ type, className = "h-4 w-4" }: OperationIconProps) => {
   switch (type) {
-    case 'daxil': 
-      return <Download className={className} />;
-    case 'xaric': 
-      return <Upload className={className} />; 
-    case 'satış': 
-      return <DollarSign className={className} />;
-    case 'transfer': 
-      return <ArrowRightLeft className={className} />;
-    case 'əvvəldən_qalıq': 
-      return <Package className={className} />;
-    default: 
-      return <FileText className={className} />;
+    case 'daxil':
+      return <ArrowDown className={`${className} text-success`} />;
+    case 'xaric':
+      return <ArrowUp className={`${className} text-warning`} />;
+    case 'satış':
+      return <ShoppingCart className={`${className} text-info`} />;
+    case 'transfer':
+      return <ArrowRightLeft className={`${className} text-muted-foreground`} />;
+    case 'əvvəldən_qalıq':
+      return <Package className={`${className} text-primary`} />;
+    default:
+      return <Package className={`${className} text-foreground`} />;
   }
 };

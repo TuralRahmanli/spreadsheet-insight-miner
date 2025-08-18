@@ -142,10 +142,38 @@ export default function AddOperation() {
   };
 
   const handleSaveOperation = () => {
-    if (!operationType || selectedProducts.length === 0) {
+    // Validation
+    if (!operationType) {
       toast({
         title: "Natamam məlumat",
-        description: "Əməliyyat növü və ən azı bir məhsul seçilməlidir",
+        description: "Əməliyyat növünü seçin",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (selectedProducts.length === 0) {
+      toast({
+        title: "Natamam məlumat", 
+        description: "Ən azı bir məhsul əlavə edin",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if ((operationType === 'incoming' || operationType === 'əvvəldən_qalıq' || operationType === 'transfer') && !selectedWarehouse) {
+      toast({
+        title: "Natamam məlumat",
+        description: "Anbar seçin",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (operationType === 'transfer' && !selectedDestinationWarehouse) {
+      toast({
+        title: "Natamam məlumat",
+        description: "Təyinat anbarını seçin", 
         variant: "destructive",
       });
       return;

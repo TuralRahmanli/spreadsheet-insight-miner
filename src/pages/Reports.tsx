@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Download, TrendingUp, Package, AlertTriangle } from "lucide-react";
 import { useProductStore } from "@/lib/productStore";
 import { useOperationHistory } from "@/hooks/useOperationHistory";
+import { OperationIcon } from "@/components/OperationIcon";
 import { toast } from "@/hooks/use-toast";
 
 export default function Reports() {
@@ -153,8 +154,8 @@ export default function Reports() {
                 {operations.map((operation) => (
                   <div key={operation.id} className="flex items-center justify-between py-2 border-b last:border-b-0">
                     <div>
-                      <p className="font-medium">
-                        {getOperationIcon(operation.type)} {operation.productName} - {operation.type}
+                      <p className="font-medium flex items-center gap-2">
+                        <OperationIcon type={operation.type} /> {operation.productName} - {operation.type}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {formatTimestamp(operation.timestamp)}

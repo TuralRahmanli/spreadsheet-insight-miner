@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "./components/ThemeProvider";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { NetworkStatus } from "./components/NetworkStatus";
 import { OfflineIndicator } from "./components/OfflineIndicator";
@@ -15,7 +16,6 @@ import { LoadingSpinner } from "./components/LoadingSpinner";
 
 // Lazy load pages for better performance
 const Index = lazy(() => import("./pages/Index"));
-const Products = lazy(() => import("./pages/Products"));
 const ProductsList = lazy(() => import("./pages/ProductsList"));
 const Reports = lazy(() => import("./pages/Reports"));
 
@@ -31,19 +31,19 @@ const AppContent = () => {
   useAppIntents();
 
   return (
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <NetworkStatus />
-      <OfflineIndicator />
-      <PerformanceOverlay />
-      <AccessibilityOverlay />
-      <BrowserRouter>
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <NetworkStatus />
+        <OfflineIndicator />
+        <PerformanceOverlay />
+        <AccessibilityOverlay />
+        <BrowserRouter>
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Index />} />
-              <Route path="products" element={<Products />} />
               <Route path="products-list" element={<ProductsList />} />
               <Route path="reports" element={<Reports />} />
               
@@ -57,7 +57,8 @@ const AppContent = () => {
           </Routes>
         </Suspense>
       </BrowserRouter>
-    </TooltipProvider>
+      </TooltipProvider>
+    </ThemeProvider>
   );
 };
 
