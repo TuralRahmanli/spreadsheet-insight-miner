@@ -28,10 +28,16 @@ export type Operation = {
   type: 'daxil' | 'xaric' | 'satış' | 'transfer' | 'əvvəldən_qalıq';
   productId: string;
   warehouseId: string;
+  warehouseName?: string;
   quantity: number;
   date: Date;
   description?: string;
   createdBy?: string;
+};
+
+export type PackagingEntry = {
+  type: string;
+  count: number;
 };
 
 export type StorageProvider = 'local' | 'google-drive';
