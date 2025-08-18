@@ -18,7 +18,7 @@ const Index = lazy(() => import("./pages/Index"));
 const Products = lazy(() => import("./pages/Products"));
 const ProductsList = lazy(() => import("./pages/ProductsList"));
 const Reports = lazy(() => import("./pages/Reports"));
-const Templates = lazy(() => import("./pages/Templates"));
+
 const AddOperation = lazy(() => import("./pages/AddOperation"));
 const WarehousesList = lazy(() => import("./pages/WarehousesList"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -46,7 +46,7 @@ const AppContent = () => {
               <Route path="products" element={<Products />} />
               <Route path="products-list" element={<ProductsList />} />
               <Route path="reports" element={<Reports />} />
-              <Route path="templates" element={<Templates />} />
+              
               <Route path="warehouses" element={<WarehousesList />} />
               <Route path="warehouses/:warehouse" element={<WarehousesList />} />
               <Route path="add" element={<AddOperation />} />

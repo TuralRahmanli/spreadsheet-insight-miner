@@ -13,7 +13,7 @@ const sidebarItems = [
   { title: "Anbarlar", href: "/warehouses", icon: Package },
   { title: "Məhsullar", href: "/products-list", icon: ShoppingCart },
   { title: "Hesabatlar", href: "/reports", icon: BarChart3 },
-  { title: "Şablonlar", href: "/templates", icon: FileText },
+  
   { title: "Yeni Əməliyyat", href: "/add", icon: Plus },
   { title: "Parametrlər", href: "/settings", icon: Settings },
 ];
