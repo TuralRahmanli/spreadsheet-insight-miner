@@ -105,7 +105,7 @@ export default function ProductsList() {
     if (products.length > 0) {
       initializeFromProducts(products);
     }
-  }, [products, initializeFromProducts]);
+  }, [products]);
   
   // Update column visibility and order when warehouses change
   useEffect(() => {
@@ -115,18 +115,11 @@ export default function ProductsList() {
     }, {} as Record<string, boolean>);
 
     setColumnVisibility(prev => ({
-      artikul: true,
-      name: true,
-      category: true,
-      location: true,
-      ...newWarehouseColumns,
-      total: true,
-      status: true,
-      packaging: true,
-      description: true
+      ...prev,
+      ...newWarehouseColumns
     }));
 
-    setColumnOrder([
+    const newOrder = [
       'artikul',
       'name', 
       'category',
@@ -136,7 +129,12 @@ export default function ProductsList() {
       'status',
       'packaging',
       'description'
-    ]);
+    ];
+    
+    // Only update if order actually changed
+    if (JSON.stringify(newOrder) !== JSON.stringify(columnOrder)) {
+      setColumnOrder(newOrder);
+    }
   }, [allWarehouses]);
   
   // Get unique values for filter options

@@ -241,7 +241,7 @@ export default function AddOperation() {
                     </SelectTrigger>
                     <SelectContent>
                       {warehouses.map((warehouse) => (
-                        <SelectItem key={warehouse.id} value={warehouse.id}>
+                        <SelectItem key={warehouse.id} value={warehouse.name}>
                           {warehouse.name}
                         </SelectItem>
                       ))}
@@ -271,7 +271,7 @@ export default function AddOperation() {
                     </SelectTrigger>
                     <SelectContent>
                       {warehouses.map((warehouse) => (
-                        <SelectItem key={warehouse.id} value={warehouse.id}>
+                        <SelectItem key={warehouse.id} value={warehouse.name}>
                           {warehouse.name}
                         </SelectItem>
                       ))}
@@ -287,7 +287,7 @@ export default function AddOperation() {
                     </SelectTrigger>
                     <SelectContent>
                       {warehouses.map((warehouse) => (
-                        <SelectItem key={warehouse.id} value={warehouse.id}>
+                        <SelectItem key={warehouse.id} value={warehouse.name}>
                           {warehouse.name}
                         </SelectItem>
                       ))}
