@@ -14,6 +14,7 @@ interface WarehouseStockStore {
   getWarehouseStock: (warehouseName: string) => WarehouseStockEntry[];
   getAllStock: () => WarehouseStockEntry[];
   clearWarehouseStock: () => void;
+  initializeFromProducts: (products: any[]) => void;
 }
 
 export const useWarehouseStockStore = create<WarehouseStockStore>()(
@@ -55,6 +56,31 @@ export const useWarehouseStockStore = create<WarehouseStockStore>()(
       },
       getAllStock: () => get().warehouseStock,
       clearWarehouseStock: () => set({ warehouseStock: [] }),
+      initializeFromProducts: (products) => {
+        const currentStock = get().warehouseStock;
+        const newStock: WarehouseStockEntry[] = [...currentStock];
+        
+        // Initialize stock for products that don't have warehouse entries yet
+        products.forEach((product) => {
+          product.warehouses?.forEach((warehouseName: string) => {
+            const existingEntry = currentStock.find(
+              entry => entry.productId === product.id && entry.warehouseName === warehouseName
+            );
+            
+            if (!existingEntry) {
+              // Distribute total stock evenly across warehouses as initial data
+              const stockPerWarehouse = Math.floor(product.stock / (product.warehouses?.length || 1));
+              newStock.push({
+                productId: product.id,
+                warehouseName,
+                quantity: stockPerWarehouse
+              });
+            }
+          });
+        });
+        
+        set({ warehouseStock: newStock });
+      },
     }),
     {
       name: 'warehouse-stock-storage',

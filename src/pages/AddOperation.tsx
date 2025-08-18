@@ -22,7 +22,7 @@ type ProductEntry = {
 };
 
 export default function AddOperation() {
-  const { products, updateWarehouseStock } = useProductStore();
+  const { products, updateWarehouseStock, updateProductPackaging } = useProductStore();
   const { packagingOptions, addPackagingOption } = usePackagingStore();
   const { warehouses } = useWarehouseStore();
   const { addOperation } = useOperationHistory();
@@ -165,6 +165,10 @@ export default function AddOperation() {
           quantity: totalQuantity,
           warehouse: warehouse
         });
+
+        // Update product packaging with the types used in this operation
+        const packagingTypesUsed = productEntry.packaging.map(p => p.type);
+        updateProductPackaging(product.id, packagingTypesUsed);
 
         // Update product stock based on operation type
         if (operationType === 'incoming' || operationType === 'əvvəldən_qalıq') {

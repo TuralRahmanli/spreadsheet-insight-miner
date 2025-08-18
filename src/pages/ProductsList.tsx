@@ -34,7 +34,7 @@ const getStatusBadge = (status: string, stock: number) => {
 export default function ProductsList() {
   const navigate = useNavigate();
   const { products, addProduct, removeProduct, updateProduct } = useProductStore();
-  const { getProductStock } = useWarehouseStockStore();
+  const { getProductStock, initializeFromProducts } = useWarehouseStockStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
     status: "all",
@@ -99,6 +99,13 @@ export default function ProductsList() {
   ]);
 
   const [draggedColumn, setDraggedColumn] = useState<string | null>(null);
+  
+  // Initialize warehouse stock from products on first load
+  useEffect(() => {
+    if (products.length > 0) {
+      initializeFromProducts(products);
+    }
+  }, [products, initializeFromProducts]);
   
   // Update column visibility and order when warehouses change
   useEffect(() => {

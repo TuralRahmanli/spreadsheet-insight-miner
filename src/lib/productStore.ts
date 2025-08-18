@@ -10,6 +10,7 @@ interface ProductStore {
   removeProduct: (productId: string) => void;
   updateProduct: (productId: string, updates: Partial<Product>) => void;
   updateWarehouseStock: (productId: string, warehouseName: string, quantity: number, operation: 'increase' | 'decrease') => void;
+  updateProductPackaging: (productId: string, packagingTypes: string[]) => void;
   getProducts: () => Product[];
   clearAllProducts: () => void;
   isLoading: boolean;
@@ -189,6 +190,17 @@ export const useProductStore = create<ProductStore>()(
             })
           };
         }),
+      updateProductPackaging: (productId, packagingTypes) =>
+        set((state) => ({
+          products: state.products.map(p => {
+            if (p.id === productId) {
+              // Merge new packaging types with existing ones, avoiding duplicates
+              const uniquePackaging = Array.from(new Set([...p.packaging, ...packagingTypes]));
+              return { ...p, packaging: uniquePackaging };
+            }
+            return p;
+          })
+        })),
       getProducts: () => get().products,
       clearAllProducts: () => set({ products: [] }),
     }),
