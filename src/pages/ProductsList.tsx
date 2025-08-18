@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -64,11 +64,20 @@ export default function ProductsList() {
   const categories = ["all", ...Array.from(new Set(products.map(p => p.category)))];
   const allWarehouses = Array.from(new Set(products.flatMap(p => p.warehouses || [])));
   
+  // Generate warehouse columns dynamically
+  const warehouseColumns = useMemo(() => {
+    return allWarehouses.reduce((acc, warehouse) => {
+      acc[`warehouse_${warehouse}`] = true;
+      return acc;
+    }, {} as Record<string, boolean>);
+  }, [allWarehouses]);
+
   const [columnVisibility, setColumnVisibility] = useState({
     artikul: true,
     name: true,
     category: true,
     location: true,
+    ...warehouseColumns,
     total: true,
     status: true,
     packaging: true,
@@ -80,6 +89,7 @@ export default function ProductsList() {
     'name', 
     'category',
     'location',
+    ...allWarehouses.map(warehouse => `warehouse_${warehouse}`),
     'total',
     'status',
     'packaging',
@@ -87,6 +97,38 @@ export default function ProductsList() {
   ]);
 
   const [draggedColumn, setDraggedColumn] = useState<string | null>(null);
+  
+  // Update column visibility and order when warehouses change
+  useEffect(() => {
+    const newWarehouseColumns = allWarehouses.reduce((acc, warehouse) => {
+      acc[`warehouse_${warehouse}`] = true;
+      return acc;
+    }, {} as Record<string, boolean>);
+
+    setColumnVisibility(prev => ({
+      artikul: true,
+      name: true,
+      category: true,
+      location: true,
+      ...newWarehouseColumns,
+      total: true,
+      status: true,
+      packaging: true,
+      description: true
+    }));
+
+    setColumnOrder([
+      'artikul',
+      'name', 
+      'category',
+      'location',
+      ...allWarehouses.map(warehouse => `warehouse_${warehouse}`),
+      'total',
+      'status',
+      'packaging',
+      'description'
+    ]);
+  }, [allWarehouses]);
   
   // Get unique values for filter options
   const allStatuses = ["all", "active", "out_of_stock", "low_stock"];
@@ -174,16 +216,26 @@ export default function ProductsList() {
     });
   };
 
-  const columnLabels = {
-    artikul: 'Artikul',
-    name: 'Məhsul Adı',
-    category: 'Kateqoriya',
-    location: 'Yerləşmə',
-    total: 'Ümumi Miqdar',
-    status: 'Vəziyyət',
-    packaging: 'Paketləşdirmə',
-    description: 'Təsvir'
-  };
+  const columnLabels = useMemo(() => {
+    const baseLabels = {
+      artikul: 'Artikul',
+      name: 'Məhsul Adı',
+      category: 'Kateqoriya',
+      location: 'Yerləşmə',
+      total: 'Ümumi Miqdar',
+      status: 'Vəziyyət',
+      packaging: 'Paketləşdirmə',
+      description: 'Təsvir'
+    };
+
+    // Add warehouse columns
+    const warehouseLabels = allWarehouses.reduce((acc, warehouse) => {
+      acc[`warehouse_${warehouse}`] = warehouse;
+      return acc;
+    }, {} as Record<string, string>);
+
+    return { ...baseLabels, ...warehouseLabels };
+  }, [allWarehouses]);
 
   const handleDragStart = (e: React.DragEvent, columnId: string) => {
     setDraggedColumn(columnId);
@@ -211,6 +263,32 @@ export default function ProductsList() {
   };
 
   const renderTableCell = (product: Product, columnId: string) => {
+    // Handle warehouse-specific columns
+    if (columnId.startsWith('warehouse_')) {
+      const warehouseName = columnId.replace('warehouse_', '');
+      const isProductInWarehouse = product.warehouses?.includes(warehouseName);
+      
+      // For demo purposes, distribute stock evenly across warehouses
+      // In a real app, this would come from a separate warehouse-stock mapping
+      const warehouseQuantity = isProductInWarehouse 
+        ? Math.floor(product.stock / Math.max(product.warehouses.length, 1))
+        : 0;
+      
+      return (
+        <TableCell>
+          <div className="font-medium text-center">
+            {isProductInWarehouse ? (
+              <span className="text-foreground">
+                {warehouseQuantity} {product.unit}
+              </span>
+            ) : (
+              <span className="text-muted-foreground">-</span>
+            )}
+          </div>
+        </TableCell>
+      );
+    }
+
     switch (columnId) {
       case 'artikul':
         return <TableCell className="font-medium">{product.article}</TableCell>;
