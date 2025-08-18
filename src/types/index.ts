@@ -25,7 +25,7 @@ export type Warehouse = {
 
 export type Operation = {
   id: string;
-  type: 'daxil' | 'xaric';
+  type: 'daxil' | 'xaric' | 'satış' | 'transfer' | 'əvvəldən_qalıq';
   productId: string;
   warehouseId: string;
   quantity: number;

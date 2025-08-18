@@ -3,7 +3,7 @@ import { useProductStore } from '@/lib/productStore';
 
 interface OperationRecord {
   id: string;
-  type: 'daxil' | 'xaric' | 'satış' | 'transfer';
+  type: 'daxil' | 'xaric' | 'satış' | 'transfer' | 'əvvəldən_qalıq';
   productName: string;
   quantity: number;
   timestamp: Date;
@@ -19,7 +19,7 @@ export const useOperationHistory = () => {
     const generateRecentOperations = () => {
       if (products.length === 0) return [];
 
-      const operationTypes: Array<'daxil' | 'xaric' | 'satış' | 'transfer'> = ['daxil', 'xaric', 'satış', 'transfer'];
+      const operationTypes: Array<'daxil' | 'xaric' | 'satış' | 'transfer' | 'əvvəldən_qalıq'> = ['daxil', 'xaric', 'satış', 'transfer', 'əvvəldən_qalıq'];
       const recentOps: OperationRecord[] = [];
 
       // Generate 3-5 recent operations
@@ -83,6 +83,7 @@ export const useOperationHistory = () => {
       case 'xaric': return 'xaric'; 
       case 'satış': return 'satış';
       case 'transfer': return 'transfer';
+      case 'əvvəldən_qalıq': return 'əvvəldən_qalıq';
       default: return 'default';
     }
   };
@@ -93,6 +94,7 @@ export const useOperationHistory = () => {
       case 'xaric': return 'text-warning';
       case 'satış': return 'text-info';
       case 'transfer': return 'text-muted-foreground';
+      case 'əvvəldən_qalıq': return 'text-primary';
       default: return 'text-foreground';
     }
   };

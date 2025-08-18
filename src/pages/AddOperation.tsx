@@ -157,7 +157,7 @@ export default function AddOperation() {
       if (product) {
         const totalQuantity = getProductTotalQuantity(productEntry.packaging);
         addOperation({
-          type: operationType as 'daxil' | 'xaric' | 'satış' | 'transfer',
+          type: operationType as 'daxil' | 'xaric' | 'satış' | 'transfer' | 'əvvəldən_qalıq',
           productName: product.name,
           quantity: totalQuantity,
           warehouse: selectedWarehouse || 'Anbar 1'
@@ -200,6 +200,7 @@ export default function AddOperation() {
                   <SelectValue placeholder="Əməliyyat növünü seçin" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="əvvəldən_qalıq">Əvvəldən Qalıq</SelectItem>
                   <SelectItem value="incoming">Daxil olma</SelectItem>
                   <SelectItem value="outgoing">Çıxış</SelectItem>
                   <SelectItem value="sale">Satış</SelectItem>
@@ -210,7 +211,7 @@ export default function AddOperation() {
               </Select>
             </div>
 
-            {operationType === "incoming" && (
+            {(operationType === "incoming" || operationType === "əvvəldən_qalıq") && (
               <>
                 <div className="space-y-2">
                   <Label htmlFor="warehouse">Anbar</Label>
