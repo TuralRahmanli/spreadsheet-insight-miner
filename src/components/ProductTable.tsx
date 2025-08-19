@@ -86,6 +86,10 @@ export function ProductTable({ products, searchTerm, hasActiveFilters, getStatus
     setColumnVisibility(prev => ({ ...prev, ...visibility }));
   };
 
+  const handleColumnOrderChange = (newOrder: string[]) => {
+    setColumnOrder(newOrder);
+  };
+
   return (
     <div className="space-y-4">
       {/* Column Settings */}
@@ -93,7 +97,9 @@ export function ProductTable({ products, searchTerm, hasActiveFilters, getStatus
         <ProductTableSettings
           columnLabels={columnLabels}
           columnVisibility={columnVisibility}
+          columnOrder={columnOrder}
           onColumnVisibilityChange={handleColumnVisibilityChange}
+          onColumnOrderChange={handleColumnOrderChange}
         />
       </div>
 
