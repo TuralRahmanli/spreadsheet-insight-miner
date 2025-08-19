@@ -92,7 +92,7 @@ export function ProductTableColumns({ product, columnId, getStatusBadge }: Produ
         <TableCell key={columnId}>
           <div className="flex gap-1 flex-wrap max-w-[120px]">
             {product.packaging.length > 0 ? (
-              product.packaging.slice(0, 2).map((pack) => (
+              product.packaging.map((pack) => (
                 <Badge 
                   key={`${product.id}-pack-${pack.type}`} 
                   variant="outline" 
@@ -103,11 +103,6 @@ export function ProductTableColumns({ product, columnId, getStatusBadge }: Produ
               ))
             ) : (
               <span className="text-muted-foreground text-xs">Yoxdur</span>
-            )}
-            {product.packaging.length > 2 && (
-              <Badge variant="secondary" className="text-xs">
-                +{product.packaging.length - 2}
-              </Badge>
             )}
           </div>
         </TableCell>
