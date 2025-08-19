@@ -227,6 +227,10 @@ export default function WarehousesList() {
                       <span className="font-medium">{warehouseProducts.length}</span>
                     </div>
                     <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Paket:</span>
+                      <span className="font-medium">{warehouseProducts.reduce((total, product) => total + product.packaging.length, 0)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Ümumi stok:</span>
                       <span className="font-medium">{totalStock}</span>
                     </div>
