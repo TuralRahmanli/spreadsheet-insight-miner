@@ -12,6 +12,7 @@ import { useProductStore } from "@/lib/productStore";
 import { usePackagingStore } from "@/lib/packagingStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
 import { useOperationHistory } from "@/hooks/useOperationHistory";
+import { OperationIcon } from "@/components/OperationIcon";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import jsPDF from 'jspdf';
@@ -25,7 +26,7 @@ export default function AddOperation() {
   const { products, updateWarehouseStock, updateProductPackaging } = useProductStore();
   const { packagingOptions, addPackagingOption } = usePackagingStore();
   const { warehouses } = useWarehouseStore();
-  const { addOperation } = useOperationHistory();
+  const { addOperation, operations, formatTimestamp, getOperationColor } = useOperationHistory();
   const [operationType, setOperationType] = useState("");
   const [selectedWarehouse, setSelectedWarehouse] = useState("");
   const [selectedDestinationWarehouse, setSelectedDestinationWarehouse] = useState("");
@@ -142,7 +143,7 @@ export default function AddOperation() {
   };
 
   const handleSaveOperation = () => {
-    // Validation
+    // Enhanced validation
     if (!operationType) {
       toast({
         title: "Natamam məlumat",
@@ -161,7 +162,9 @@ export default function AddOperation() {
       return;
     }
 
-    if ((operationType === 'incoming' || operationType === 'əvvəldən_qalıq' || operationType === 'transfer') && !selectedWarehouse) {
+    // Validate warehouse selection for operations that require it
+    const requiresWarehouse = ['incoming', 'outgoing', 'sale', 'əvvəldən_qalıq', 'transfer'];
+    if (requiresWarehouse.includes(operationType) && !selectedWarehouse) {
       toast({
         title: "Natamam məlumat",
         description: "Anbar seçin",
@@ -179,39 +182,69 @@ export default function AddOperation() {
       return;
     }
 
-    // Add operations to history and update product store for each product
-    selectedProducts.forEach(productEntry => {
-      const product = products.find(p => p.id === productEntry.productId);
-      if (product) {
-        const totalQuantity = getProductTotalQuantity(productEntry.packaging);
-        const warehouse = selectedWarehouse || 'Anbar 1';
-        
-        // Add to operation history
-        addOperation({
-          type: operationType as 'daxil' | 'xaric' | 'satış' | 'transfer' | 'əvvəldən_qalıq',
-          productName: product.name,
-          quantity: totalQuantity,
-          warehouse: warehouse
-        });
+    if (operationType === 'transfer' && selectedWarehouse === selectedDestinationWarehouse) {
+      toast({
+        title: "Səhv məlumat",
+        description: "Mənbə və təyinat anbarları fərqli olmalıdır", 
+        variant: "destructive",
+      });
+      return;
+    }
 
-        // Update product packaging with the types used in this operation
-        const packagingTypesUsed = productEntry.packaging.map(p => p.type);
-        updateProductPackaging(product.id, packagingTypesUsed);
+    // Validate product quantities
+    const hasZeroQuantity = selectedProducts.some(p => getProductTotalQuantity(p.packaging) <= 0);
+    if (hasZeroQuantity) {
+      toast({
+        title: "Səhv məlumat",
+        description: "Bütün məhsulların miqdarı 0-dan böyük olmalıdır", 
+        variant: "destructive",
+      });
+      return;
+    }
 
-        // Update product stock based on operation type
-        if (operationType === 'incoming' || operationType === 'əvvəldən_qalıq') {
-          updateWarehouseStock(product.id, warehouse, totalQuantity, 'increase');
-        } else if (operationType === 'outgoing' || operationType === 'sale') {
-          updateWarehouseStock(product.id, warehouse, totalQuantity, 'decrease');
-        } else if (operationType === 'transfer') {
-          // Transfer from source to destination
-          if (selectedDestinationWarehouse) {
-            updateWarehouseStock(product.id, warehouse, totalQuantity, 'decrease');
-            updateWarehouseStock(product.id, selectedDestinationWarehouse, totalQuantity, 'increase');
+    try {
+      // Add operations to history and update product store for each product
+      selectedProducts.forEach(productEntry => {
+        const product = products.find(p => p.id === productEntry.productId);
+        if (product) {
+          const totalQuantity = getProductTotalQuantity(productEntry.packaging);
+          const warehouseName = selectedWarehouse || warehouses[0]?.name || 'Anbar 1';
+          
+          // Add to operation history with proper warehouse name
+          addOperation({
+            type: operationType as 'daxil' | 'xaric' | 'satış' | 'transfer' | 'əvvəldən_qalıq',
+            productName: product.name,
+            quantity: totalQuantity,
+            warehouse: warehouseName
+          });
+
+          // Update product packaging with the types used in this operation
+          const packagingTypesUsed = productEntry.packaging.map(p => p.type);
+          updateProductPackaging(product.id, packagingTypesUsed);
+
+          // Update product stock based on operation type
+          if (operationType === 'incoming' || operationType === 'əvvəldən_qalıq') {
+            updateWarehouseStock(product.id, warehouseName, totalQuantity, 'increase');
+          } else if (operationType === 'outgoing' || operationType === 'sale') {
+            updateWarehouseStock(product.id, warehouseName, totalQuantity, 'decrease');
+          } else if (operationType === 'transfer') {
+            // Transfer from source to destination
+            if (selectedDestinationWarehouse) {
+              updateWarehouseStock(product.id, warehouseName, totalQuantity, 'decrease');
+              updateWarehouseStock(product.id, selectedDestinationWarehouse, totalQuantity, 'increase');
+            }
           }
         }
-      }
-    });
+      });
+    } catch (error) {
+      console.error('Error saving operation:', error);
+      toast({
+        title: "Əməliyyat saxlanılmadı",
+        description: "Əməliyyat saxlanılarkən xəta baş verdi",
+        variant: "destructive",
+      });
+      return;
+    }
 
     toast({
       title: "Əməliyyat saxlanıldı",
@@ -580,16 +613,37 @@ export default function AddOperation() {
 
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Son Əməliyyatlar</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
-            <p>Hələ ki heç bir əməliyyat yoxdur</p>
-          </div>
-        </CardContent>
-      </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Son Əməliyyatlar</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {operations.length > 0 ? (
+              <div className="space-y-3 max-h-60 overflow-y-auto">
+                {operations.slice(0, 5).map((operation) => (
+                  <div key={operation.id} className="flex items-center justify-between py-2 border-b last:border-b-0">
+                    <div className="flex items-center gap-3">
+                      <OperationIcon type={operation.type} />
+                      <div>
+                        <p className="font-medium text-sm">{operation.productName}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {operation.type} • {operation.warehouse} • {formatTimestamp(operation.timestamp)}
+                        </p>
+                      </div>
+                    </div>
+                    <span className={`font-medium text-sm ${getOperationColor(operation.type)}`}>
+                      {operation.quantity} ədəd
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>Hələ ki heç bir əməliyyat yoxdur</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
     </div>
   );
 }
