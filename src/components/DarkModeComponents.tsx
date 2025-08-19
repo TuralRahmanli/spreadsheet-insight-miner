@@ -36,9 +36,9 @@ export function DarkModeBadge({ children, variant = "default", className }: Dark
     secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
     destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/80",
     outline: "text-foreground border-foreground/20 hover:bg-accent hover:text-accent-foreground",
-    success: "bg-green-500 text-white dark:bg-green-600 hover:bg-green-600 dark:hover:bg-green-700",
-    warning: "bg-yellow-500 text-white dark:bg-yellow-600 hover:bg-yellow-600 dark:hover:bg-yellow-700",
-    info: "bg-blue-500 text-white dark:bg-blue-600 hover:bg-blue-600 dark:hover:bg-blue-700"
+    success: "bg-success/90 text-success-foreground hover:bg-success/80",
+    warning: "bg-warning/90 text-warning-foreground hover:bg-warning/80",
+    info: "bg-info/90 text-info-foreground hover:bg-info/80"
   };
 
   return (

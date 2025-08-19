@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { GripVertical } from "lucide-react";
 import { Product } from "@/types";
@@ -18,27 +18,52 @@ export function ProductTable({ products, searchTerm, hasActiveFilters, getStatus
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  // Get all unique warehouses
-  const allWarehouses = Array.from(new Set(products.flatMap(p => p.warehouses || [])));
+  // Get all unique warehouses - memoized to prevent infinite re-renders
+  const allWarehouses = useMemo(() => 
+    Array.from(new Set(products.flatMap(p => p.warehouses || []))), 
+    [products]
+  );
   
-  // Column visibility state
-  const [columnVisibility, setColumnVisibility] = useState({
+  // Column visibility state - memoized initial state
+  const [columnVisibility, setColumnVisibility] = useState(() => ({
     artikul: true,
     name: true,
     category: true,
     location: true,
-    ...allWarehouses.reduce((acc, warehouse) => ({ ...acc, [`warehouse_${warehouse}`]: true }), {}),
     total: true,
     status: true,
     packaging: true,
     description: true
-  });
+  }));
 
-  const [columnOrder] = useState([
+  // Column order - dynamically updated when warehouses change
+  const [columnOrder, setColumnOrder] = useState<string[]>([
     'artikul', 'name', 'category', 'location',
-    ...allWarehouses.map(warehouse => `warehouse_${warehouse}`),
     'total', 'status', 'packaging', 'description'
   ]);
+
+  // Update column order and visibility when warehouses change
+  useEffect(() => {
+    const warehouseColumns = allWarehouses.map(warehouse => `warehouse_${warehouse}`);
+    const newOrder = [
+      'artikul', 'name', 'category', 'location',
+      ...warehouseColumns,
+      'total', 'status', 'packaging', 'description'
+    ];
+    
+    setColumnOrder(newOrder);
+    
+    // Add new warehouse columns to visibility
+    setColumnVisibility(prev => {
+      const newVisibility = { ...prev };
+      warehouseColumns.forEach(col => {
+        if (!(col in newVisibility)) {
+          newVisibility[col] = true;
+        }
+      });
+      return newVisibility;
+    });
+  }, [allWarehouses]);
 
   const columnLabels = useMemo(() => ({
     artikul: 'Artikul',
