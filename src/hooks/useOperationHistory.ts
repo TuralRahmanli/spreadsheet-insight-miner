@@ -53,11 +53,10 @@ export const useOperationHistory = () => {
     setOperations(generateRecentOperations());
   }, [products]);
 
-  const addOperation = (operation: Omit<OperationRecord, 'id' | 'timestamp'>) => {
+  const addOperation = (operation: Omit<OperationRecord, 'id'>) => {
     const newOperation: OperationRecord = {
       ...operation,
-      id: `op-${Date.now()}`,
-      timestamp: new Date()
+      id: `op-${Date.now()}`
     };
 
     setOperations(prev => [newOperation, ...prev].slice(0, 10)); // Keep only last 10

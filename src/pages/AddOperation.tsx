@@ -7,7 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Plus, Save, Check, ChevronsUpDown, X, Download } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Plus, Save, Check, ChevronsUpDown, X, Download, CalendarIcon, Clock } from "lucide-react";
+import { format } from "date-fns";
+import { az } from "date-fns/locale";
 import { useProductStore } from "@/lib/productStore";
 import { usePackagingStore } from "@/lib/packagingStore";
 import { usePackagingMethodsStore } from "@/lib/packagingMethodsStore";
@@ -43,6 +46,11 @@ export default function AddOperation() {
   const [currentPackageCount, setCurrentPackageCount] = useState("");
   const [currentPackagingMethod, setCurrentPackagingMethod] = useState("");
   const [customPackagingMethod, setCustomPackagingMethod] = useState("");
+  const [operationDate, setOperationDate] = useState<Date>(new Date());
+  const [operationTime, setOperationTime] = useState(() => {
+    const now = new Date();
+    return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+  });
 
   const getCurrentProductTotalQuantity = () => {
     return currentPackaging.reduce((total, item) => {
@@ -228,12 +236,17 @@ export default function AddOperation() {
           const totalQuantity = getProductTotalQuantity(productEntry.packaging);
           const warehouseName = selectedWarehouse || warehouses[0]?.name || 'Anbar 1';
           
-          // Add to operation history with proper warehouse name
+          // Add to operation history with proper warehouse name and custom date/time
+          const [hours, minutes] = operationTime.split(':').map(Number);
+          const operationDateTime = new Date(operationDate);
+          operationDateTime.setHours(hours, minutes);
+          
           addOperation({
             type: operationType as 'daxil' | 'xaric' | 'satış' | 'transfer' | 'əvvəldən_qalıq',
             productName: product.name,
             quantity: totalQuantity,
-            warehouse: warehouseName
+            warehouse: warehouseName,
+            timestamp: operationDateTime
           });
 
           // Update product packaging with the types and quantities used in this operation
@@ -601,6 +614,52 @@ export default function AddOperation() {
               />
             </div>
 
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Əməliyyat tarixi</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !operationDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {operationDate ? format(operationDate, "dd MMMM yyyy", { locale: az }) : "Tarix seçin"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={operationDate}
+                      onSelect={setOperationDate}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("1900-01-01")
+                      }
+                      initialFocus
+                      className="p-3 pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="operation-time">Əməliyyat saatı</Label>
+                <div className="relative">
+                  <Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="operation-time"
+                    type="time"
+                    value={operationTime}
+                    onChange={(e) => setOperationTime(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="flex gap-2 pt-4">
               <Button 
                 className="flex-1" 
@@ -658,6 +717,11 @@ export default function AddOperation() {
                   setSelectedWarehouse("");
                   setSelectedDestinationWarehouse("");
                   setBatchName("");
+                  setOperationDate(new Date());
+                  setOperationTime(() => {
+                    const now = new Date();
+                    return `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                  });
                 }}
                 title="Bütün sahələri təmizlə"
               >
