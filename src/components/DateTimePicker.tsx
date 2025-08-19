@@ -89,7 +89,7 @@ export function DateTimePicker({
         avoidCollisions={true}
         collisionPadding={16}
       >
-        <div className="p-1 space-y-1.5 bg-background border rounded-md shadow-lg max-h-[50vh] max-w-[80vw] overflow-y-auto transform scale-95">
+        <div className="p-1 space-y-1.5 bg-background border rounded-md shadow-lg max-h-[50vh] max-w-[80vw] overflow-y-auto">
           {/* Calendar */}
           <div className="border rounded-md bg-card">
             <Calendar
@@ -100,7 +100,7 @@ export function DateTimePicker({
                 date > new Date() || date < new Date("1900-01-01")
               }
               initialFocus
-              className="pointer-events-auto p-0 text-xs transform scale-75"
+              className="pointer-events-auto p-0 text-xs transform scale-90"
             />
           </div>
           
