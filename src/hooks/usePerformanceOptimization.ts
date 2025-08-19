@@ -34,20 +34,20 @@ export function usePerformanceOptimization(config: Partial<PerformanceConfig> = 
   const createDebouncedFunction = useCallback(<T extends (...args: any[]) => any>(
     fn: T,
     delay?: number
-  ): T => {
+  ) => {
     if (!finalConfig.enableDebouncing) return fn;
     
-    return debounce(fn, delay || finalConfig.debounceDelay) as T;
+    return debounce(fn, delay || finalConfig.debounceDelay);
   }, [finalConfig.enableDebouncing, finalConfig.debounceDelay]);
 
   // Throttled function factory
   const createThrottledFunction = useCallback(<T extends (...args: any[]) => any>(
     fn: T,
     delay?: number
-  ): T => {
+  ) => {
     if (!finalConfig.enableThrottling) return fn;
     
-    return throttle(fn, delay || finalConfig.throttleDelay) as T;
+    return throttle(fn, delay || finalConfig.throttleDelay);
   }, [finalConfig.enableThrottling, finalConfig.throttleDelay]);
 
   // Memoized computation
