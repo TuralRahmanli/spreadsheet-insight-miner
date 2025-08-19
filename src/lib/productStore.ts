@@ -10,7 +10,7 @@ interface ProductStore {
   removeProduct: (productId: string) => void;
   updateProduct: (productId: string, updates: Partial<Product>) => void;
   updateWarehouseStock: (productId: string, warehouseName: string, quantity: number, operation: 'increase' | 'decrease') => void;
-  updateProductPackaging: (productId: string, packagingTypes: string[]) => void;
+  updateProductPackaging: (productId: string, packaging: {type: string, quantity: number}[]) => void;
   getProducts: () => Product[];
   clearAllProducts: () => void;
   isLoading: boolean;
@@ -27,7 +27,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 150,
     unit: "kg",
-    packaging: ["100", "120", "135"],
+    packaging: [{type: "100", quantity: 5}, {type: "120", quantity: 3}, {type: "135", quantity: 2}],
     warehouses: ["Anbar 1", "Anbar 2"],
     description: "Premium keyfiyyətli albalı məhsulu"
   },
@@ -39,7 +39,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 200,
     unit: "kg",
-    packaging: ["100", "120"],
+    packaging: [{type: "100", quantity: 4}, {type: "120", quantity: 6}],
     warehouses: ["Anbar 1"],
     description: "Standart keyfiyyətli albalı məhsulu"
   },
@@ -51,7 +51,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 80,
     unit: "kg",
-    packaging: ["135", "120"],
+    packaging: [{type: "135", quantity: 2}, {type: "120", quantity: 4}],
     warehouses: ["Anbar 2", "Anbar 3"],
     description: "Deluxe keyfiyyətli albalı məhsulu"
   },
@@ -63,7 +63,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 120,
     unit: "kg",
-    packaging: ["100", "110"],
+    packaging: [{type: "100", quantity: 3}, {type: "110", quantity: 5}],
     warehouses: ["Anbar 1", "Anbar 3"],
     description: "Premium keyfiyyətli qarağat məhsulu"
   },
@@ -75,7 +75,7 @@ const initialProducts: Product[] = [
     status: "low_stock",
     stock: 45,
     unit: "kg",
-    packaging: ["100", "120"],
+    packaging: [{type: "100", quantity: 2}, {type: "120", quantity: 3}],
     warehouses: ["Anbar 2"],
     description: "Standart keyfiyyətli qarağat məhsulu"
   },
@@ -87,7 +87,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 90,
     unit: "ədəd",
-    packaging: ["100", "120", "135"],
+    packaging: [{type: "100", quantity: 4}, {type: "120", quantity: 6}, {type: "135", quantity: 3}],
     warehouses: ["Anbar 1", "Anbar 2", "Anbar 3"],
     description: "Premium keyfiyyətli mango məhsulu"
   },
@@ -99,7 +99,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 110,
     unit: "ədəd",
-    packaging: ["110", "120"],
+    packaging: [{type: "110", quantity: 5}, {type: "120", quantity: 2}],
     warehouses: ["Anbar 2"],
     description: "Standart keyfiyyətli mango məhsulu"
   },
@@ -111,7 +111,7 @@ const initialProducts: Product[] = [
     status: "out_of_stock",
     stock: 0,
     unit: "ədəd",
-    packaging: ["100", "135"],
+    packaging: [{type: "100", quantity: 0}, {type: "135", quantity: 0}],
     warehouses: [],
     description: "Lux keyfiyyətli mango məhsulu"
   },
@@ -123,7 +123,7 @@ const initialProducts: Product[] = [
     status: "active", 
     stock: 75,
     unit: "litr",
-    packaging: ["100", "110", "120"],
+    packaging: [{type: "100", quantity: 3}, {type: "110", quantity: 4}, {type: "120", quantity: 2}],
     warehouses: ["Anbar 1"],
     description: "Premium keyfiyyətli zeytun məhsulu"
   },
@@ -135,7 +135,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 95,
     unit: "litr",
-    packaging: ["120", "135"],
+    packaging: [{type: "120", quantity: 3}, {type: "135", quantity: 4}],
     warehouses: ["Anbar 3"],
     description: "Standart keyfiyyətli zeytun məhsulu"
   }
@@ -190,13 +190,11 @@ export const useProductStore = create<ProductStore>()(
             })
           };
         }),
-      updateProductPackaging: (productId, packagingTypes) =>
+      updateProductPackaging: (productId, packaging) =>
         set((state) => ({
           products: state.products.map(p => {
             if (p.id === productId) {
-              // Merge new packaging types with existing ones, avoiding duplicates
-              const uniquePackaging = Array.from(new Set([...p.packaging, ...packagingTypes]));
-              return { ...p, packaging: uniquePackaging };
+              return { ...p, packaging };
             }
             return p;
           })

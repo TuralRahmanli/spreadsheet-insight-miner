@@ -6,7 +6,7 @@ export type Product = {
   status: 'active' | 'low_stock' | 'out_of_stock';
   stock: number;
   unit: string;
-  packaging: string[];
+  packaging: {type: string, quantity: number}[];
   warehouses: string[];
   description?: string;
   createdAt?: Date;

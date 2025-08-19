@@ -10,7 +10,7 @@ interface Product {
   status: string;
   stock: number;
   unit: string;
-  packaging: string[];
+  packaging: {type: string, quantity: number}[];
   warehouses: string[];
   description?: string;
 }
@@ -62,10 +62,10 @@ const ProductRow = memo(({ product, onProductClick }: {
       <TableCell>
         <div className="flex gap-1 flex-wrap">
            {product.packaging.slice(0, 3).map((pkg) => (
-            <Badge key={`${product.id}-packaging-${pkg}`} variant="outline" className="text-xs">
-              {pkg}
+            <Badge key={`${product.id}-packaging-${pkg.type}`} variant="outline" className="text-xs">
+              {pkg.type}×{pkg.quantity}
             </Badge>
-          ))}
+           ))}
           {product.packaging.length > 3 && (
             <Badge variant="outline" className="text-xs">
               +{product.packaging.length - 3}

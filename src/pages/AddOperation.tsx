@@ -218,9 +218,12 @@ export default function AddOperation() {
             warehouse: warehouseName
           });
 
-          // Update product packaging with the types used in this operation
-          const packagingTypesUsed = productEntry.packaging.map(p => p.type);
-          updateProductPackaging(product.id, packagingTypesUsed);
+          // Update product packaging with the types and quantities used in this operation
+          const packagingUsed = productEntry.packaging.map(p => ({
+            type: p.type,
+            quantity: p.count
+          }));
+          updateProductPackaging(product.id, packagingUsed);
 
           // Update product stock based on operation type
           if (operationType === 'incoming' || operationType === 'əvvəldən_qalıq') {

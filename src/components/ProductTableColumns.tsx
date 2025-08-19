@@ -92,13 +92,13 @@ export function ProductTableColumns({ product, columnId, getStatusBadge }: Produ
         <TableCell key={columnId}>
           <div className="flex gap-1 flex-wrap max-w-[120px]">
             {product.packaging.length > 0 ? (
-              product.packaging.slice(0, 2).map((pack, index) => (
+              product.packaging.slice(0, 2).map((pack) => (
                 <Badge 
-                  key={`${product.id}-pack-${pack}`} 
+                  key={`${product.id}-pack-${pack.type}`} 
                   variant="outline" 
                   className="text-xs bg-accent/50"
                 >
-                  {pack}
+                  {pack.type}×{pack.quantity}
                 </Badge>
               ))
             ) : (

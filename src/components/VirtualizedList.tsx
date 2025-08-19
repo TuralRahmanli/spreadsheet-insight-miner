@@ -12,7 +12,7 @@ interface Product {
   status: string;
   stock: number;
   unit: string;
-  packaging: string[];
+  packaging: {type: string, quantity: number}[];
   warehouses: string[];
   description?: string;
 }
@@ -83,6 +83,24 @@ const ProductItem = memo(({ index, style, data }: {
                 {product.warehouses.length > 2 && (
                   <Badge variant="secondary" className="text-xs">
                     +{product.warehouses.length - 2}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          )}
+          
+          {product.packaging.length > 0 && (
+            <div className="mt-2">
+              <span className="text-xs text-muted-foreground">Paketlər:</span>
+              <div className="flex gap-1 flex-wrap mt-1">
+                {product.packaging.slice(0, 2).map((pack, idx) => (
+                  <Badge key={idx} variant="outline" className="text-xs bg-accent/50">
+                    {pack.type}×{pack.quantity}
+                  </Badge>
+                ))}
+                {product.packaging.length > 2 && (
+                  <Badge variant="secondary" className="text-xs">
+                    +{product.packaging.length - 2}
                   </Badge>
                 )}
               </div>

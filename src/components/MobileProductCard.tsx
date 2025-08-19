@@ -91,13 +91,13 @@ export function MobileProductCard({ product, getStatusBadge, onEdit, onDelete }:
           <div className="space-y-1">
             <span className="text-sm text-muted-foreground">Paketlər:</span>
             <div className="flex flex-wrap gap-1">
-              {product.packaging.slice(0, 3).map((pack, index) => (
+              {product.packaging.slice(0, 3).map((pack) => (
                 <Badge 
-                  key={`${product.id}-pack-${pack}`} 
+                  key={`${product.id}-pack-${pack.type}`} 
                   variant="outline" 
                   className="text-xs bg-accent/50"
                 >
-                  {pack}
+                  {pack.type}×{pack.quantity}
                 </Badge>
               ))}
               {product.packaging.length > 3 && (
