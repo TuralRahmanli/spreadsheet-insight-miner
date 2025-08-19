@@ -521,9 +521,9 @@ export default function AddOperation() {
                 </div>
 
                 {currentPackaging.length > 0 && (
-                  <div className="space-y-2">
-                    <Label>Seçilmiş paketləşdirmələr</Label>
-                    <div className="space-y-2 max-h-32 overflow-y-auto">
+                 <div className="space-y-2">
+                   <Label>Seçilmiş {currentPackaging.length > 0 && currentPackaging[0].method ? currentPackaging[0].method + 'lar' : 'paketləşdirmələr'}</Label>
+                   <div className="space-y-2 max-h-32 overflow-y-auto">
                        {currentPackaging.map((item, index) => (
                         <div key={`packaging-${item.type}-${item.count}-${index}`} className="flex items-center justify-between bg-muted p-2 rounded">
                           <span className="text-sm">

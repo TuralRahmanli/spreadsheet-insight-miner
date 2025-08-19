@@ -65,6 +65,13 @@ export function ProductTable({ products, searchTerm, hasActiveFilters, getStatus
     });
   }, [allWarehouses]);
 
+  // Get the most common packaging method from operations to use as column header
+  const getPackagingColumnHeader = () => {
+    // For now, we'll use a default "Paket" but this could be made dynamic
+    // based on the most recent operation's packaging method
+    return 'Paket';
+  };
+
   const columnLabels = useMemo(() => ({
     artikul: 'Artikul',
     name: 'Məhsul Adı', 
@@ -72,7 +79,7 @@ export function ProductTable({ products, searchTerm, hasActiveFilters, getStatus
     location: 'Yerləşmə',
     total: 'Ümumi',
     status: 'Vəziyyət',
-    packaging: 'Paket',
+    packaging: getPackagingColumnHeader(),
     description: 'Təsvir',
     ...allWarehouses.reduce((acc, warehouse) => ({ ...acc, [`warehouse_${warehouse}`]: warehouse }), {})
   }), [allWarehouses]);

@@ -263,7 +263,7 @@ export default function WarehousesList() {
                     <TableHead>Vəziyyət</TableHead>
                     <TableHead>Artikul</TableHead>
                     <TableHead>Məhsul Adı</TableHead>
-                    <TableHead>Paket</TableHead>
+                    <TableHead>Paket Növü</TableHead>
                     <TableHead>Stok</TableHead>
                     <TableHead>Digər Anbarlar</TableHead>
                     <TableHead>Kateqoriya</TableHead>
