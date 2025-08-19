@@ -236,8 +236,10 @@ export default function AddOperation() {
           }
         }
       });
-    } catch (error) {
-      console.error('Error saving operation:', error);
+      } catch (error) {
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error saving operation:', error);
+        }
       toast({
         title: "Əməliyyat saxlanılmadı",
         description: "Əməliyyat saxlanılarkən xəta baş verdi",

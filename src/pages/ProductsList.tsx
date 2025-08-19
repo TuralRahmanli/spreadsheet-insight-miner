@@ -503,7 +503,9 @@ export default function ProductsList() {
         const availableColumns = Object.keys(firstRow);
         
         if (process.env.NODE_ENV === 'development' && import.meta.env.DEV) {
+        if (process.env.NODE_ENV === 'development') {
           console.log("Available columns:", availableColumns);
+        }
         }
 
         for (let index = 0; index < jsonData.length; index++) {
@@ -531,7 +533,9 @@ export default function ProductsList() {
             const description = getColumnValue(['təsvir', 'description', 'açıqlama', 'qeyd']);
 
             if (process.env.NODE_ENV === 'development' && import.meta.env.DEV) {
+            if (process.env.NODE_ENV === 'development') {
               console.log(`Row ${index + 1}:`, { article, name, category, stockValue, unit });
+            }
             }
 
             if (!article || !name) {
@@ -597,7 +601,9 @@ export default function ProductsList() {
 
         if (errorMessages.length > 0 && errorMessages.length <= 5) {
           if (process.env.NODE_ENV === 'development' && import.meta.env.DEV) {
+          if (process.env.NODE_ENV === 'development') {
             console.log("Import xətaları:", errorMessages);
+          }
           }
         }
 

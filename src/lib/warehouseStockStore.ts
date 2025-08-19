@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { Product } from '@/types';
 
 interface WarehouseStockEntry {
   productId: string;
@@ -14,7 +15,7 @@ interface WarehouseStockStore {
   getWarehouseStock: (warehouseName: string) => WarehouseStockEntry[];
   getAllStock: () => WarehouseStockEntry[];
   clearWarehouseStock: () => void;
-  initializeFromProducts: (products: any[]) => void;
+  initializeFromProducts: (products: Product[]) => void;
 }
 
 export const useWarehouseStockStore = create<WarehouseStockStore>()(
@@ -56,12 +57,12 @@ export const useWarehouseStockStore = create<WarehouseStockStore>()(
       },
       getAllStock: () => get().warehouseStock,
       clearWarehouseStock: () => set({ warehouseStock: [] }),
-      initializeFromProducts: (products) => {
+      initializeFromProducts: (products: Product[]) => {
         const currentStock = get().warehouseStock;
         const newStock: WarehouseStockEntry[] = [...currentStock];
         
         // Initialize stock for products that don't have warehouse entries yet
-        products.forEach((product) => {
+        products.forEach((product: Product) => {
           product.warehouses?.forEach((warehouseName: string) => {
             const existingEntry = currentStock.find(
               entry => entry.productId === product.id && entry.warehouseName === warehouseName

@@ -1,0 +1,226 @@
+import { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { LoadingButton } from "@/components/LoadingButton";
+import { useToast } from "@/hooks/use-toast";
+import { useProductStore } from "@/lib/productStore";
+import { sanitizeString, sanitizeNumber } from "@/lib/validation";
+import { Product } from "@/types";
+import { useFormValidation, commonValidationRules } from "@/hooks/useFormValidation";
+import { FormValidation } from "@/components/FormValidation";
+
+interface ProductDialogProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  trigger?: React.ReactNode;
+  editingProduct?: Product | null;
+}
+
+interface ProductFormData {
+  article: string;
+  name: string;
+  category: string;
+  stock: string;
+  unit: string;
+  description: string;
+}
+
+export function ProductDialog({ isOpen, onOpenChange, trigger, editingProduct }: ProductDialogProps) {
+  const { addProduct, updateProduct } = useProductStore();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const [formData, setFormData] = useState<ProductFormData>({
+    article: "",
+    name: "",
+    category: "",
+    stock: "",
+    unit: "",
+    description: ""
+  });
+
+  // Form validation rules
+  const validationRules: { field: string; validate: (value: any, formData?: any) => string | null; required?: boolean }[] = [
+    { field: 'article', validate: commonValidationRules.required, required: true },
+    { field: 'name', validate: commonValidationRules.required, required: true },
+    { field: 'stock', validate: (value: string) => {
+      const num = parseFloat(value);
+      return commonValidationRules.positiveNumber(num);
+    }, required: false }
+  ];
+
+  const { errors, validateForm, clearErrors } = useFormValidation(validationRules);
+
+  // Load editing product data
+  useEffect(() => {
+    if (editingProduct) {
+      setFormData({
+        article: editingProduct.article,
+        name: editingProduct.name,
+        category: editingProduct.category,
+        stock: editingProduct.stock.toString(),
+        unit: editingProduct.unit,
+        description: editingProduct.description || ""
+      });
+    } else {
+      setFormData({
+        article: "",
+        name: "",
+        category: "",
+        stock: "",
+        unit: "",
+        description: ""
+      });
+    }
+    clearErrors();
+  }, [editingProduct, clearErrors]);
+
+  const handleSubmit = async () => {
+    if (!validateForm(formData)) {
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      const sanitizedData = {
+        article: sanitizeString(formData.article),
+        name: sanitizeString(formData.name),
+        category: sanitizeString(formData.category),
+        stock: sanitizeNumber(formData.stock),
+        unit: sanitizeString(formData.unit),
+        description: sanitizeString(formData.description)
+      };
+
+      if (editingProduct) {
+        // Update existing product
+        updateProduct(editingProduct.id, sanitizedData);
+        toast({
+          title: "Uğur",
+          description: "Məhsul uğurla yeniləndi"
+        });
+      } else {
+        // Add new product
+        const newProduct: Product = {
+          id: sanitizedData.article,
+          article: sanitizedData.article,
+          name: sanitizedData.name,
+          category: sanitizedData.category || "",
+          status: "active",
+          stock: sanitizedData.stock,
+          unit: sanitizedData.unit || "",
+          packaging: [],
+          warehouses: [],
+          description: sanitizedData.description
+        };
+
+        addProduct(newProduct);
+        toast({
+          title: "Uğur",
+          description: "Məhsul uğurla əlavə edildi"
+        });
+      }
+
+      onOpenChange(false);
+    } catch (error) {
+      toast({
+        title: "Xəta",
+        description: "Məhsul saxlanılarkən xəta baş verdi",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
+      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>
+            {editingProduct ? "Məhsulu Redaktə Et" : "Yeni Məhsul Əlavə Et"}
+          </DialogTitle>
+        </DialogHeader>
+        
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="article">Artikul *</Label>
+            <Input
+              id="article"
+              value={formData.article}
+              onChange={(e) => setFormData(prev => ({ ...prev, article: e.target.value }))}
+              placeholder="Məhsul artikulunu daxil edin"
+              disabled={!!editingProduct} // Disable editing article for existing products
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="name">Məhsul Adı *</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              placeholder="Məhsul adını daxil edin"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="category">Kateqoriya</Label>
+            <Input
+              id="category"
+              value={formData.category}
+              onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+              placeholder="Kateqoriya adını daxil edin"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="stock">Stok Miqdarı</Label>
+            <Input
+              id="stock"
+              type="number"
+              min="0"
+              value={formData.stock}
+              onChange={(e) => setFormData(prev => ({ ...prev, stock: e.target.value }))}
+              placeholder="Stok miqdarını daxil edin"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="unit">Ölçü Vahidi</Label>
+            <Input
+              id="unit"
+              value={formData.unit}
+              onChange={(e) => setFormData(prev => ({ ...prev, unit: e.target.value }))}
+              placeholder="kg, ədəd, litr, vs."
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="description">Təsvir</Label>
+            <Textarea
+              id="description"
+              value={formData.description}
+              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              placeholder="Məhsul haqqında əlavə məlumat"
+              rows={3}
+            />
+          </div>
+          
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+              Ləğv et
+            </Button>
+            <LoadingButton onClick={handleSubmit} loading={isLoading}>
+              {editingProduct ? "Yenilə" : "Məhsul Əlavə Et"}
+            </LoadingButton>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
