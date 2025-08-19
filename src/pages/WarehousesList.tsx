@@ -256,26 +256,23 @@ export default function WarehousesList() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Vəziyyət</TableHead>
                     <TableHead>Artikul</TableHead>
                     <TableHead>Məhsul Adı</TableHead>
-                    <TableHead>Kateqoriya</TableHead>
                     <TableHead>Stok</TableHead>
-                    <TableHead>Vəziyyət</TableHead>
                     <TableHead>Digər Anbarlar</TableHead>
+                    <TableHead>Kateqoriya</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {warehouse.products.map((product) => (
                     <TableRow key={product.id}>
-                      <TableCell className="font-medium">{product.article}</TableCell>
-                      <TableCell>{product.name}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{product.category}</Badge>
-                      </TableCell>
-                      <TableCell>{product.stock} {product.unit}</TableCell>
                       <TableCell>
                         {getStatusBadge(product.status, product.stock)}
                       </TableCell>
+                      <TableCell className="font-medium">{product.article}</TableCell>
+                      <TableCell>{product.name}</TableCell>
+                      <TableCell>{product.stock} {product.unit}</TableCell>
                       <TableCell>
                         <div className="flex gap-1 flex-wrap">
                           {product.warehouses
@@ -294,6 +291,9 @@ export default function WarehousesList() {
                             <span className="text-muted-foreground text-sm">Yalnız bu anbarda</span>
                           )}
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{product.category}</Badge>
                       </TableCell>
                     </TableRow>
                   ))}
