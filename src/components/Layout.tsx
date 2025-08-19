@@ -5,6 +5,9 @@ import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { NetworkStatus } from "./NetworkStatus";
+import { OfflineIndicator } from "./OfflineIndicator";
+import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 
 
@@ -96,6 +99,10 @@ export default function Layout() {
           </div>
         </main>
       </div>
+      
+      <Toaster />
+      <NetworkStatus />
+      <OfflineIndicator />
     </div>
   );
 }

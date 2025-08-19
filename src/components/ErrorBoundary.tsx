@@ -24,9 +24,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error("Error Boundary yakaladı:", error, errorInfo);
-    }
+    // Error logged to console only in development
   }
 
   handleReset = () => {

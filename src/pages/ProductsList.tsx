@@ -501,12 +501,6 @@ export default function ProductsList() {
         // Check first row to understand column structure
         const firstRow = jsonData[0] as Record<string, unknown>;
         const availableColumns = Object.keys(firstRow);
-        
-        if (process.env.NODE_ENV === 'development' && import.meta.env.DEV) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log("Available columns:", availableColumns);
-        }
-        }
 
         for (let index = 0; index < jsonData.length; index++) {
           const row = jsonData[index] as Record<string, unknown>;
@@ -531,12 +525,6 @@ export default function ProductsList() {
             const stockValue = getColumnValue(['stok', 'stock', 'miqdar', 'quantity', 'say']);
             const unit = getColumnValue(['vahid', 'unit', 'ölçü', 'measure']) || 'ədəd';
             const description = getColumnValue(['təsvir', 'description', 'açıqlama', 'qeyd']);
-
-            if (process.env.NODE_ENV === 'development' && import.meta.env.DEV) {
-            if (process.env.NODE_ENV === 'development') {
-              console.log(`Row ${index + 1}:`, { article, name, category, stockValue, unit });
-            }
-            }
 
             if (!article || !name) {
               errorMessages.push(`Sətir ${index + 2}: Artikul və ya məhsul adı boşdur`);
@@ -600,17 +588,10 @@ export default function ProductsList() {
         }
 
         if (errorMessages.length > 0 && errorMessages.length <= 5) {
-          if (process.env.NODE_ENV === 'development' && import.meta.env.DEV) {
-          if (process.env.NODE_ENV === 'development') {
-            console.log("Import xətaları:", errorMessages);
-          }
-          }
+          // Import errors will be shown in toast
         }
 
       } catch (error) {
-        if (process.env.NODE_ENV === 'development' && import.meta.env.DEV) {
-          console.error("Excel import error:", error);
-        }
         toast({
           title: "Xəta",
           description: "Excel faylı oxunarkən xəta baş verdi. Fayl formatını yoxlayın.",

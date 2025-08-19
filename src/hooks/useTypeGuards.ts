@@ -134,7 +134,7 @@ export function groupBy<T, K extends keyof T>(array: T[], key: K): Record<string
 }
 
 // Object utilities
-export function pickProperties<T, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
+export function pickProperties<T extends Record<string, any>, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
   const result = {} as Pick<T, K>;
   keys.forEach(key => {
     if (key in obj) {

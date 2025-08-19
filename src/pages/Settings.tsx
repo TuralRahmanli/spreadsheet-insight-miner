@@ -309,9 +309,7 @@ export default function Settings() {
                     localStorage.clear();
                     window.location.reload();
                   } catch (error) {
-                    if (process.env.NODE_ENV === 'development') {
-                      console.error("System reset failed:", error);
-                    }
+                    // System reset failed - ignore error
                   }
                 }
               }}
