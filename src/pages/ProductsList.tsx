@@ -22,6 +22,35 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Product } from "@/types";
 import * as XLSX from 'xlsx';
 
+interface ProductFormData {
+  article: string;
+  name: string;
+  category: string;
+  stock: string;
+  unit: string;
+  packaging: string[];
+  description: string;
+}
+
+interface EditingProduct {
+  article: string;
+  name: string;
+  category: string;
+  stock: string;
+  description: string;
+}
+
+interface Filters {
+  status: string;
+  stockLevel: string;
+  unit: string;
+  category: string;
+}
+
+interface ColumnVisibility {
+  [key: string]: boolean;
+}
+
 const getStatusBadge = (status: string, stock: number) => {
   if (status === "out_of_stock" || stock === 0) {
     return <Badge variant="destructive">Bitib</Badge>;
@@ -37,7 +66,7 @@ export default function ProductsList() {
   const { products, addProduct, removeProduct, updateProduct } = useProductStore();
   const { getProductStock, initializeFromProducts } = useWarehouseStockStore();
   const [searchTerm, setSearchTerm] = useState("");
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<Filters>({
     status: "all",
     stockLevel: "all",
     unit: "all",
@@ -46,20 +75,14 @@ export default function ProductsList() {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<{
-    article: string;
-    name: string;
-    category: string;
-    stock: string;
-    description: string;
-  } | null>(null);
-  const [newProduct, setNewProduct] = useState({
+  const [editingProduct, setEditingProduct] = useState<EditingProduct | null>(null);
+  const [newProduct, setNewProduct] = useState<ProductFormData>({
     article: "",
     name: "",
     category: "",
     stock: "",
     unit: "",
-    packaging: [] as string[],
+    packaging: [],
     description: ""
   });
   const { toast } = useToast();
@@ -75,7 +98,7 @@ export default function ProductsList() {
     }, {} as Record<string, boolean>);
   }, [allWarehouses]);
 
-  const [columnVisibility, setColumnVisibility] = useState({
+  const [columnVisibility, setColumnVisibility] = useState<ColumnVisibility>({
     artikul: true,
     name: true,
     category: true,
