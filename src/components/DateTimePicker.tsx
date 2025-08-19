@@ -66,7 +66,7 @@ export function DateTimePicker({
     : placeholder;
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover open={isOpen} onOpenChange={setIsOpen} modal={true}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -81,10 +81,17 @@ export function DateTimePicker({
         </Button>
       </PopoverTrigger>
       
-      <PopoverContent className="w-auto p-0" align="start">
-        <div className="p-3 space-y-4">
+      <PopoverContent 
+        className="w-auto p-0 z-50" 
+        align="start"
+        side="bottom"
+        sideOffset={4}
+        avoidCollisions={true}
+        collisionPadding={16}
+      >
+        <div className="p-3 space-y-4 bg-background border rounded-md shadow-lg max-h-[80vh] overflow-y-auto">
           {/* Calendar */}
-          <div className="border rounded-md">
+          <div className="border rounded-md bg-card">
             <Calendar
               mode="single"
               selected={selectedDate}
@@ -93,7 +100,7 @@ export function DateTimePicker({
                 date > new Date() || date < new Date("1900-01-01")
               }
               initialFocus
-              className="pointer-events-auto"
+              className="pointer-events-auto p-0"
             />
           </div>
           
