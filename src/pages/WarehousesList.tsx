@@ -9,6 +9,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Search, Warehouse, Package, MapPin, Plus } from "lucide-react";
 import { useProductStore } from "@/lib/productStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
+import { usePackagingMethodsStore } from "@/lib/packagingMethodsStore";
+import { useOperationHistory } from "@/hooks/useOperationHistory";
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function WarehousesList() {
@@ -16,9 +18,18 @@ export default function WarehousesList() {
   const navigate = useNavigate();
   const { products } = useProductStore();
   const { warehouses, addWarehouse } = useWarehouseStore();
+  const { packagingMethods } = usePackagingMethodsStore();
+  const { operations } = useOperationHistory();
   const [searchTerm, setSearchTerm] = useState("");
   const [newWarehouseName, setNewWarehouseName] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Get the first packaging method from store or default to "Paket"
+  const getMostUsedPackagingMethod = () => {
+    return packagingMethods.length > 0 ? packagingMethods[0] : "Paket";
+  };
+
+  const dynamicPackagingLabel = getMostUsedPackagingMethod();
 
   // Get warehouses from warehouse store
   const allWarehouses = warehouses.map(w => w.name).sort();
@@ -227,7 +238,7 @@ export default function WarehousesList() {
                       <span className="font-medium">{warehouseProducts.length}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Paket:</span>
+                      <span className="text-muted-foreground">{dynamicPackagingLabel}:</span>
                       <span className="font-medium">{warehouseProducts.reduce((total, product) => total + product.packaging.length, 0)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
@@ -263,7 +274,7 @@ export default function WarehousesList() {
                     <TableHead>Vəziyyət</TableHead>
                     <TableHead>Artikul</TableHead>
                     <TableHead>Məhsul Adı</TableHead>
-                    <TableHead>Paket Növü</TableHead>
+                    <TableHead>{dynamicPackagingLabel}</TableHead>
                     <TableHead>Stok</TableHead>
                     <TableHead>Digər Anbarlar</TableHead>
                     <TableHead>Kateqoriya</TableHead>
