@@ -138,6 +138,42 @@ All colors MUST be HSL.
     /* Better touch targets on mobile */
     button, input, select, textarea {
       min-height: 44px;
+      min-width: 44px;
+    }
+    
+    /* iOS Safari specific fixes */
+    input[type="text"], input[type="email"], input[type="password"], 
+    input[type="number"], textarea, select {
+      -webkit-appearance: none;
+      border-radius: 0;
+    }
+    
+    /* Prevent zoom on input focus in iOS */
+    input, select, textarea {
+      font-size: 16px;
+    }
+    
+    /* Improve scrolling on iOS */
+    * {
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Handle keyboard overlay on mobile */
+    .keyboard-adjust {
+      padding-bottom: env(keyboard-inset-height, 0);
+    }
+    
+    /* Viewport zoom support */
+    @media (max-resolution: 1dppx) {
+      html {
+        zoom: 1.25;
+      }
+    }
+    
+    @media (max-resolution: 0.8dppx) {
+      html {
+        zoom: 1.5;
+      }
     }
     
     /* Improve table readability on mobile */
