@@ -85,7 +85,7 @@ export function DateTimePicker({
         className="w-auto p-0 z-50" 
         align="center"
         side="bottom"
-        sideOffset={4}
+        sideOffset={42}
         avoidCollisions={true}
         collisionPadding={16}
       >
