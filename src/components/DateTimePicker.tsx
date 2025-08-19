@@ -89,7 +89,7 @@ export function DateTimePicker({
         avoidCollisions={true}
         collisionPadding={16}
       >
-        <div className="p-2 space-y-3 bg-background border rounded-md shadow-lg max-h-[70vh] max-w-[90vw] overflow-y-auto">
+        <div className="p-1.5 space-y-2 bg-background border rounded-md shadow-lg max-h-[60vh] max-w-[85vw] overflow-y-auto">
           {/* Calendar */}
           <div className="border rounded-md bg-card">
             <Calendar
@@ -100,18 +100,18 @@ export function DateTimePicker({
                 date > new Date() || date < new Date("1900-01-01")
               }
               initialFocus
-              className="pointer-events-auto p-1 text-sm"
+              className="pointer-events-auto p-0.5 text-xs scale-90"
             />
           </div>
           
           {/* Time Controls */}
-          <div className="space-y-3 px-1">
+          <div className="space-y-2 px-0.5">
             <div className="text-center text-xs font-medium">
               Saat: {hours.toString().padStart(2, '0')}:{minutes.toString().padStart(2, '0')}
             </div>
             
-            <div className="space-y-2">
-              <div className="space-y-1">
+            <div className="space-y-1.5">
+              <div className="space-y-0.5">
                 <label className="text-xs font-medium">Saat:</label>
                 <Slider
                   value={[hours]}
@@ -119,15 +119,15 @@ export function DateTimePicker({
                   max={23}
                   min={0}
                   step={1}
-                  className="w-full"
+                  className="w-full h-4"
                 />
-                <div className="flex justify-between text-xs text-muted-foreground">
+                <div className="flex justify-between text-[10px] text-muted-foreground">
                   <span>00</span>
                   <span>23</span>
                 </div>
               </div>
               
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <label className="text-xs font-medium">Dəqiqə:</label>
                 <Slider
                   value={[minutes]}
@@ -135,9 +135,9 @@ export function DateTimePicker({
                   max={59}
                   min={0}
                   step={1}
-                  className="w-full"
+                  className="w-full h-4"
                 />
-                <div className="flex justify-between text-xs text-muted-foreground">
+                <div className="flex justify-between text-[10px] text-muted-foreground">
                   <span>00</span>
                   <span>59</span>
                 </div>
@@ -145,14 +145,14 @@ export function DateTimePicker({
             </div>
             
             {/* Selected DateTime Display */}
-            <div className="text-center text-xs bg-muted p-1.5 rounded">
+            <div className="text-center text-[10px] bg-muted p-1 rounded">
               {format(selectedDate, "yyyy-MM-dd HH:mm", { locale: az })}
             </div>
             
             {/* Confirm Button */}
             <Button 
               onClick={handleConfirm}
-              className="w-full h-8 text-xs"
+              className="w-full h-7 text-xs"
             >
               Təsdiq
             </Button>
