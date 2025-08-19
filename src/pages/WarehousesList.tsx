@@ -243,7 +243,7 @@ export default function WarehousesList() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Warehouse className="h-5 w-5" />
-              {warehouse.name} ({warehouse.products.length} məhsul, {warehouse.products.reduce((total, product) => total + product.packaging.length, 0)} paket növü)
+              {warehouse.name} ({warehouse.products.length} məhsul, {warehouse.products.reduce((total, product) => total + product.packaging.length, 0)} paket)
             </CardTitle>
           </CardHeader>
           <CardContent>
