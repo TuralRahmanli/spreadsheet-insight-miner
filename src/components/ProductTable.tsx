@@ -6,6 +6,7 @@ import { ProductDialog } from "./ProductDialog";
 import { ProductTableColumns } from "./ProductTableColumns";
 import { ProductTableActions } from "./ProductTableActions";
 import { ProductTableSettings } from "./ProductTableSettings";
+import { usePackagingMethodsStore } from "@/lib/packagingMethodsStore";
 
 interface ProductTableProps {
   products: Product[];
@@ -15,6 +16,7 @@ interface ProductTableProps {
 }
 
 export function ProductTable({ products, searchTerm, hasActiveFilters, getStatusBadge }: ProductTableProps) {
+  const { packagingMethods } = usePackagingMethodsStore();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
@@ -65,11 +67,9 @@ export function ProductTable({ products, searchTerm, hasActiveFilters, getStatus
     });
   }, [allWarehouses]);
 
-  // Get the most common packaging method from operations to use as column header
+  // Get the first packaging method from store or default to "Paket"
   const getPackagingColumnHeader = () => {
-    // For now, we'll use a default "Paket" but this could be made dynamic
-    // based on the most recent operation's packaging method
-    return 'Paket';
+    return packagingMethods.length > 0 ? packagingMethods[0] : "Paket";
   };
 
   const columnLabels = useMemo(() => ({
@@ -82,7 +82,7 @@ export function ProductTable({ products, searchTerm, hasActiveFilters, getStatus
     packaging: getPackagingColumnHeader(),
     description: 'Təsvir',
     ...allWarehouses.reduce((acc, warehouse) => ({ ...acc, [`warehouse_${warehouse}`]: warehouse }), {})
-  }), [allWarehouses]);
+  }), [allWarehouses, packagingMethods]);
 
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
