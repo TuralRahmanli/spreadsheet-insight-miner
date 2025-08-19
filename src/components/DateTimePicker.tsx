@@ -89,7 +89,7 @@ export function DateTimePicker({
         avoidCollisions={true}
         collisionPadding={16}
       >
-        <div className="p-3 space-y-4 bg-background border rounded-md shadow-lg max-h-[80vh] overflow-y-auto">
+        <div className="p-2 space-y-3 bg-background border rounded-md shadow-lg max-h-[70vh] max-w-[90vw] overflow-y-auto">
           {/* Calendar */}
           <div className="border rounded-md bg-card">
             <Calendar
@@ -100,19 +100,19 @@ export function DateTimePicker({
                 date > new Date() || date < new Date("1900-01-01")
               }
               initialFocus
-              className="pointer-events-auto p-0"
+              className="pointer-events-auto p-1 text-sm"
             />
           </div>
           
           {/* Time Controls */}
-          <div className="space-y-4 px-2">
-            <div className="text-center text-sm font-medium">
+          <div className="space-y-3 px-1">
+            <div className="text-center text-xs font-medium">
               Saat: {hours.toString().padStart(2, '0')}:{minutes.toString().padStart(2, '0')}
             </div>
             
-            <div className="space-y-3">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Saat:</label>
+            <div className="space-y-2">
+              <div className="space-y-1">
+                <label className="text-xs font-medium">Saat:</label>
                 <Slider
                   value={[hours]}
                   onValueChange={handleHourChange}
@@ -127,8 +127,8 @@ export function DateTimePicker({
                 </div>
               </div>
               
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Dəqiqə:</label>
+              <div className="space-y-1">
+                <label className="text-xs font-medium">Dəqiqə:</label>
                 <Slider
                   value={[minutes]}
                   onValueChange={handleMinuteChange}
@@ -145,14 +145,14 @@ export function DateTimePicker({
             </div>
             
             {/* Selected DateTime Display */}
-            <div className="text-center text-sm bg-muted p-2 rounded">
+            <div className="text-center text-xs bg-muted p-1.5 rounded">
               {format(selectedDate, "yyyy-MM-dd HH:mm", { locale: az })}
             </div>
             
             {/* Confirm Button */}
             <Button 
               onClick={handleConfirm}
-              className="w-full"
+              className="w-full h-8 text-xs"
             >
               Təsdiq
             </Button>
