@@ -89,7 +89,7 @@ export function DateTimePicker({
         avoidCollisions={true}
         collisionPadding={16}
       >
-        <div className="p-1 space-y-1.5 bg-background border rounded-md shadow-lg max-h-[50vh] max-w-[80vw] overflow-y-auto">
+        <div className="p-2 space-y-2 bg-background border rounded-md shadow-lg max-h-[60vh] max-w-[90vw] overflow-y-auto">
           {/* Calendar */}
           <div className="border rounded-md bg-card">
             <Calendar
