@@ -68,7 +68,7 @@ export function MobileProductCard({ product, getStatusBadge, onEdit, onDelete }:
             <div className="flex flex-wrap gap-1">
               {product.warehouses.slice(0, 3).map((warehouse, index) => (
                 <Button
-                  key={`${product.id}-warehouse-${warehouse}-${index}`}
+                  key={`${product.id}-warehouse-${warehouse}`}
                   variant="outline"
                   size="sm"
                   className="h-6 px-2 text-xs"
@@ -93,7 +93,7 @@ export function MobileProductCard({ product, getStatusBadge, onEdit, onDelete }:
             <div className="flex flex-wrap gap-1">
               {product.packaging.slice(0, 3).map((pack, index) => (
                 <Badge 
-                  key={`${product.id}-pack-${pack}-${index}`} 
+                  key={`${product.id}-pack-${pack}`} 
                   variant="outline" 
                   className="text-xs bg-accent/50"
                 >

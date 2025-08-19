@@ -53,7 +53,7 @@ export function ProductTableColumns({ product, columnId, getStatusBadge }: Produ
             {product.warehouses && product.warehouses.length > 0 ? (
               product.warehouses.slice(0, 2).map((warehouse, index) => (
                 <Button
-                  key={`${product.id}-warehouse-${warehouse}-${index}`}
+                  key={`${product.id}-warehouse-${warehouse}`}
                   variant="outline"
                   size="sm"
                   className="h-6 px-2 text-xs cursor-pointer hover:bg-primary hover:text-primary-foreground"
@@ -94,7 +94,7 @@ export function ProductTableColumns({ product, columnId, getStatusBadge }: Produ
             {product.packaging.length > 0 ? (
               product.packaging.slice(0, 2).map((pack, index) => (
                 <Badge 
-                  key={`${product.id}-pack-${pack}-${index}`} 
+                  key={`${product.id}-pack-${pack}`} 
                   variant="outline" 
                   className="text-xs bg-accent/50"
                 >

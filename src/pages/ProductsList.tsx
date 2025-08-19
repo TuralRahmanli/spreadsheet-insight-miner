@@ -9,11 +9,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useProductStore } from "@/lib/productStore";
 import { useWarehouseStockStore } from "@/lib/warehouseStockStore";
 import { Product } from "@/types";
-import { ProductTable } from "./ProductTable";
-import { ProductDialog } from "./ProductDialog";
-import { ProductFilters } from "./ProductFilters";
-import { ExcelImport } from "./ExcelImport";
-import { MobileProductCard } from "./MobileProductCard";
+import { ProductTable } from "../components/ProductTable";
+import { ProductDialog } from "../components/ProductDialog";
+import { ProductFilters } from "../components/ProductFilters";
+import { ExcelImport } from "../components/ExcelImport";
+import { MobileProductCard } from "../components/MobileProductCard";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 interface Filters {
@@ -33,7 +33,7 @@ const getStatusBadge = (status: string, stock: number) => {
   return <Badge variant="secondary" className="bg-success/90 text-success-foreground">Mövcud</Badge>;
 };
 
-export default function ProductsListRefactored() {
+export default function ProductsList() {
   const navigate = useNavigate();
   const { products } = useProductStore();
   const { initializeFromProducts } = useWarehouseStockStore();
