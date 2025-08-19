@@ -52,8 +52,8 @@ const ProductRow = memo(({ product, onProductClick }: {
       </TableCell>
       <TableCell>
         <div className="flex gap-1 flex-wrap">
-           {product.warehouses.map((warehouse, index) => (
-            <Badge key={`${product.id}-warehouse-${warehouse}-${index}`} variant="secondary" className="text-xs">
+           {product.warehouses.map((warehouse) => (
+            <Badge key={`${product.id}-warehouse-${warehouse}`} variant="secondary" className="text-xs">
               {warehouse}
             </Badge>
           ))}
@@ -61,8 +61,8 @@ const ProductRow = memo(({ product, onProductClick }: {
       </TableCell>
       <TableCell>
         <div className="flex gap-1 flex-wrap">
-           {product.packaging.slice(0, 3).map((pkg, index) => (
-            <Badge key={`${product.id}-packaging-${pkg}-${index}`} variant="outline" className="text-xs">
+           {product.packaging.slice(0, 3).map((pkg) => (
+            <Badge key={`${product.id}-packaging-${pkg}`} variant="outline" className="text-xs">
               {pkg}
             </Badge>
           ))}
