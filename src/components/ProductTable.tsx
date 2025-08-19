@@ -38,17 +38,17 @@ export function ProductTable({ products, searchTerm, hasActiveFilters, getStatus
 
   // Column order - dynamically updated when warehouses change
   const [columnOrder, setColumnOrder] = useState<string[]>([
-    'artikul', 'name', 'category', 'location',
-    'total', 'status', 'packaging', 'description'
+    'status', 'artikul', 'name', 'location', 'packaging',
+    'total', 'category', 'description'
   ]);
 
   // Update column order and visibility when warehouses change
   useEffect(() => {
     const warehouseColumns = allWarehouses.map(warehouse => `warehouse_${warehouse}`);
     const newOrder = [
-      'artikul', 'name', 'category', 'location',
+      'status', 'artikul', 'name', 'location', 'packaging',
       ...warehouseColumns,
-      'total', 'status', 'packaging', 'description'
+      'total', 'category', 'description'
     ];
     
     setColumnOrder(newOrder);
