@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Plus, Save, Check, ChevronsUpDown, X, Download } from "lucide-react";
 import { useProductStore } from "@/lib/productStore";
 import { usePackagingStore } from "@/lib/packagingStore";
+import { usePackagingMethodsStore } from "@/lib/packagingMethodsStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
 import { useOperationHistory } from "@/hooks/useOperationHistory";
 import { OperationIcon } from "@/components/OperationIcon";
@@ -19,12 +20,13 @@ import jsPDF from 'jspdf';
 
 type ProductEntry = {
   productId: string;
-  packaging: {type: string, count: number}[];
+  packaging: {type: string, count: number, method?: string}[];
 };
 
 export default function AddOperation() {
   const { products, updateWarehouseStock, updateProductPackaging } = useProductStore();
   const { packagingOptions, addPackagingOption } = usePackagingStore();
+  const { packagingMethods, addPackagingMethod } = usePackagingMethodsStore();
   const { warehouses } = useWarehouseStore();
   const { addOperation, operations, formatTimestamp, getOperationColor } = useOperationHistory();
   const [operationType, setOperationType] = useState("");
@@ -33,12 +35,14 @@ export default function AddOperation() {
   const [batchName, setBatchName] = useState("");
   const [selectedProducts, setSelectedProducts] = useState<ProductEntry[]>([]);
   const [currentProduct, setCurrentProduct] = useState("");
-  const [currentPackaging, setCurrentPackaging] = useState<{type: string, count: number}[]>([]);
+  const [currentPackaging, setCurrentPackaging] = useState<{type: string, count: number, method?: string}[]>([]);
   const [notes, setNotes] = useState("");
   const [packagingOpen, setPackagingOpen] = useState(false);
   const [customPackaging, setCustomPackaging] = useState("");
   const [currentPackagingType, setCurrentPackagingType] = useState("");
   const [currentPackageCount, setCurrentPackageCount] = useState("");
+  const [currentPackagingMethod, setCurrentPackagingMethod] = useState("");
+  const [customPackagingMethod, setCustomPackagingMethod] = useState("");
 
   const getCurrentProductTotalQuantity = () => {
     return currentPackaging.reduce((total, item) => {
@@ -48,7 +52,7 @@ export default function AddOperation() {
     }, 0);
   };
 
-  const getProductTotalQuantity = (packaging: {type: string, count: number}[]) => {
+  const getProductTotalQuantity = (packaging: {type: string, count: number, method?: string}[]) => {
     return packaging.reduce((total, item) => {
       const packagingSize = parseInt(item.type.split(/[+()]/)[0]);
       if (isNaN(packagingSize) || isNaN(item.count)) return total;
@@ -57,12 +61,17 @@ export default function AddOperation() {
   };
 
   const handleAddPackaging = () => {
-    if (currentPackagingType && currentPackageCount) {
+    if (currentPackagingType && currentPackageCount && currentPackagingMethod) {
       const countNum = parseInt(currentPackageCount);
       if (!isNaN(countNum) && countNum > 0) {
-        setCurrentPackaging(prev => [...prev, { type: currentPackagingType, count: countNum }]);
+        setCurrentPackaging(prev => [...prev, { 
+          type: currentPackagingType, 
+          count: countNum,
+          method: currentPackagingMethod
+        }]);
         setCurrentPackagingType("");
         setCurrentPackageCount("");
+        setCurrentPackagingMethod("");
         setPackagingOpen(false);
       }
     }
@@ -80,6 +89,14 @@ export default function AddOperation() {
     }
   };
 
+  const handleAddCustomPackagingMethod = () => {
+    if (customPackagingMethod.trim() && !packagingMethods.includes(customPackagingMethod.trim())) {
+      addPackagingMethod(customPackagingMethod.trim());
+      setCurrentPackagingMethod(customPackagingMethod.trim());
+      setCustomPackagingMethod("");
+    }
+  };
+
   const handleAddProduct = () => {
     if (currentProduct && currentPackaging.length > 0) {
       setSelectedProducts(prev => [...prev, {
@@ -90,6 +107,7 @@ export default function AddOperation() {
       setCurrentPackaging([]);
       setCurrentPackagingType("");
       setCurrentPackageCount("");
+      setCurrentPackagingMethod("");
     }
   };
 
@@ -453,6 +471,42 @@ export default function AddOperation() {
                         </Command>
                       </PopoverContent>
                     </Popover>
+                    <div className="flex flex-col gap-2">
+                      <Select value={currentPackagingMethod} onValueChange={setCurrentPackagingMethod}>
+                        <SelectTrigger className="w-32">
+                          <SelectValue placeholder="Üsul" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {packagingMethods.map((method) => (
+                            <SelectItem key={method} value={method}>
+                              {method}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <div className="flex gap-1">
+                        <Input
+                          placeholder="Yeni üsul"
+                          value={customPackagingMethod}
+                          onChange={(e) => setCustomPackagingMethod(e.target.value)}
+                          className="text-xs h-8 flex-1"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && customPackagingMethod.trim()) {
+                              e.preventDefault();
+                              handleAddCustomPackagingMethod();
+                            }
+                          }}
+                        />
+                        <Button 
+                          size="sm" 
+                          onClick={handleAddCustomPackagingMethod}
+                          disabled={!customPackagingMethod.trim()}
+                          className="h-8 px-2"
+                        >
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
                     <Input
                       type="number"
                       placeholder="Sayı"
@@ -460,7 +514,7 @@ export default function AddOperation() {
                       onChange={(e) => setCurrentPackageCount(e.target.value)}
                       className="w-20"
                     />
-                    <Button onClick={handleAddPackaging} disabled={!currentPackagingType || !currentPackageCount}>
+                    <Button onClick={handleAddPackaging} disabled={!currentPackagingType || !currentPackageCount || !currentPackagingMethod}>
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
@@ -473,7 +527,7 @@ export default function AddOperation() {
                        {currentPackaging.map((item, index) => (
                         <div key={`packaging-${item.type}-${item.count}-${index}`} className="flex items-center justify-between bg-muted p-2 rounded">
                           <span className="text-sm">
-                            {item.count} ədəd × {item.type} metr = {parseInt(item.type.split(/[+()]/)[0]) * item.count} metr
+                            {item.count} ədəd × {item.type} metr ({item.method}) = {parseInt(item.type.split(/[+()]/)[0]) * item.count} metr
                           </span>
                           <Button
                             variant="ghost"
@@ -521,9 +575,9 @@ export default function AddOperation() {
                         </Button>
                       </div>
                       <div className="space-y-1">
-                         {productEntry.packaging.map((pkg, pkgIndex) => (
+                          {productEntry.packaging.map((pkg, pkgIndex) => (
                           <div key={`product-packaging-${pkg.type}-${pkg.count}-${pkgIndex}`} className="text-xs text-muted-foreground">
-                            {pkg.count} ədəd × {pkg.type} metr
+                            {pkg.count} ədəd × {pkg.type} metr ({pkg.method})
                           </div>
                         ))}
                         <div className="text-xs font-medium">
