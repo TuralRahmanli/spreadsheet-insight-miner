@@ -40,7 +40,6 @@ export const useDataExport = () => {
 
       return blob;
     } catch (error) {
-      console.error('Export error:', error);
       toast({
         title: "Export xətası",
         description: "Məlumatlar export edilərkən xəta baş verdi",
@@ -109,7 +108,6 @@ export const useDataExport = () => {
         }
       }
     } catch (error) {
-      console.error('Share error:', error);
       toast({
         title: "Paylaşma xətası",
         description: "Məlumatlar paylaşılarkən xəta baş verdi",

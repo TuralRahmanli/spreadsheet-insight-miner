@@ -36,7 +36,6 @@ export const useAppIntents = () => {
             await processImportFile(file);
           }
         } catch (error) {
-          console.error('File reading error:', error);
           toast({
             title: "Fayl oxuna bilmədi",
             description: "Faylı manual olaraq seçməyi yoxlayın",
@@ -45,16 +44,13 @@ export const useAppIntents = () => {
         }
       }
     } catch (error) {
-      console.error('App URL handling error:', error);
+      // Handle app URL error silently
     }
   }, [processImportFile]);
 
   const handleAppStateChange = useCallback(async (state: { isActive: boolean }) => {
     if (state.isActive) {
       // App became active, check for any pending file intents
-      if (process.env.NODE_ENV === 'development') {
-        console.log('App became active');
-      }
     }
   }, []);
 
@@ -110,11 +106,11 @@ export const useAppIntents = () => {
             });
 
           } catch (error) {
-            console.error('Error processing shared file:', error);
+            // Error processing shared file - handle silently
           }
         }
       } catch (error) {
-        console.error('Error checking shared files:', error);
+        // Error checking shared files - handle silently
       }
     }
   }, [processImportFile]);

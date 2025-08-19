@@ -3,8 +3,7 @@ import { toast } from "@/hooks/use-toast";
 
 export const useErrorHandler = () => {
   const handleError = useCallback((error: unknown, context?: string) => {
-    console.error("Error caught:", error, context ? `Context: ${context}` : "");
-    
+    // Error handling logic here
     let message = "Gözlənilməz xəta baş verdi";
     
     if (error instanceof Error) {

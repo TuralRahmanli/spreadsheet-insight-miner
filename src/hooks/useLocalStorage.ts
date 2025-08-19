@@ -14,7 +14,6 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
       // If error also return initialValue
-      console.error(`Error reading localStorage key "${key}":`, error);
       return initialValue;
     }
   });
@@ -35,9 +34,6 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       }
     } catch (error) {
       // A more advanced implementation would handle the error case
-      if (process.env.NODE_ENV === 'development') {
-        console.error(`Error setting localStorage key "${key}":`, error);
-      }
     }
   };
 
@@ -49,9 +45,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
         window.localStorage.removeItem(key);
       }
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error(`Error clearing localStorage key "${key}":`, error);
-      }
+      // Handle error silently
     }
   };
 

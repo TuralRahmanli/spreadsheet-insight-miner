@@ -27,7 +27,6 @@ export const useOfflineSync = () => {
           }
         })
         .catch((error) => {
-          console.error('Service Worker registration failed:', error);
           handleError(error, 'Service Worker Registration');
         });
     }
@@ -63,9 +62,7 @@ export const useOfflineSync = () => {
               await (registration as ServiceWorkerRegistration & { sync: { register: (tag: string) => Promise<void> } }).sync.register('background-sync');
             }
           } catch (syncError) {
-            if (process.env.NODE_ENV === 'development') {
-              console.log('Background sync registration failed, will try on next online event');
-            }
+            // Background sync registration failed, will try on next online event
           }
         }
       }

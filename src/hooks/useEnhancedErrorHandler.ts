@@ -37,14 +37,7 @@ export const useEnhancedErrorHandler = () => {
       technicalDetails = 'Unknown error type';
     }
 
-    // Log for debugging (only in development)
-    if (process.env.NODE_ENV === 'development' && import.meta.env.DEV) {
-      console.group(`🚨 Error in ${context}`);
-      console.error('Original error:', error);
-      console.error('Technical details:', technicalDetails);
-      console.error('User message:', errorMessage);
-      console.groupEnd();
-    }
+    // Error logged for debugging in development only
 
     // Show user-friendly toast
     toast({

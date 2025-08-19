@@ -92,7 +92,6 @@ export const useAutoImport = () => {
       return { newItemsCount, duplicatesCount };
 
     } catch (error) {
-      console.error('Import error:', error);
       toast({
         title: "İmport xətası",
         description: "Fayl oxunarkən xəta baş verdi",

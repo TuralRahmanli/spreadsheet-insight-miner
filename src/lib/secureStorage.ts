@@ -11,7 +11,6 @@ export class SecureStorage {
     try {
       return btoa(data);
     } catch (error) {
-      console.error('Encoding failed:', error);
       return data;
     }
   }
@@ -20,7 +19,6 @@ export class SecureStorage {
     try {
       return atob(encodedData);
     } catch (error) {
-      console.error('Decoding failed:', error);
       return encodedData;
     }
   }
@@ -41,9 +39,6 @@ export class SecureStorage {
       localStorage.setItem(`${STORAGE_KEY}_${key}`, encodedData);
       return true;
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error(`Failed to store ${key}:`, error);
-      }
       return false;
     }
   }
@@ -65,7 +60,6 @@ export class SecureStorage {
 
       return parsedData.value;
     } catch (error) {
-      console.error(`Failed to retrieve ${key}:`, error);
       return null;
     }
   }
@@ -75,9 +69,6 @@ export class SecureStorage {
       localStorage.removeItem(`${STORAGE_KEY}_${key}`);
       return true;
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error(`Failed to remove ${key}:`, error);
-      }
       return false;
     }
   }
@@ -91,9 +82,6 @@ export class SecureStorage {
       keys.forEach(key => localStorage.removeItem(key));
       return true;
     } catch (error) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Failed to clear storage:', error);
-      }
       return false;
     }
   }

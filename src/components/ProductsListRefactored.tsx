@@ -13,6 +13,8 @@ import { ProductTable } from "./ProductTable";
 import { ProductDialog } from "./ProductDialog";
 import { ProductFilters } from "./ProductFilters";
 import { ExcelImport } from "./ExcelImport";
+import { MobileProductCard } from "./MobileProductCard";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 interface Filters {
   status: string;
@@ -23,12 +25,12 @@ interface Filters {
 
 const getStatusBadge = (status: string, stock: number) => {
   if (status === "out_of_stock" || stock === 0) {
-    return <Badge variant="destructive">Bitib</Badge>;
+    return <Badge variant="destructive" className="bg-destructive/90 text-destructive-foreground">Bitib</Badge>;
   }
   if (status === "low_stock" || stock < 50) {
-    return <Badge variant="secondary" className="bg-warning text-warning-foreground">Az qalıb</Badge>;
+    return <Badge variant="secondary" className="bg-warning/90 text-warning-foreground">Az qalıb</Badge>;
   }
-  return <Badge variant="secondary" className="bg-success text-success-foreground">Mövcud</Badge>;
+  return <Badge variant="secondary" className="bg-success/90 text-success-foreground">Mövcud</Badge>;
 };
 
 export default function ProductsListRefactored() {
@@ -44,6 +46,7 @@ export default function ProductsListRefactored() {
   });
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
   const { toast } = useToast();
   
   const categories = ["all", ...Array.from(new Set(products.map(p => p.category)))];
@@ -89,6 +92,19 @@ export default function ProductsListRefactored() {
 
   const hasActiveFilters = filters.status !== "all" || filters.stockLevel !== "all" || 
                           filters.unit !== "all" || filters.category !== "all" || searchTerm !== "";
+
+  const handleDeleteProduct = (productId: string) => {
+    const { removeProduct } = useProductStore.getState();
+    removeProduct(productId);
+    toast({
+      title: "Uğur",
+      description: "Məhsul uğurla silindi"
+    });
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setIsDialogOpen(true);
+  };
 
   return (
     <div className="space-y-6">
@@ -155,15 +171,70 @@ export default function ProductsListRefactored() {
             />
           )}
 
-          {/* Products Table */}
-          <ProductTable 
-            products={filteredProducts}
-            searchTerm={searchTerm}
-            hasActiveFilters={hasActiveFilters}
-            getStatusBadge={getStatusBadge}
-          />
+          {/* Products Table - Desktop */}
+          <div className="hidden md:block">
+            <ProductTable 
+              products={filteredProducts}
+              searchTerm={searchTerm}
+              hasActiveFilters={hasActiveFilters}
+              getStatusBadge={getStatusBadge}
+            />
+          </div>
+
+          {/* Products Cards - Mobile */}
+          <div className="md:hidden space-y-3">
+            {filteredProducts.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                {searchTerm || hasActiveFilters 
+                  ? "Axtarış şərtinə uyğun məhsul tapılmadı" 
+                  : "Məhsul tapılmadı"
+                }
+              </div>
+            ) : (
+              filteredProducts.map((product) => (
+                <div key={product.id}>
+                  <MobileProductCard
+                    product={product}
+                    getStatusBadge={getStatusBadge}
+                    onEdit={handleEditProduct}
+                    onDelete={(productId) => setDeletingProduct(product)}
+                  />
+                </div>
+              ))
+            )}
+          </div>
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog - Mobile */}
+      {deletingProduct && (
+        <AlertDialog open={!!deletingProduct} onOpenChange={() => setDeletingProduct(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Məhsulu sil</AlertDialogTitle>
+              <AlertDialogDescription>
+                Bu məhsulu silmək istədiyinizə əminsiniz? Bu əməliyyat geri alına bilməz.
+                <br /><br />
+                <strong>Məhsul:</strong> {deletingProduct.name} ({deletingProduct.article})
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setDeletingProduct(null)}>
+                Ləğv et
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  handleDeleteProduct(deletingProduct.id);
+                  setDeletingProduct(null);
+                }}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Sil
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      )}
     </div>
   );
 }
