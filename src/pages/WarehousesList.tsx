@@ -259,6 +259,7 @@ export default function WarehousesList() {
                     <TableHead>Vəziyyət</TableHead>
                     <TableHead>Artikul</TableHead>
                     <TableHead>Məhsul Adı</TableHead>
+                    <TableHead>Paket</TableHead>
                     <TableHead>Stok</TableHead>
                     <TableHead>Digər Anbarlar</TableHead>
                     <TableHead>Kateqoriya</TableHead>
@@ -272,6 +273,23 @@ export default function WarehousesList() {
                       </TableCell>
                       <TableCell className="font-medium">{product.article}</TableCell>
                       <TableCell>{product.name}</TableCell>
+                      <TableCell>
+                        <div className="flex gap-1 flex-wrap max-w-[120px]">
+                          {product.packaging.length > 0 ? (
+                            product.packaging.map((pack) => (
+                              <Badge 
+                                key={`${product.id}-pack-${pack.type}`} 
+                                variant="outline" 
+                                className="text-xs bg-accent/50"
+                              >
+                                {pack.type}×{pack.quantity}
+                              </Badge>
+                            ))
+                          ) : (
+                            <span className="text-muted-foreground text-xs">Yoxdur</span>
+                          )}
+                        </div>
+                      </TableCell>
                       <TableCell>{product.stock} {product.unit}</TableCell>
                       <TableCell>
                         <div className="flex gap-1 flex-wrap">
