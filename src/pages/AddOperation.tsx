@@ -505,7 +505,7 @@ export default function AddOperation() {
                     </Popover>
                     <div className="flex flex-col gap-2">
                        <Select value={currentPackagingMethod} onValueChange={setCurrentPackagingMethod}>
-                         <SelectTrigger className="w-32">
+                         <SelectTrigger className="w-40">
                            <SelectValue placeholder="Paketləşdirmə üsulu" />
                          </SelectTrigger>
                         <SelectContent>
