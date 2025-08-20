@@ -46,8 +46,8 @@ export default function WarehousesList() {
       if (product.packaging && Array.isArray(product.packaging)) {
         product.packaging.forEach((pkg: any) => {
           const method = pkg.method || "Paket";
-          // Extract package count from packaging data (e.g., "100×5" means 5 packages)
-          const packageCount = parseInt(pkg.type?.split('×')[1] || '1', 10);
+          // Use the quantity field directly from packaging data
+          const packageCount = pkg.quantity || 0;
           methodCounts[method] = (methodCounts[method] || 0) + packageCount;
         });
       }
