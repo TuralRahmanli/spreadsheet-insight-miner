@@ -7,7 +7,6 @@ import { Product } from "@/types";
 
 interface Filters {
   status: string;
-  stockLevel: string;
   unit: string;
   category: string;
 }
@@ -30,17 +29,7 @@ export function ProductFilters({
   onClearFilters 
 }: ProductFiltersProps) {
   const allUnits = ["all", ...Array.from(new Set(products.map(p => p.unit).filter(Boolean)))];
-  const stockLevels = ["all", "in_stock", "low_stock", "out_of_stock"];
   const allStatuses = ["all", "active", "out_of_stock", "low_stock"];
-
-  const getStockLevelLabel = (level: string) => {
-    switch (level) {
-      case "in_stock": return "Stokda var";
-      case "low_stock": return "Az qalıb";
-      case "out_of_stock": return "Bitib";
-      default: return "Hamısı";
-    }
-  };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
@@ -65,7 +54,7 @@ export function ProductFilters({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <div className="space-y-2">
             <label className="text-sm font-medium">Kateqoriya</label>
             <Select value={filters.category} onValueChange={(value) => 
@@ -96,24 +85,6 @@ export function ProductFilters({
                 {allStatuses.map(status => (
                   <SelectItem key={status} value={status}>
                     {getStatusLabel(status)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Stok Səviyyəsi</label>
-            <Select value={filters.stockLevel} onValueChange={(value) => 
-              onFiltersChange({ ...filters, stockLevel: value })
-            }>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {stockLevels.map(level => (
-                  <SelectItem key={level} value={level}>
-                    {getStockLevelLabel(level)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -159,15 +130,6 @@ export function ProductFilters({
                   <X 
                     className="h-3 w-3 cursor-pointer" 
                     onClick={() => onFiltersChange({ ...filters, status: "all" })}
-                  />
-                </Badge>
-              )}
-              {filters.stockLevel !== "all" && (
-                <Badge variant="secondary" className="gap-1">
-                  Stok: {getStockLevelLabel(filters.stockLevel)}
-                  <X 
-                    className="h-3 w-3 cursor-pointer" 
-                    onClick={() => onFiltersChange({ ...filters, stockLevel: "all" })}
                   />
                 </Badge>
               )}

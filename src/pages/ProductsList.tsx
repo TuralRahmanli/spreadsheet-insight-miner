@@ -18,7 +18,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 interface Filters {
   status: string;
-  stockLevel: string;
   unit: string;
   category: string;
 }
@@ -40,7 +39,6 @@ export default function ProductsList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<Filters>({
     status: "all",
-    stockLevel: "all",
     unit: "all",
     category: "all"
   });
@@ -69,28 +67,22 @@ export default function ProductsList() {
         (filters.status === "out_of_stock" && (product.status === "out_of_stock" || product.stock === 0)) ||
         (filters.status === "low_stock" && (product.status === "low_stock" || (product.stock > 0 && product.stock < 50)));
       
-      const matchesStockLevel = filters.stockLevel === "all" ||
-        (filters.stockLevel === "in_stock" && product.stock >= 50) ||
-        (filters.stockLevel === "low_stock" && product.stock > 0 && product.stock < 50) ||
-        (filters.stockLevel === "out_of_stock" && product.stock === 0);
-      
       const matchesUnit = filters.unit === "all" || product.unit === filters.unit;
       
-      return matchesSearch && matchesCategory && matchesStatus && matchesStockLevel && matchesUnit;
+      return matchesSearch && matchesCategory && matchesStatus && matchesUnit;
     });
   }, [products, searchTerm, filters]);
 
   const clearAllFilters = () => {
     setFilters({
       status: "all",
-      stockLevel: "all", 
       unit: "all",
       category: "all"
     });
     setSearchTerm("");
   };
 
-  const hasActiveFilters = filters.status !== "all" || filters.stockLevel !== "all" || 
+  const hasActiveFilters = filters.status !== "all" || 
                           filters.unit !== "all" || filters.category !== "all" || searchTerm !== "";
 
   const handleDeleteProduct = (productId: string) => {
