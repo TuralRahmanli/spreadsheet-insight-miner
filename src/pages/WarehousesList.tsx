@@ -45,7 +45,8 @@ export default function WarehousesList() {
     products.forEach(product => {
       if (product.packaging && Array.isArray(product.packaging)) {
         product.packaging.forEach((pkg: any) => {
-          const method = pkg.method || "Paket";
+          // Use pkg.type instead of pkg.method and map to packaging method names
+          const method = pkg.type === "Rulon" ? "Rulon" : "Paket";
           // Use the quantity field directly from packaging data
           const packageCount = pkg.quantity || 0;
           methodCounts[method] = (methodCounts[method] || 0) + packageCount;
