@@ -53,7 +53,7 @@ export default function WarehousesList() {
       }
     });
 
-    const entries = Object.entries(methodCounts);
+    const entries = Object.entries(methodCounts).filter(([_, count]) => count > 0);
     
     if (entries.length === 0) return "Paket";
     if (entries.length === 1) {
