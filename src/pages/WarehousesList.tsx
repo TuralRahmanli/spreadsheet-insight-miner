@@ -49,21 +49,23 @@ export default function WarehousesList() {
   const allWarehouses = warehouses.map(w => w.name).sort();
   
   // Filter products by selected warehouse or show all warehouses
-  // Helper function to get packaging summary
+  // Helper function to get packaging summary by method
   const getPackagingSummary = (products: any[]) => {
-    const packagingCount: { [key: string]: number } = {};
+    const methodCount: Record<string, number> = {};
     
     products.forEach(product => {
-      product.packaging.forEach((pkg: { type: string; quantity: number }) => {
-        packagingCount[pkg.type] = (packagingCount[pkg.type] || 0) + pkg.quantity;
+      // Get unique packaging methods for this product
+      const productMethods = [...new Set(product.packaging.map((pkg: { type: string }) => pkg.type))];
+      productMethods.forEach((method: string) => {
+        methodCount[method] = (methodCount[method] || 0) + 1;
       });
     });
     
-    const entries = Object.entries(packagingCount);
-    if (entries.length === 0) return "0 paket";
-    if (entries.length === 1) return `${entries[0][1]} ${entries[0][0].toLowerCase()}`;
+    const entries = Object.entries(methodCount);
+    if (entries.length === 0) return "0 məhsul";
+    if (entries.length === 1) return entries[0][0];
     
-    return entries.map(([type, count]) => `${count} ${type.toLowerCase()}`).join(' + ');
+    return entries.map(([method, count]) => `${count} ${method.toLowerCase()}`).join(' + ');
   };
 
   const filteredData = selectedWarehouse 
