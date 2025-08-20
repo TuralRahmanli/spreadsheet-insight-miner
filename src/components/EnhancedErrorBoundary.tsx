@@ -43,7 +43,10 @@ class EnhancedErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): Partial<State> {
-    const errorId = `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    // Use crypto.randomUUID if available, fallback to timestamp
+    const errorId = typeof crypto !== 'undefined' && crypto.randomUUID 
+      ? `error-${crypto.randomUUID()}`
+      : `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     return {
       hasError: true,
@@ -92,12 +95,17 @@ class EnhancedErrorBoundary extends Component<Props, State> {
         retryCount: this.state.retryCount
       };
 
-      const existingErrors = JSON.parse(localStorage.getItem('app-errors') || '[]');
-      existingErrors.push(errorData);
-      
-      // Keep only last 10 errors
-      const recentErrors = existingErrors.slice(-10);
-      localStorage.setItem('app-errors', JSON.stringify(recentErrors));
+      try {
+        const existingErrors = JSON.parse(localStorage.getItem('app-errors') || '[]');
+        const updatedErrors = Array.isArray(existingErrors) ? existingErrors : [];
+        updatedErrors.push(errorData);
+        
+        // Keep only last 10 errors
+        const recentErrors = updatedErrors.slice(-10);
+        localStorage.setItem('app-errors', JSON.stringify(recentErrors));
+      } catch (storageError) {
+        // Ignore storage errors
+      }
       } catch (e) {
         if (process.env.NODE_ENV === 'development') {
           console.warn('Could not store error locally:', e);

@@ -1,0 +1,46 @@
+// Application constants
+export const CONSTANTS = {
+  // Performance
+  LOW_STOCK_THRESHOLD: 50,
+  MAX_DISPLAY_ITEMS: 100,
+  DEBOUNCE_DELAY: 300,
+  
+  // Timers
+  AUTO_SAVE_DELAY: 2000,
+  ACCESSIBILITY_CHECK_INTERVAL: 30000,
+  BARCODE_SCAN_INTERVAL: 1000,
+  OFFLINE_ALERT_TIMEOUT: 10000,
+  
+  // Storage
+  MAX_STORED_ERRORS: 10,
+  MAX_RECENT_OPERATIONS: 10,
+  
+  // File handling
+  MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
+  CHUNK_SIZE: 1000,
+  
+  // UI
+  SKELETON_ANIMATION_DURATION: 2000,
+  TOAST_DURATION: 3000,
+  
+  // Mock data
+  MOCK_BARCODE_DETECTION_CHANCE: 0.1,
+  MOCK_CODES: [
+    '1234567890123',
+    '9876543210987', 
+    'ABC123DEF456',
+    'TEST-PRODUCT-001'
+  ] as const,
+  
+  // Bluetooth
+  BATTERY_SERVICE_UUID: '0000180f-0000-1000-8000-00805f9b34fb',
+  DEVICE_INFO_SERVICE_UUID: '0000180a-0000-1000-8000-00805f9b34fb',
+  
+  // Error handling
+  MAX_RETRY_ATTEMPTS: 3,
+  RETRY_DELAY: 1000,
+} as const;
+
+// Type-safe selectors
+export type ConstantKeys = keyof typeof CONSTANTS;
+export type MockCodes = typeof CONSTANTS.MOCK_CODES[number];

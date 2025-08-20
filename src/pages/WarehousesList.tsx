@@ -79,7 +79,8 @@ export default function WarehousesList() {
 
   const handleAddWarehouse = () => {
     if (newWarehouseName.trim()) {
-      const warehouseId = `warehouse-${Date.now()}`;
+      const warehouseId = `warehouse-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
       addWarehouse({
         id: warehouseId,
         name: newWarehouseName.trim()

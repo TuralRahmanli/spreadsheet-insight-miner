@@ -230,7 +230,7 @@ export function ExcelImport() {
                         {importResult.errors.length > 0 && (
                           <div className="mt-2 space-y-1 max-h-32 overflow-y-auto">
                             {importResult.errors.map((error, index) => (
-                              <div key={index} className="text-xs text-muted-foreground bg-muted p-2 rounded">
+                              <div key={`error-${error.slice(0, 20)}-${index}`} className="text-xs text-muted-foreground bg-muted p-2 rounded">
                                 {error}
                               </div>
                             ))}

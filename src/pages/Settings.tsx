@@ -43,19 +43,33 @@ export default function Settings() {
 
   // Load settings from localStorage on mount
   useEffect(() => {
-    const savedSettings = localStorage.getItem('app-settings');
-    if (savedSettings) {
-      setSettings(JSON.parse(savedSettings));
+    try {
+      const savedSettings = localStorage.getItem('app-settings');
+      if (savedSettings) {
+        const parsed = JSON.parse(savedSettings);
+        if (parsed && typeof parsed === 'object') {
+          setSettings(parsed);
+        }
+      }
+    } catch (error) {
+      // Ignore parse errors
     }
   }, []);
 
-  // Save settings function
   const saveSettings = () => {
-    localStorage.setItem('app-settings', JSON.stringify(settings));
-    toast({
-      title: "Parametrlər saxlanıldı",
-      description: "Bütün dəyişikliklər uğurla saxlanıldı",
-    });
+    try {
+      localStorage.setItem('app-settings', JSON.stringify(settings));
+      toast({
+        title: "Parametrlər saxlanıldı",
+        description: "Bütün dəyişikliklər uğurla saxlanıldı",
+      });
+    } catch (error) {
+      toast({
+        title: "Xəta",
+        description: "Parametrlər saxlanılarkən xəta baş verdi",
+        variant: "destructive",
+      });
+    }
   };
 
   const updateSetting = (key: keyof AppSettings, value: string | boolean | number) => {

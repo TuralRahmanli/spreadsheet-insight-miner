@@ -72,7 +72,7 @@ export function MobileProductCard({ product, getStatusBadge, onEdit, onDelete }:
                 <span>Anbarlar:</span>
               </div>
               <div className="flex flex-wrap gap-1">
-                {product.warehouses.slice(0, 3).map((warehouse, index) => (
+                {product.warehouses.slice(0, 3).map((warehouse) => (
                   <Button
                     key={`${product.id}-warehouse-${warehouse}`}
                     variant="outline"

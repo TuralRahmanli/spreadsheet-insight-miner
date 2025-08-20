@@ -18,6 +18,7 @@ import { DateTimePicker } from "@/components/DateTimePicker";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import jsPDF from 'jspdf';
+import { generateTimestampId } from "@/utils/idGeneration";
 
 type ProductEntry = {
   productId: string;
@@ -146,7 +147,8 @@ export default function AddOperation() {
 
   const handleDownloadPDF = (operationTitle: string, operationDate: string, productName: string, quantity: number) => {
     const doc = generateOperationPDF(operationTitle, operationDate, productName, quantity);
-    doc.save(`${operationTitle.replace(/\s+/g, '_')}_${Date.now()}.pdf`);
+    const timestamp = generateTimestampId();
+    doc.save(`${operationTitle.replace(/\s+/g, '_')}_${timestamp}.pdf`);
   };
 
   const handlePrint = (operationTitle: string, operationDate: string, productName: string, quantity: number) => {

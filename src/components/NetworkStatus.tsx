@@ -21,9 +21,9 @@ export function NetworkStatus() {
     window.addEventListener('offline', handleOffline);
 
     // Auto-hide offline alert after 10 seconds
-    let timeoutId: NodeJS.Timeout;
+    const timeoutRef = { current: null as NodeJS.Timeout | null };
     if (!isOnline) {
-      timeoutId = setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setShowOfflineAlert(false);
       }, 10000);
     }
@@ -31,7 +31,7 @@ export function NetworkStatus() {
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
-      if (timeoutId) clearTimeout(timeoutId);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, [isOnline]);
 

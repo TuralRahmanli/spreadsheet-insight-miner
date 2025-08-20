@@ -41,7 +41,7 @@ export const MobileResponsiveTable = ({
           </thead>
           <tbody>
             {data.map((item, index) => (
-              <tr key={index} className="border-b">
+              <tr key={`table-row-${item.id || index}`} className="border-b">
                 {columns.map(col => (
                   <td key={col.key} className="p-2">
                     {col.render ? col.render(item) : item[col.key]}
@@ -75,7 +75,7 @@ export const MobileResponsiveTable = ({
   return (
     <div className="space-y-4">
       {data.map((item, index) => (
-        <Card key={index}>
+        <Card key={`mobile-card-${item.id || index}`}>
           <CardContent className="p-4">
             <div className="space-y-2">
               {columns

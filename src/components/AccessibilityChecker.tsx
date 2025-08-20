@@ -3,6 +3,7 @@ import { AlertTriangle, CheckCircle, Info } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CONSTANTS } from "@/constants";
 
 interface AccessibilityIssue {
   type: 'error' | 'warning' | 'info';
@@ -101,9 +102,9 @@ export function useAccessibilityChecker() {
       setIssues(foundIssues);
     };
 
-    // Check immediately and then every 30 seconds (reduced frequency)
+    // Check immediately and then at configured interval
     checkAccessibility();
-    const interval = setInterval(checkAccessibility, 30000);
+    const interval = setInterval(checkAccessibility, CONSTANTS.ACCESSIBILITY_CHECK_INTERVAL);
 
     return () => clearInterval(interval);
   }, []);
@@ -162,7 +163,7 @@ export function AccessibilityOverlay() {
             ) : (
               issues.map((issue, index) => (
                 <Alert 
-                  key={`accessibility-issue-${issue.type}-${index}`}
+                  key={`accessibility-issue-${issue.element || issue.type}-${issue.message.slice(0, 10)}-${index}`}
                   variant={issue.type === 'error' ? 'destructive' : 'default'}
                   className="text-sm"
                 >

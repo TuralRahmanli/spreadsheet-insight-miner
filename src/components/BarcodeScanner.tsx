@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "@/hooks/use-toast";
+import { CONSTANTS } from "@/constants";
 
 interface BarcodeScannerProps {
   isOpen: boolean;
@@ -119,22 +120,19 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     
     // Mock detection for demo - you should integrate with a real barcode library
-    if (Math.random() < 0.1) { // 10% chance to simulate detection
-      const mockCodes = [
-        '1234567890123',
-        '9876543210987',
-        'ABC123DEF456',
-        'TEST-PRODUCT-001'
-      ];
-      const randomCode = mockCodes[Math.floor(Math.random() * mockCodes.length)];
+    // Use deterministic detection based on scan attempts
+    const scanAttempts = Math.floor(Date.now() / 1000) % 100;
+    if (scanAttempts % 10 === 0) { // Every 10th second has detection
+      const codeIndex = scanAttempts % CONSTANTS.MOCK_CODES.length;
+      const mockCode = CONSTANTS.MOCK_CODES[codeIndex];
       
-      onScan(randomCode, 'EAN-13');
+      onScan(mockCode, 'EAN-13');
       setIsScanning(false);
       onClose();
       
       toast({
         title: "Barkod oxundu",
-        description: `Kod: ${randomCode}`,
+        description: `Kod: ${mockCode}`,
       });
     }
   }, [isScanning, onScan, onClose]);
@@ -143,7 +141,7 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
   useEffect(() => {
     if (!isScanning) return;
 
-    const interval = setInterval(detectBarcode, 1000); // Reduced frequency
+    const interval = setInterval(detectBarcode, CONSTANTS.BARCODE_SCAN_INTERVAL);
     return () => clearInterval(interval);
   }, [isScanning, detectBarcode]);
 

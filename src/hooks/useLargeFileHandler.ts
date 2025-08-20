@@ -121,13 +121,14 @@ export function useLargeFileHandler<T = any>(options: FileProcessingOptions = {}
 
             chunk.forEach((row, index) => {
               try {
-                const obj: any = {};
+                const obj = {} as Record<string, unknown>;
                 headerRow.forEach((header, colIndex) => {
                   obj[header] = row[colIndex] || '';
                 });
-                processedChunk = [...processedChunk, obj];
+                processedChunk = [...processedChunk, obj as T];
               } catch (error) {
-                errors = [...errors, `Sətir ${i + index}: ${error}`];
+                const errorMessage = error instanceof Error ? error.message : String(error);
+                errors = [...errors, `Sətir ${i + index}: ${errorMessage}`];
               }
             });
 

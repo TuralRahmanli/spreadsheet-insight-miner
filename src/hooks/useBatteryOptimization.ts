@@ -38,7 +38,14 @@ export function useBatteryOptimization(config: Partial<BatteryOptimizationConfig
   const [powerSaverMode, setPowerSaverMode] = useState(false);
   const [optimizationsActive, setOptimizationsActive] = useState<string[]>([]);
   
-  const batteryRef = useRef<any>(null);
+  const batteryRef = useRef<{
+    level: number;
+    charging: boolean;
+    chargingTime: number;
+    dischargingTime: number;
+    addEventListener: (type: string, listener: EventListener) => void;
+    removeEventListener: (type: string, listener: EventListener) => void;
+  } | null>(null);
   const activityTimerRef = useRef<NodeJS.Timeout>();
   const lastActivityRef = useRef<number>(Date.now());
   
@@ -54,11 +61,13 @@ export function useBatteryOptimization(config: Partial<BatteryOptimizationConfig
           // Initial battery info
           updateBatteryInfo(battery);
           
-          // Set up battery event listeners
-          battery.addEventListener('chargingchange', () => updateBatteryInfo(battery));
-          battery.addEventListener('levelchange', () => updateBatteryInfo(battery));
-          battery.addEventListener('chargingtimechange', () => updateBatteryInfo(battery));
-          battery.addEventListener('dischargingtimechange', () => updateBatteryInfo(battery));
+          // Set up battery event listeners with proper event handling
+          const handleBatteryEvent = () => updateBatteryInfo(battery);
+          
+          battery.addEventListener('chargingchange', handleBatteryEvent);
+          battery.addEventListener('levelchange', handleBatteryEvent);
+          battery.addEventListener('chargingtimechange', handleBatteryEvent);
+          battery.addEventListener('dischargingtimechange', handleBatteryEvent);
           
         } catch (error) {
           console.error('Battery API error:', error);
@@ -73,7 +82,8 @@ export function useBatteryOptimization(config: Partial<BatteryOptimizationConfig
   }, []);
 
   // Update battery information
-  const updateBatteryInfo = useCallback((battery: any) => {
+  const updateBatteryInfo = useCallback((battery: typeof batteryRef.current) => {
+    if (!battery) return;
     const info: BatteryInfo = {
       level: battery.level,
       charging: battery.charging,
@@ -283,10 +293,11 @@ export function useBatteryOptimization(config: Partial<BatteryOptimizationConfig
       // Remove battery event listeners
       const battery = batteryRef.current;
       if (battery) {
-        battery.removeEventListener('chargingchange', updateBatteryInfo);
-        battery.removeEventListener('levelchange', updateBatteryInfo);
-        battery.removeEventListener('chargingtimechange', updateBatteryInfo);
-        battery.removeEventListener('dischargingtimechange', updateBatteryInfo);
+        const handleBatteryEvent = () => updateBatteryInfo(battery);
+        battery.removeEventListener('chargingchange', handleBatteryEvent);
+        battery.removeEventListener('levelchange', handleBatteryEvent);
+        battery.removeEventListener('chargingtimechange', handleBatteryEvent);
+        battery.removeEventListener('dischargingtimechange', handleBatteryEvent);
       }
     };
   }, [updateBatteryInfo]);

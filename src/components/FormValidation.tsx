@@ -20,7 +20,7 @@ export function FormValidation({ errors, className = "" }: FormValidationProps) 
     <div className={`space-y-2 ${className}`}>
       {errors.map((error, index) => (
         <Alert 
-          key={`validation-error-${error.field}-${index}`}
+          key={`validation-error-${error.field}-${error.message.slice(0, 10)}-${index}`}
           variant={error.type === 'error' ? 'destructive' : 'default'}
           className="text-sm"
         >
