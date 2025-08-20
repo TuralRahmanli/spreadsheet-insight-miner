@@ -1,6 +1,9 @@
 // Enhanced error handling utilities
 import { useCallback } from 'react';
 import { toast } from '@/hooks/use-toast';
+import { log } from '@/utils/logger';
+import { safeStorage } from '@/utils/safeOperations';
+import { generateRequestId } from '@/utils/secureIdGenerator';
 
 export interface ErrorDetails {
   code?: string;
@@ -37,7 +40,25 @@ export const useEnhancedErrorHandler = () => {
       technicalDetails = 'Unknown error type';
     }
 
-    // Error logged for debugging in development only
+    // Log error with correlation ID
+    const correlationId = generateRequestId();
+    log.error(`${context}: ${errorMessage}`, 'ErrorHandler', {
+      originalError: error,
+      correlationId,
+      technicalDetails,
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
+      timestamp: new Date().toISOString()
+    });
+
+    // Store critical errors for analytics
+    if (error instanceof Error && error.name === 'ChunkLoadError') {
+      safeStorage.set('critical_error', {
+        type: error.name,
+        message: error.message,
+        correlationId,
+        timestamp: Date.now()
+      });
+    }
 
     // Show user-friendly toast
     toast({

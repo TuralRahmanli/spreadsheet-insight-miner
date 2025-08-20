@@ -5,6 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "@/hooks/use-toast";
 import { CONSTANTS } from "@/constants";
+import { log } from "@/utils/logger";
+import { generateShortId } from "@/utils/secureIdGenerator";
 
 interface BarcodeScannerProps {
   isOpen: boolean;
@@ -58,9 +60,8 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
         setIsScanning(true);
       }
     } catch (err) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Camera access error:', err);
-      }
+      const errorMessage = err instanceof Error ? err.message : 'Unknown camera error';
+      log.error('Camera access failed', 'BarcodeScanner', { error: errorMessage });
       setError('Kameraya çıxış olmadı. Zəhmət olmasa icazə verin və ya başqa cihazdan yoxlayın.');
     } finally {
       setIsLoading(false);
@@ -71,15 +72,18 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
   const toggleFlash = useCallback(async () => {
     if (streamRef.current) {
       const track = streamRef.current.getVideoTracks()[0];
-      const capabilities = track.getCapabilities?.() as any;
+      const capabilities = track.getCapabilities?.() as MediaTrackCapabilities & {
+        torch?: boolean;
+      };
       
       if (capabilities && 'torch' in capabilities) {
         try {
           await track.applyConstraints({
-            advanced: [{ torch: !flashEnabled } as any]
+            advanced: [{ torch: !flashEnabled } as MediaTrackConstraintSet]
           });
           setFlashEnabled(!flashEnabled);
         } catch (err) {
+          log.warn('Flash toggle failed', 'BarcodeScanner', err);
           toast({
             title: "Flash dəstəklənmir",
             description: "Bu cihazda flash funksiyası yoxdur",
@@ -125,14 +129,20 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
     if (scanAttempts % 10 === 0) { // Every 10th second has detection
       const codeIndex = scanAttempts % CONSTANTS.MOCK_CODES.length;
       const mockCode = CONSTANTS.MOCK_CODES[codeIndex];
+      const scannedCode = `${mockCode}-${generateShortId('scan')}`;
       
-      onScan(mockCode, 'EAN-13');
+      log.debug('Barcode detected (simulated)', 'BarcodeScanner', { 
+        code: scannedCode, 
+        attempts: scanAttempts 
+      });
+      
+      onScan(scannedCode, 'EAN-13');
       setIsScanning(false);
       onClose();
       
       toast({
         title: "Barkod oxundu",
-        description: `Kod: ${mockCode}`,
+        description: `Kod: ${scannedCode}`,
       });
     }
   }, [isScanning, onScan, onClose]);
