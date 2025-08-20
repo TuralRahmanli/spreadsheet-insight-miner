@@ -27,7 +27,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 150,
     unit: "kg",
-    packaging: [{type: "100", quantity: 5}, {type: "120", quantity: 3}, {type: "135", quantity: 2}],
+    packaging: [{type: "Paket", quantity: 41}, {type: "Rulon", quantity: 2}],
     warehouses: ["Anbar 1", "Anbar 2"],
     description: "Premium keyfiyyətli albalı məhsulu"
   },
@@ -39,7 +39,7 @@ const initialProducts: Product[] = [
     status: "active",
     stock: 200,
     unit: "kg",
-    packaging: [{type: "100", quantity: 4}, {type: "120", quantity: 6}],
+    packaging: [{type: "Paket", quantity: 25}, {type: "Qutu", quantity: 3}],
     warehouses: ["Anbar 1"],
     description: "Standart keyfiyyətli albalı məhsulu"
   },
