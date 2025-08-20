@@ -58,10 +58,10 @@ export default function WarehousesList() {
     if (entries.length === 0) return "Paket";
     if (entries.length === 1) {
       const [method, count] = entries[0];
-      return `${count} ${method.toLowerCase()}`;
+      return `${count} ${method}`;
     }
     
-    return entries.map(([method, count]) => `${count} ${method.toLowerCase()}`).join(" + ");
+    return entries.map(([method, count]) => `${count} ${method}`).join(" + ");
   };
 
   // Get warehouses from warehouse store
