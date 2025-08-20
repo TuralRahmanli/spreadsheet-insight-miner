@@ -44,7 +44,7 @@ export function ProductFilters({
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case "active": return "Aktiv";
+      case "active": return "Mövcud";
       case "out_of_stock": return "Bitib";
       case "low_stock": return "Az qalıb";
       default: return "Hamısı";
