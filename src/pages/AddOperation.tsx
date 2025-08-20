@@ -495,7 +495,7 @@ export default function AddOperation() {
                                         currentPackagingType === option ? "opacity-100" : "opacity-0"
                                       )}
                                     />
-                                    {option} metr/paket
+                                    {option} metr
                                   </CommandItem>
                                 ))}
                             </CommandGroup>
@@ -572,7 +572,7 @@ export default function AddOperation() {
                             <div key={`packaging-${item.type}-${item.count}-${index}`} className="flex items-center justify-between bg-muted p-2 rounded">
                               <div className="flex flex-col">
                                 <span className="text-sm font-medium">
-                                  {item.count} ədəd paket × {item.type} metr/paket ({item.method})
+                                  {item.count} ədəd paket × {item.type} metr ({item.method})
                                 </span>
                                 <span className="text-xs text-muted-foreground">
                                   Ümumi məhsul: {totalQuantity} metr
