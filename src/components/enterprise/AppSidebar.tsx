@@ -159,7 +159,7 @@ export function AppSidebar() {
   const getNavClassName = ({ isActive }: { isActive: boolean }): string => {
     return isActive 
       ? 'bg-accent text-accent-foreground font-medium' 
-      : 'hover:bg-accent/50 hover:text-accent-foreground';
+      : 'text-sidebar-foreground hover:bg-accent/50 hover:text-accent-foreground';
   };
 
   const handleNavClick = (item: NavItem) => {
@@ -203,7 +203,7 @@ export function AppSidebar() {
               key={`nav-group-${group.label}-${groupIndex}`}
             >
               {!isCollapsed && (
-                <SidebarGroupLabel className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <SidebarGroupLabel className="text-xs font-medium text-sidebar-foreground/90 uppercase tracking-wider">
                   {group.label}
                 </SidebarGroupLabel>
               )}
@@ -263,7 +263,7 @@ export function AppSidebar() {
       <SidebarFooter>
         {!isCollapsed ? (
           <div className="p-4 border-t">
-            <div className="text-xs text-muted-foreground space-y-1">
+            <div className="text-xs text-sidebar-foreground/80 space-y-1">
               <div>Məhsullar: {totalProducts}</div>
               <div>Anbarlar: {totalWarehouses}</div>
               {lowStockProducts > 0 && (
