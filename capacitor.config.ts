@@ -4,10 +4,11 @@ const config: CapacitorConfig = {
   appId: 'app.lovable.eadd56d6378d4085ace9d19bb9608d0d',
   appName: 'spreadsheet-insight-miner',
   webDir: 'dist',
-  server: {
-    url: 'https://eadd56d6-378d-4085-ace9-d19bb9608d0d.lovableproject.com?forceHideBadge=true',
-    cleartext: true
-  },
+  // Production build - no development server
+  // server: {
+  //   url: 'https://eadd56d6-378d-4085-ace9d19bb9608d0d.lovableproject.com?forceHideBadge=true',
+  //   cleartext: true
+  // },
   plugins: {
     SplashScreen: {
       launchShowDuration: 3000,
