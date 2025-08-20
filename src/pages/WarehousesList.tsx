@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Search, Warehouse, Package, Plus } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Search, Warehouse, Package, Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { useProductStore } from "@/lib/productStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
 import { usePackagingMethodsStore } from "@/lib/packagingMethodsStore";
@@ -24,7 +25,18 @@ export default function WarehousesList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [newWarehouseName, setNewWarehouseName] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [expandedWarehouses, setExpandedWarehouses] = useState<Set<string>>(new Set());
   const isMobile = useIsMobile();
+
+  const toggleWarehouse = (warehouseName: string) => {
+    const newExpanded = new Set(expandedWarehouses);
+    if (newExpanded.has(warehouseName)) {
+      newExpanded.delete(warehouseName);
+    } else {
+      newExpanded.add(warehouseName);
+    }
+    setExpandedWarehouses(newExpanded);
+  };
 
   // Get the first packaging method from store or default to "Paket"
   const getMostUsedPackagingMethod = () => {
@@ -261,30 +273,50 @@ export default function WarehousesList() {
 
       {filteredData.map(warehouse => {
         const totalPackages = warehouse.products.reduce((total, product) => total + product.packaging.length, 0);
+        const isExpanded = expandedWarehouses.has(warehouse.name);
         
         return (
-          <Card key={warehouse.name}>
-            <CardHeader>
-              <CardTitle className="flex items-start sm:items-center flex-col sm:flex-row gap-2">
-                <div className="flex items-center gap-2">
-                  <Warehouse className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-                  <span className="font-semibold">{warehouse.name}</span>
-                </div>
-                <div className="text-sm sm:text-base font-normal text-muted-foreground">
-                  {warehouse.products.length} məhsul, {totalPackages} paket
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <WarehouseResponsiveTable 
-                products={warehouse.products}
-                warehouseName={warehouse.name}
-                getStatusBadge={getStatusBadge}
-                dynamicPackagingLabel={dynamicPackagingLabel}
-                searchTerm={searchTerm}
-              />
-            </CardContent>
-          </Card>
+          <Collapsible 
+            key={warehouse.name} 
+            open={isExpanded}
+            onOpenChange={() => toggleWarehouse(warehouse.name)}
+          >
+            <Card>
+              <CollapsibleTrigger asChild>
+                <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                  <CardTitle className="flex items-center justify-between">
+                    <div className="flex items-start sm:items-center flex-col sm:flex-row gap-2">
+                      <div className="flex items-center gap-2">
+                        <Warehouse className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                        <span className="font-semibold">{warehouse.name}</span>
+                      </div>
+                      <div className="text-sm sm:text-base font-normal text-muted-foreground">
+                        {warehouse.products.length} məhsul, {totalPackages} paket
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      {isExpanded ? (
+                        <ChevronUp className="h-4 w-4" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4" />
+                      )}
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <CardContent className="pt-0">
+                  <WarehouseResponsiveTable 
+                    products={warehouse.products}
+                    warehouseName={warehouse.name}
+                    getStatusBadge={getStatusBadge}
+                    dynamicPackagingLabel={dynamicPackagingLabel}
+                    searchTerm={searchTerm}
+                  />
+                </CardContent>
+              </CollapsibleContent>
+            </Card>
+          </Collapsible>
         );
       })}
     </div>
