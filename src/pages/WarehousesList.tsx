@@ -46,7 +46,9 @@ export default function WarehousesList() {
       if (product.packaging && Array.isArray(product.packaging)) {
         product.packaging.forEach((pkg: any) => {
           const method = pkg.method || "Paket";
-          methodCounts[method] = (methodCounts[method] || 0) + 1;
+          // Extract package count from packaging data (e.g., "100×5" means 5 packages)
+          const packageCount = parseInt(pkg.type?.split('×')[1] || '1', 10);
+          methodCounts[method] = (methodCounts[method] || 0) + packageCount;
         });
       }
     });
@@ -54,7 +56,10 @@ export default function WarehousesList() {
     const entries = Object.entries(methodCounts);
     
     if (entries.length === 0) return "Paket";
-    if (entries.length === 1) return entries[0][0];
+    if (entries.length === 1) {
+      const [method, count] = entries[0];
+      return `${count} ${method.toLowerCase()}`;
+    }
     
     return entries.map(([method, count]) => `${count} ${method.toLowerCase()}`).join(" + ");
   };
