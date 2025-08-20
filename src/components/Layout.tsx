@@ -8,6 +8,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { NetworkStatus } from "./NetworkStatus";
 import { OfflineIndicator } from "./OfflineIndicator";
 import { Toaster } from "@/components/ui/toaster";
+import { SkipLinks } from "@/components/SkipLinks";
 import { cn } from "@/lib/utils";
 
 
@@ -33,7 +34,12 @@ const SidebarContent = ({ isMobile = false, onItemClick }: { isMobile?: boolean;
       )}
     </div>
     <div className="flex-1 overflow-auto py-2">
-      <nav className="grid items-start px-2 text-sm font-medium lg:px-4" role="navigation" aria-label="Ana menyü">
+      <nav 
+        id="navigation"
+        className="grid items-start px-2 text-sm font-medium lg:px-4" 
+        role="navigation" 
+        aria-label="Ana menyü"
+      >
         {sidebarItems.map((item) => (
           <NavLink
             key={item.href}
@@ -65,6 +71,7 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen w-full bg-muted/40">
+      <SkipLinks />
       {/* Desktop Sidebar */}
       <div className="hidden border-r bg-muted/40 md:block md:w-64 md:fixed md:inset-y-0">
         <SidebarContent />
@@ -76,7 +83,12 @@ export default function Layout() {
         <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:px-6 md:hidden">
           <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="shrink-0">
+              <Button 
+                variant="outline" 
+                size="icon" 
+                className="shrink-0"
+                aria-label="Navigation menyusunu aç"
+              >
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Navigation menyusunu aç</span>
               </Button>
@@ -93,7 +105,11 @@ export default function Layout() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 lg:p-6 w-full min-w-0 overflow-hidden" role="main">
+        <main 
+          id="main-content"
+          className="flex-1 p-4 lg:p-6 w-full min-w-0 overflow-hidden" 
+          role="main"
+        >
           <div className="w-full max-w-full">
             <Outlet />
           </div>

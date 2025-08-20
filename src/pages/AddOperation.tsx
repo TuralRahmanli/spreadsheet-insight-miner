@@ -489,10 +489,12 @@ export default function AddOperation() {
                       </Select>
                       <div className="flex gap-1">
                         <Input
+                          id="new-packaging-method-input"
                           placeholder="Yeni üsul"
                           value={customPackagingMethod}
                           onChange={(e) => setCustomPackagingMethod(e.target.value)}
                           className="text-xs h-8 flex-1"
+                          aria-label="Yeni paketləşdirmə üsulu"
                           onKeyDown={(e) => {
                             if (e.key === "Enter" && customPackagingMethod.trim()) {
                               e.preventDefault();
@@ -505,19 +507,26 @@ export default function AddOperation() {
                           onClick={handleAddCustomPackagingMethod}
                           disabled={!customPackagingMethod.trim()}
                           className="h-8 px-2"
+                          aria-label="Yeni paketləşdirmə üsulunu əlavə et"
                         >
                           <Plus className="h-3 w-3" />
                         </Button>
                       </div>
                     </div>
                     <Input
+                      id="package-count-input"
                       type="number"
                       placeholder="Sayı"
                       value={currentPackageCount}
                       onChange={(e) => setCurrentPackageCount(e.target.value)}
                       className="w-20"
+                      aria-label="Paket sayı"
                     />
-                    <Button onClick={handleAddPackaging} disabled={!currentPackagingType || !currentPackageCount || !currentPackagingMethod}>
+                    <Button 
+                      onClick={handleAddPackaging} 
+                      disabled={!currentPackagingType || !currentPackageCount || !currentPackagingMethod}
+                      aria-label="Paketləşdirməni əlavə et"
+                    >
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
@@ -537,6 +546,7 @@ export default function AddOperation() {
                             size="sm"
                             onClick={() => handleRemovePackaging(index)}
                             className="h-6 w-6 p-0"
+                            aria-label={`${item.type} paketini sil`}
                           >
                             <X className="h-3 w-3" />
                           </Button>

@@ -30,6 +30,7 @@ export function ProductTableActions({ product, onEdit }: ProductTableActionsProp
         onClick={() => onEdit(product)}
         className="h-8 w-8 p-0"
         title="Məhsulu redaktə et"
+        aria-label={`${product.name} məhsulunu redaktə et`}
       >
         <Edit className="h-4 w-4" />
       </Button>
@@ -40,6 +41,7 @@ export function ProductTableActions({ product, onEdit }: ProductTableActionsProp
             size="sm"
             className="h-8 w-8 p-0 text-destructive hover:text-destructive"
             title="Məhsulu sil"
+            aria-label={`${product.name} məhsulunu sil`}
           >
             <Trash2 className="h-4 w-4" />
           </Button>

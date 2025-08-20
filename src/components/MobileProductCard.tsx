@@ -32,6 +32,7 @@ export function MobileProductCard({ product, getStatusBadge, onEdit, onDelete }:
                 size="sm"
                 onClick={() => onEdit(product)}
                 className="h-8 w-8 p-0 flex-shrink-0"
+                aria-label={`${product.name} məhsulunu redaktə et`}
               >
                 <Edit className="h-3 w-3" />
               </Button>
@@ -40,6 +41,7 @@ export function MobileProductCard({ product, getStatusBadge, onEdit, onDelete }:
                 size="sm"
                 onClick={() => onDelete(product.id)}
                 className="h-8 w-8 p-0 text-destructive flex-shrink-0"
+                aria-label={`${product.name} məhsulunu sil`}
               >
                 <Trash2 className="h-3 w-3" />
               </Button>

@@ -242,52 +242,58 @@ export function ProductDialog({ isOpen, onOpenChange, trigger, editingProduct }:
             />
           </div>
           
-          <div className="space-y-2">
-            <Label>Paket növləri</Label>
-            <div className="flex gap-2">
-              <Input
-                placeholder="Paket növü (məs. 100)"
-                value={newPackageType}
-                onChange={(e) => setNewPackageType(e.target.value)}
-                className="flex-1"
-              />
-              <Input
-                type="number"
-                placeholder="Miqdar"
-                value={newPackageQuantity}
-                onChange={(e) => setNewPackageQuantity(e.target.value)}
-                className="w-24"
-                min="1"
-              />
-              <Button
-                type="button"
-                onClick={handleAddPackaging}
-                disabled={!newPackageType || !newPackageQuantity}
-                size="sm"
-              >
-                Əlavə et
-              </Button>
-            </div>
-            
-            {formData.packaging.length > 0 && (
-              <div className="space-y-1 max-h-32 overflow-y-auto">
-                {formData.packaging.map((pack, index) => (
-                  <div key={`${pack.type}-${pack.quantity}-${index}`} className="flex items-center justify-between bg-muted p-2 rounded text-sm">
-                    <span>{pack.type}×{pack.quantity}</span>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRemovePackaging(index)}
-                      className="h-6 w-6 p-0"
-                    >
-                      ×
-                    </Button>
-                  </div>
-                ))}
+            <div className="space-y-2">
+              <Label htmlFor="package-types">Paket növləri</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="package-type-input"
+                  placeholder="Paket növü (məs. 100)"
+                  value={newPackageType}
+                  onChange={(e) => setNewPackageType(e.target.value)}
+                  className="flex-1"
+                  aria-label="Yeni paket növü"
+                />
+                <Input
+                  id="package-quantity-input"
+                  type="number"
+                  placeholder="Miqdar"
+                  value={newPackageQuantity}
+                  onChange={(e) => setNewPackageQuantity(e.target.value)}
+                  className="w-24"
+                  min="1"
+                  aria-label="Paket miqdarı"
+                />
+                <Button
+                  type="button"
+                  onClick={handleAddPackaging}
+                  disabled={!newPackageType || !newPackageQuantity}
+                  size="sm"
+                  aria-label="Paketi əlavə et"
+                >
+                  Əlavə et
+                </Button>
               </div>
-            )}
-          </div>
+              
+              {formData.packaging.length > 0 && (
+                <div className="space-y-1 max-h-32 overflow-y-auto">
+                  {formData.packaging.map((pack, index) => (
+                    <div key={`${pack.type}-${pack.quantity}-${index}`} className="flex items-center justify-between bg-muted p-2 rounded text-sm">
+                      <span>{pack.type}×{pack.quantity}</span>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemovePackaging(index)}
+                        className="h-6 w-6 p-0"
+                        aria-label={`${pack.type} paketini sil`}
+                      >
+                        ×
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
