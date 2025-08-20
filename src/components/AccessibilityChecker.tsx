@@ -69,7 +69,7 @@ export function useAccessibilityChecker() {
       }
 
       // Check for missing skip links
-      const skipLinks = document.querySelectorAll('a[href="#main"], a[href="#content"]');
+      const skipLinks = document.querySelectorAll('a[href="#main-content"], a[href="#navigation"]');
       if (skipLinks.length === 0) {
         foundIssues.push({
           type: 'info',
