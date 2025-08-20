@@ -35,16 +35,16 @@ export function MobileWarehouseCard({
             <CardContent className="p-4 cursor-pointer hover:bg-muted/50 transition-colors">
               <div className="space-y-3">
                 {/* Header with status and article */}
-                <MobileFlexBetween>
-                  <div className="flex-1 min-w-0">
-                    <MobileText variant="subtitle" className="truncate font-medium">
+                <MobileFlexBetween className="items-start">
+                  <div className="flex-1 min-w-0 pr-3 overflow-hidden">
+                    <MobileText variant="subtitle" className="block truncate font-medium leading-tight mb-1">
                       {product.name}
                     </MobileText>
-                    <MobileText variant="caption" className="truncate">
+                    <MobileText variant="caption" className="block truncate">
                       {product.article}
                     </MobileText>
                   </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
+                  <div className="flex items-center gap-2 flex-shrink-0 ml-auto">
                     {getStatusBadge(product.status, product.stock)}
                     {hasAdditionalInfo && (
                       isExpanded ? (
