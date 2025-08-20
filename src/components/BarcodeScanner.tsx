@@ -57,7 +57,9 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
         setIsScanning(true);
       }
     } catch (err) {
-      console.error('Camera access error:', err);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Camera access error:', err);
+      }
       setError('Kameraya çıxış olmadı. Zəhmət olmasa icazə verin və ya başqa cihazdan yoxlayın.');
     } finally {
       setIsLoading(false);
@@ -141,7 +143,7 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
   useEffect(() => {
     if (!isScanning) return;
 
-    const interval = setInterval(detectBarcode, 500);
+    const interval = setInterval(detectBarcode, 1000); // Reduced frequency
     return () => clearInterval(interval);
   }, [isScanning, detectBarcode]);
 

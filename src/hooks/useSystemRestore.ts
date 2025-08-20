@@ -93,14 +93,16 @@ export const useSystemRestore = () => {
       });
 
       // Suggest page reload for full effect
-      setTimeout(() => {
-        const reload = window.confirm(
-          'Sistem tamamilə bərpa edildi. Səhifəni yeniləmək istəyirsiniz?'
-        );
-        if (reload) {
-          window.location.reload();
-        }
-      }, 2000);
+      if (typeof window !== 'undefined') {
+        setTimeout(() => {
+          const reload = window.confirm(
+            'Sistem tamamilə bərpa edildi. Səhifəni yeniləmək istəyirsiniz?'
+          );
+          if (reload) {
+            window.location.reload();
+          }
+        }, 2000);
+      }
 
       return true;
     } catch (error) {

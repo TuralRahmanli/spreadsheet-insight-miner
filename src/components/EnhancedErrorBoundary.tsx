@@ -54,19 +54,20 @@ class EnhancedErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Error Boundary caught an error:', error, errorInfo);
+    // Only log in development mode
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Error Boundary caught an error:', error, errorInfo);
+      console.group(`🚨 Error Boundary: ${error.name}`);
+      console.error('Error:', error.message);
+      console.error('Stack:', error.stack);
+      console.error('Component Stack:', errorInfo.componentStack);
+      console.groupEnd();
+    }
     
     this.setState({ errorInfo });
     
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo);
-    
-    // Log error to browser console with stack trace
-    console.group(`🚨 Error Boundary: ${error.name}`);
-    console.error('Error:', error.message);
-    console.error('Stack:', error.stack);
-    console.error('Component Stack:', errorInfo.componentStack);
-    console.groupEnd();
 
     // Store error in localStorage for debugging
     this.storeErrorLocally(error, errorInfo);
@@ -97,9 +98,11 @@ class EnhancedErrorBoundary extends Component<Props, State> {
       // Keep only last 10 errors
       const recentErrors = existingErrors.slice(-10);
       localStorage.setItem('app-errors', JSON.stringify(recentErrors));
-    } catch (e) {
-      console.warn('Could not store error locally:', e);
-    }
+      } catch (e) {
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Could not store error locally:', e);
+        }
+      }
   };
 
   private reportError = async (error: Error, errorInfo: ErrorInfo) => {
@@ -137,12 +140,16 @@ class EnhancedErrorBoundary extends Component<Props, State> {
       });
 
       if (response.ok) {
-        console.log('Error report sent successfully');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Error report sent successfully');
+        }
       } else {
         throw new Error(`Report failed: ${response.status}`);
       }
     } catch (e) {
-      console.error('Failed to report error:', e);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to report error:', e);
+      }
     } finally {
       this.setState({ isReporting: false });
     }
@@ -192,7 +199,9 @@ class EnhancedErrorBoundary extends Component<Props, State> {
     try {
       sessionStorage.clear();
     } catch (e) {
-      console.warn('Could not clear session storage:', e);
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Could not clear session storage:', e);
+      }
     }
     window.location.reload();
   };
@@ -213,9 +222,13 @@ User Agent: ${navigator.userAgent}
 
     try {
       await navigator.clipboard.writeText(errorText);
-      console.log('Error details copied to clipboard');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Error details copied to clipboard');
+      }
     } catch (e) {
-      console.error('Could not copy to clipboard:', e);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Could not copy to clipboard:', e);
+      }
     }
   };
 

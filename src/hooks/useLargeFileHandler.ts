@@ -73,7 +73,7 @@ export function useLargeFileHandler<T = any>(options: FileProcessingOptions = {}
   ): Promise<ProcessingResult<T>> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      const errors: string[] = [];
+      let errors: string[] = [];
       let allData: T[] = [];
       let totalRows = 0;
 
@@ -117,7 +117,7 @@ export function useLargeFileHandler<T = any>(options: FileProcessingOptions = {}
             }
 
             const chunk = jsonData.slice(i, i + finalOptions.chunkSize) as any[][];
-            const processedChunk: T[] = [];
+            let processedChunk: T[] = [];
 
             chunk.forEach((row, index) => {
               try {
@@ -125,13 +125,13 @@ export function useLargeFileHandler<T = any>(options: FileProcessingOptions = {}
                 headerRow.forEach((header, colIndex) => {
                   obj[header] = row[colIndex] || '';
                 });
-                processedChunk.push(obj);
+                processedChunk = [...processedChunk, obj];
               } catch (error) {
-                errors.push(`Sətir ${i + index}: ${error}`);
+                errors = [...errors, `Sətir ${i + index}: ${error}`];
               }
             });
 
-            allData.push(...processedChunk);
+            allData = [...allData, ...processedChunk];
             
             const currentProgress = ((i + chunk.length - 1) / totalRows) * 100;
             setProgress(currentProgress);

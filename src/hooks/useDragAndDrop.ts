@@ -97,9 +97,14 @@ export function useDragAndDrop<T>({
       
       if (draggedIndex !== -1 && targetIndex !== -1) {
         const newItems = [...items];
-        const [draggedElement] = newItems.splice(draggedIndex, 1);
-        newItems.splice(targetIndex, 0, draggedElement);
-        onReorder(newItems);
+        const draggedElement = newItems[draggedIndex];
+        const itemsWithoutDragged = newItems.filter((_, index) => index !== draggedIndex);
+        const reorderedItems = [
+          ...itemsWithoutDragged.slice(0, targetIndex > draggedIndex ? targetIndex - 1 : targetIndex),
+          draggedElement,
+          ...itemsWithoutDragged.slice(targetIndex > draggedIndex ? targetIndex - 1 : targetIndex)
+        ];
+        onReorder(reorderedItems);
       }
     }
     

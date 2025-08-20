@@ -101,9 +101,9 @@ export function useAccessibilityChecker() {
       setIssues(foundIssues);
     };
 
-    // Check immediately and then every 5 seconds
+    // Check immediately and then every 30 seconds (reduced frequency)
     checkAccessibility();
-    const interval = setInterval(checkAccessibility, 5000);
+    const interval = setInterval(checkAccessibility, 30000);
 
     return () => clearInterval(interval);
   }, []);

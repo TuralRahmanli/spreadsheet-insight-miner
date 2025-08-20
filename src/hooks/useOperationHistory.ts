@@ -15,40 +15,41 @@ export const useOperationHistory = () => {
   const { products } = useProductStore();
 
   useEffect(() => {
-    // Generate dynamic recent operations based on current products
-    const generateRecentOperations = () => {
-      if (products.length === 0) return [];
+      // Generate dynamic recent operations based on current products
+      const generateRecentOperations = () => {
+        if (products.length === 0) return [];
 
-      const operationTypes: Array<'daxil' | 'xaric' | 'satış' | 'transfer' | 'əvvəldən_qalıq'> = ['daxil', 'xaric', 'satış', 'transfer', 'əvvəldən_qalıq'];
-      const recentOps: OperationRecord[] = [];
+        const operationTypes: Array<'daxil' | 'xaric' | 'satış' | 'transfer' | 'əvvəldən_qalıq'> = ['daxil', 'xaric', 'satış', 'transfer', 'əvvəldən_qalıq'];
+        let recentOps: OperationRecord[] = [];
 
-      // Generate 3-5 recent operations
-      const numOperations = Math.min(products.length, 5);
-      
-      for (let i = 0; i < numOperations; i++) {
-        const product = products[i % products.length];
-        const type = operationTypes[Math.floor(Math.random() * operationTypes.length)];
-        const quantity = Math.floor(Math.random() * 50) + 1;
+        // Generate 3-5 recent operations
+        const numOperations = Math.min(products.length, 5);
         
-        // Generate timestamps for last 3 days
-        const daysAgo = Math.floor(Math.random() * 3);
-        const hoursAgo = Math.floor(Math.random() * 24);
-        const timestamp = new Date();
-        timestamp.setDate(timestamp.getDate() - daysAgo);
-        timestamp.setHours(timestamp.getHours() - hoursAgo);
+        for (let i = 0; i < numOperations; i++) {
+          const product = products[i % products.length];
+          const type = operationTypes[Math.floor(Math.random() * operationTypes.length)];
+          const quantity = Math.floor(Math.random() * 50) + 1;
+          
+          // Generate timestamps for last 3 days
+          const daysAgo = Math.floor(Math.random() * 3);
+          const hoursAgo = Math.floor(Math.random() * 24);
+          const timestamp = new Date();
+          timestamp.setDate(timestamp.getDate() - daysAgo);
+          timestamp.setHours(timestamp.getHours() - hoursAgo);
 
-        recentOps.push({
-          id: `op-${Date.now()}-${i}`,
-          type,
-          productName: product.name,
-          quantity,
-          timestamp,
-          warehouse: product.warehouses[0] || 'Anbar 1'
-        });
-      }
+          const newOperation = {
+            id: `op-${Date.now()}-${i}`,
+            type,
+            productName: product.name,
+            quantity,
+            timestamp,
+            warehouse: product.warehouses[0] || 'Anbar 1'
+          };
+          recentOps = [...recentOps, newOperation];
+        }
 
-      return recentOps.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-    };
+        return recentOps.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+      };
 
     setOperations(generateRecentOperations());
   }, [products]);
@@ -59,7 +60,7 @@ export const useOperationHistory = () => {
       id: `op-${Date.now()}`
     };
 
-    setOperations(prev => [newOperation, ...prev].slice(0, 10)); // Keep only last 10
+    setOperations(prev => [newOperation, ...prev.slice(0, 9)]); // Keep only last 10
   };
 
   const formatTimestamp = (timestamp: Date) => {

@@ -226,12 +226,17 @@ export class PDFGenerator {
     this.addFooter();
     const pdfBlob = this.doc.output('blob');
     const url = URL.createObjectURL(pdfBlob);
-    const printWindow = window.open(url);
-    if (printWindow) {
-      printWindow.onload = () => {
-        printWindow.print();
+    
+    if (typeof window !== 'undefined') {
+      const printWindow = window.open(url);
+      if (printWindow) {
+        printWindow.onload = () => {
+          printWindow.print();
+          URL.revokeObjectURL(url);
+        };
+      } else {
         URL.revokeObjectURL(url);
-      };
+      }
     }
   }
 }

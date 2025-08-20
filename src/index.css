@@ -125,7 +125,7 @@ All colors MUST be HSL.
 
   /* Mobile optimizations */
   @media (max-width: 767px) {
-    * {
+    .mobile-container {
       /* Prevent horizontal scroll on mobile */
       max-width: 100vw;
       /* Prevent layout shift on mobile */

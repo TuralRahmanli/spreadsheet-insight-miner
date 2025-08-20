@@ -305,13 +305,15 @@ export default function Settings() {
               className="flex flex-col items-center gap-2 h-20"
               aria-label="Bütün məlumatları sil və sistemi sıfırla"
               onClick={() => {
-                const confirmed = window.confirm?.("Sistemi sıfırlamaq istədiyinizə əminsiniz? Bu əməliyyat geri alına bilməz!");
-                if (confirmed) {
-                  try {
-                    localStorage.clear();
-                    window.location.reload();
-                  } catch (error) {
-                    // System reset failed - ignore error
+                if (typeof window !== 'undefined') {
+                  const confirmed = window.confirm?.("Sistemi sıfırlamaq istədiyinizə əminsiniz? Bu əməliyyat geri alına bilməz!");
+                  if (confirmed) {
+                    try {
+                      localStorage.clear();
+                      window.location.reload();
+                    } catch (error) {
+                      // System reset failed - ignore error
+                    }
                   }
                 }
               }}
