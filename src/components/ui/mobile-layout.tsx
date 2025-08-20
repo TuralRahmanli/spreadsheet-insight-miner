@@ -31,8 +31,7 @@ export const MobileFlexRow = ({ children, className }: MobileLayoutProps) => (
 // Mobile-optimized flex between layout that prevents shifting
 export const MobileFlexBetween = ({ children, className }: MobileLayoutProps) => (
   <div className={cn(
-    "flex items-start justify-between gap-2 min-w-0",
-    "md:items-center",
+    "flex items-center justify-between gap-2 min-w-0",
     className
   )}>
     {children}
