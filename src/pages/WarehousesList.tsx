@@ -38,12 +38,26 @@ export default function WarehousesList() {
     setExpandedWarehouses(newExpanded);
   };
 
-  // Get the first packaging method from store or default to "Paket"
-  const getMostUsedPackagingMethod = () => {
-    return packagingMethods.length > 0 ? packagingMethods[0] : "Paket";
-  };
+  // Get packaging methods summary from products
+  const getPackagingSummary = (products: any[]) => {
+    const methodCounts: { [key: string]: number } = {};
+    
+    products.forEach(product => {
+      if (product.packaging && Array.isArray(product.packaging)) {
+        product.packaging.forEach((pkg: any) => {
+          const method = pkg.method || "Paket";
+          methodCounts[method] = (methodCounts[method] || 0) + 1;
+        });
+      }
+    });
 
-  const dynamicPackagingLabel = getMostUsedPackagingMethod();
+    const entries = Object.entries(methodCounts);
+    
+    if (entries.length === 0) return "Paket";
+    if (entries.length === 1) return entries[0][0];
+    
+    return entries.map(([method, count]) => `${count} ${method.toLowerCase()}`).join(" + ");
+  };
 
   // Get warehouses from warehouse store
   const allWarehouses = warehouses.map(w => w.name).sort();
@@ -233,7 +247,7 @@ export default function WarehousesList() {
           {allWarehouses.map(warehouse => {
             const warehouseProducts = products.filter(p => p.warehouses?.includes(warehouse));
             const totalStock = warehouseProducts.reduce((sum, p) => sum + p.stock, 0);
-            const totalPackages = warehouseProducts.reduce((total, product) => total + product.packaging.length, 0);
+            const packagingSummary = getPackagingSummary(warehouseProducts);
             
             return (
               <Card 
@@ -247,7 +261,7 @@ export default function WarehousesList() {
                     <span className="truncate">{warehouse}</span>
                   </CardTitle>
                   <div className="text-sm text-muted-foreground">
-                    {warehouseProducts.length} məhsul, {totalPackages} paket
+                    {warehouseProducts.length} məhsul, {packagingSummary}
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
@@ -257,8 +271,8 @@ export default function WarehousesList() {
                       <span className="font-medium">{warehouseProducts.length}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">{dynamicPackagingLabel}:</span>
-                      <span className="font-medium">{totalPackages}</span>
+                      <span className="text-muted-foreground">Paketləşdirmə:</span>
+                      <span className="font-medium">{packagingSummary}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Ümumi stok:</span>
@@ -273,7 +287,7 @@ export default function WarehousesList() {
       )}
 
       {filteredData.map(warehouse => {
-        const totalPackages = warehouse.products.reduce((total, product) => total + product.packaging.length, 0);
+        const packagingSummary = getPackagingSummary(warehouse.products);
         const isExpanded = expandedWarehouses.has(warehouse.name);
         
         return (
@@ -292,7 +306,7 @@ export default function WarehousesList() {
                         <span className="font-semibold">{warehouse.name}</span>
                       </div>
                       <div className="text-sm sm:text-base font-normal text-muted-foreground">
-                        {warehouse.products.length} məhsul, {totalPackages} paket
+                        {warehouse.products.length} məhsul, {packagingSummary}
                       </div>
                     </div>
                     <div className="flex items-center">
@@ -311,7 +325,7 @@ export default function WarehousesList() {
                     products={warehouse.products}
                     warehouseName={warehouse.name}
                     getStatusBadge={getStatusBadge}
-                    dynamicPackagingLabel={dynamicPackagingLabel}
+                    dynamicPackagingLabel={packagingSummary}
                     searchTerm={searchTerm}
                   />
                 </CardContent>
