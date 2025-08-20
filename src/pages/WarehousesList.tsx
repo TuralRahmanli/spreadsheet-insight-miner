@@ -40,29 +40,29 @@ export default function WarehousesList() {
 
   // Get packaging methods summary from products
   const getPackagingSummary = (products: any[]) => {
-    const methodCounts: { [key: string]: number } = {};
+    let paketCount = 0;
+    let rulonCount = 0;
     
     products.forEach(product => {
       if (product.packaging && Array.isArray(product.packaging)) {
         product.packaging.forEach((pkg: any) => {
-          // Use pkg.type instead of pkg.method and map to packaging method names
-          const method = pkg.type === "Rulon" ? "Rulon" : "Paket";
-          // Use the quantity field directly from packaging data
           const packageCount = pkg.quantity || 0;
-          methodCounts[method] = (methodCounts[method] || 0) + packageCount;
+          if (pkg.type === "Rulon") {
+            rulonCount += packageCount;
+          } else {
+            paketCount += packageCount;
+          }
         });
       }
     });
 
-    const entries = Object.entries(methodCounts).filter(([_, count]) => count > 0);
+    if (paketCount === 0 && rulonCount === 0) return "Paket";
     
-    if (entries.length === 0) return "Paket";
-    if (entries.length === 1) {
-      const [method, count] = entries[0];
-      return `${count} ${method}`;
-    }
+    const parts = [];
+    if (paketCount > 0) parts.push(`${paketCount} paket`);
+    if (rulonCount > 0) parts.push(`${rulonCount} Rulon`);
     
-    return entries.map(([method, count]) => `${count} ${method}`).join(" + ");
+    return parts.join(" + ");
   };
 
   // Get warehouses from warehouse store
