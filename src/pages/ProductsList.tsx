@@ -17,10 +17,10 @@ import { MobileProductCard } from "../components/MobileProductCard";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 interface Filters {
-  status: string[];
-  category: string[];
-  location: string[];
-  roll: string[];
+  status: string;
+  category: string;
+  location: string;
+  roll: string;
   stockRange: { min: number | undefined; max: number | undefined };
 }
 
@@ -40,10 +40,10 @@ export default function ProductsList() {
   const { initializeFromProducts } = useWarehouseStockStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<Filters>({
-    status: [],
-    category: [],
-    location: [],
-    roll: [],
+    status: '',
+    category: '',
+    location: '',
+    roll: '',
     stockRange: { min: undefined, max: undefined }
   });
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
@@ -65,14 +65,13 @@ export default function ProductsList() {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            product.article.toLowerCase().includes(searchTerm.toLowerCase());
       
-      const matchesCategory = filters.category.length === 0 || filters.category.includes(product.category);
+      const matchesCategory = filters.category === '' || filters.category === product.category;
       
-      const matchesStatus = filters.status.length === 0 || filters.status.includes(product.status);
+      const matchesStatus = filters.status === '' || filters.status === product.status;
       
-      const matchesLocation = filters.location.length === 0 || 
-        product.warehouses.some(warehouse => filters.location.includes(warehouse));
+      const matchesLocation = filters.location === '' || product.warehouses.includes(filters.location);
       
-      const matchesRoll = filters.roll.length === 0; // Placeholder since roll doesn't exist yet
+      const matchesRoll = filters.roll === '' || product.packaging.some(pkg => pkg.type === filters.roll);
       
       const matchesStockRange = 
         (filters.stockRange.min === undefined || product.stock >= filters.stockRange.min) &&
@@ -84,19 +83,19 @@ export default function ProductsList() {
 
   const clearAllFilters = () => {
     setFilters({
-      status: [],
-      category: [],
-      location: [],
-      roll: [],
+      status: '',
+      category: '',
+      location: '',
+      roll: '',
       stockRange: { min: undefined, max: undefined }
     });
     setSearchTerm("");
   };
 
-  const hasActiveFilters = filters.status.length > 0 || 
-                          filters.category.length > 0 || 
-                          filters.location.length > 0 || 
-                          filters.roll.length > 0 ||
+  const hasActiveFilters = filters.status !== '' || 
+                          filters.category !== '' || 
+                          filters.location !== '' || 
+                          filters.roll !== '' ||
                           filters.stockRange.min !== undefined ||
                           filters.stockRange.max !== undefined ||
                           searchTerm !== "";
