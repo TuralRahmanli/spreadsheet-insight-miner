@@ -49,6 +49,23 @@ export default function WarehousesList() {
   const allWarehouses = warehouses.map(w => w.name).sort();
   
   // Filter products by selected warehouse or show all warehouses
+  // Helper function to get packaging summary
+  const getPackagingSummary = (products: any[]) => {
+    const packagingCount: { [key: string]: number } = {};
+    
+    products.forEach(product => {
+      product.packaging.forEach((pkg: { type: string; quantity: number }) => {
+        packagingCount[pkg.type] = (packagingCount[pkg.type] || 0) + pkg.quantity;
+      });
+    });
+    
+    const entries = Object.entries(packagingCount);
+    if (entries.length === 0) return "0 paket";
+    if (entries.length === 1) return `${entries[0][1]} ${entries[0][0].toLowerCase()}`;
+    
+    return entries.map(([type, count]) => `${count} ${type.toLowerCase()}`).join(' + ');
+  };
+
   const filteredData = selectedWarehouse 
     ? [{
         name: selectedWarehouse,
@@ -233,7 +250,7 @@ export default function WarehousesList() {
           {allWarehouses.map(warehouse => {
             const warehouseProducts = products.filter(p => p.warehouses?.includes(warehouse));
             const totalStock = warehouseProducts.reduce((sum, p) => sum + p.stock, 0);
-            const totalPackages = warehouseProducts.reduce((total, product) => total + product.packaging.length, 0);
+            const packagingSummary = getPackagingSummary(warehouseProducts);
             
             return (
               <Card 
@@ -247,7 +264,7 @@ export default function WarehousesList() {
                     <span className="truncate">{warehouse}</span>
                   </CardTitle>
                   <div className="text-sm text-muted-foreground">
-                    {warehouseProducts.length} məhsul, {totalPackages} paket
+                    {warehouseProducts.length} məhsul, {packagingSummary}
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
@@ -257,8 +274,8 @@ export default function WarehousesList() {
                       <span className="font-medium">{warehouseProducts.length}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">{dynamicPackagingLabel}:</span>
-                      <span className="font-medium">{totalPackages}</span>
+                      <span className="text-muted-foreground">Paketləşmə:</span>
+                      <span className="font-medium">{packagingSummary}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Ümumi stok:</span>
@@ -273,7 +290,7 @@ export default function WarehousesList() {
       )}
 
       {filteredData.map(warehouse => {
-        const totalPackages = warehouse.products.reduce((total, product) => total + product.packaging.length, 0);
+        const packagingSummary = getPackagingSummary(warehouse.products);
         const isExpanded = expandedWarehouses.has(warehouse.name);
         
         return (
@@ -292,7 +309,7 @@ export default function WarehousesList() {
                         <span className="font-semibold">{warehouse.name}</span>
                       </div>
                       <div className="text-sm sm:text-base font-normal text-muted-foreground">
-                        {warehouse.products.length} məhsul, {totalPackages} paket
+                        {warehouse.products.length} məhsul, {packagingSummary}
                       </div>
                     </div>
                     <div className="flex items-center">
