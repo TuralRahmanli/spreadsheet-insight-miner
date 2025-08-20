@@ -68,30 +68,47 @@ export default function Reports() {
   
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Hesabatlar</h1>
-        <div className="flex gap-2">
+      <div className="space-y-4 md:space-y-0 md:flex md:items-center md:justify-between">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Hesabatlar</h1>
+        <div className="flex flex-wrap gap-2">
           <Button 
             variant={reportType === "overview" ? "default" : "outline"}
             onClick={() => setReportType("overview")}
+            size="sm"
+            className="text-xs md:text-sm"
           >
-            <BarChart3 className="mr-2 h-4 w-4" />
-            Ümumi
+            <BarChart3 className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+            <span className="hidden sm:inline">Ümumi</span>
+            <span className="sm:hidden">Ümm</span>
           </Button>
           <Button 
             variant={reportType === "detailed" ? "default" : "outline"}
             onClick={() => setReportType("detailed")}
+            size="sm"
+            className="text-xs md:text-sm"
           >
-            <FileText className="mr-2 h-4 w-4" />
-            Təfərrüatlı
+            <FileText className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+            <span className="hidden sm:inline">Təfərrüatlı</span>
+            <span className="sm:hidden">Təfər</span>
           </Button>
-          <Button variant="outline" onClick={handleDateSelect}>
-            <Calendar className="mr-2 h-4 w-4" />
-            Tarix seç
+          <Button 
+            variant="outline" 
+            onClick={handleDateSelect}
+            size="sm"
+            className="text-xs md:text-sm"
+          >
+            <Calendar className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+            <span className="hidden sm:inline">Tarix seç</span>
+            <span className="sm:hidden">Tarix</span>
           </Button>
-          <Button onClick={handleExport}>
-            <Download className="mr-2 h-4 w-4" />
-            İxrac et
+          <Button 
+            onClick={handleExport}
+            size="sm"
+            className="text-xs md:text-sm"
+          >
+            <Download className="mr-1 md:mr-2 h-3 w-3 md:h-4 md:w-4" />
+            <span className="hidden sm:inline">İxrac et</span>
+            <span className="sm:hidden">İxrac</span>
           </Button>
         </div>
       </div>
