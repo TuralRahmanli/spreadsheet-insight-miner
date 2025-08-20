@@ -175,6 +175,7 @@ export default function ProductsList() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
+              aria-label="Məhsul axtarışı"
             />
           </div>
 

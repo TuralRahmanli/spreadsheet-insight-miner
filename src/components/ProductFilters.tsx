@@ -149,6 +149,7 @@ export function ProductFilters({
                   })
                 }
                 className="text-sm"
+                aria-label="Minimum qalıq"
               />
               <Input
                 type="number"
@@ -161,6 +162,7 @@ export function ProductFilters({
                   })
                 }
                 className="text-sm"
+                aria-label="Maksimum qalıq"
               />
             </div>
           </div>
