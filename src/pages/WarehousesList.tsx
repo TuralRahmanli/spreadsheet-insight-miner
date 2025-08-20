@@ -49,16 +49,13 @@ export default function WarehousesList() {
   const allWarehouses = warehouses.map(w => w.name).sort();
   
   // Filter products by selected warehouse or show all warehouses
-  // Helper function to get packaging summary by method
+  // Helper function to get packaging method summary  
   const getPackagingSummary = (products: any[]) => {
     const methodCount: Record<string, number> = {};
     
     products.forEach(product => {
-      // Get unique packaging methods for this product
-      const productMethods = [...new Set(product.packaging.map((pkg: { type: string }) => pkg.type))];
-      productMethods.forEach((method: string) => {
-        methodCount[method] = (methodCount[method] || 0) + 1;
-      });
+      const method = product.packagingMethod || packagingMethods[0] || "Paket";
+      methodCount[method] = (methodCount[method] || 0) + 1;
     });
     
     const entries = Object.entries(methodCount);
