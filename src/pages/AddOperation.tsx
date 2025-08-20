@@ -49,21 +49,21 @@ export default function AddOperation() {
 
   const getCurrentProductTotalQuantity = () => {
     return currentPackaging.reduce((total, item) => {
-      // Handle both numeric and text-based packaging types
-      const packagingSize = parseInt(item.type.toString().split(/[+()]/)[0]);
-      const count = parseInt(item.count.toString());
-      if (isNaN(packagingSize) || isNaN(count) || count <= 0) return total;
-      return total + (packagingSize * count);
+      // Each package contains the specified quantity of product
+      const quantityPerPackage = parseInt(item.type.toString().split(/[+()]/)[0]);
+      const packageCount = parseInt(item.count.toString());
+      if (isNaN(quantityPerPackage) || isNaN(packageCount) || packageCount <= 0) return total;
+      return total + (quantityPerPackage * packageCount);
     }, 0);
   };
 
   const getProductTotalQuantity = (packaging: {type: string, count: number, method?: string}[]) => {
     return packaging.reduce((total, item) => {
-      // Handle both numeric and text-based packaging types
-      const packagingSize = parseInt(item.type.toString().split(/[+()]/)[0]);
-      const count = parseInt(item.count.toString());
-      if (isNaN(packagingSize) || isNaN(count) || count <= 0) return total;
-      return total + (packagingSize * count);
+      // Each package contains the specified quantity of product
+      const quantityPerPackage = parseInt(item.type.toString().split(/[+()]/)[0]);
+      const packageCount = parseInt(item.count.toString());
+      if (isNaN(quantityPerPackage) || isNaN(packageCount) || packageCount <= 0) return total;
+      return total + (quantityPerPackage * packageCount);
     }, 0);
   };
 
@@ -428,9 +428,9 @@ export default function AddOperation() {
 
             {currentProduct && (
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Paketləşdirmə növü əlavə et</Label>
-                  <div className="flex gap-2">
+                 <div className="space-y-2">
+                   <Label>Paket miqdarı (hər paketdə olan məhsulun miqdarı)</Label>
+                   <div className="flex gap-2">
                     <Popover open={packagingOpen} onOpenChange={setPackagingOpen}>
                       <PopoverTrigger asChild>
                         <Button
@@ -439,17 +439,17 @@ export default function AddOperation() {
                           aria-expanded={packagingOpen}
                           className="flex-1 justify-between"
                         >
-                          {currentPackagingType
-                            ? `${currentPackagingType} metr`
-                            : "Paketləşdirmə seçin"}
-                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                           {currentPackagingType
+                             ? `Hər paketdə ${currentPackagingType} metr`
+                             : "Paket miqdarını seçin"}
+                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-full p-0">
                         <Command>
-                          <CommandInput 
-                            placeholder="Paketləşdirmə axtarın və ya yeni əlavə edin..." 
-                            value={customPackaging}
+                           <CommandInput 
+                             placeholder="Paket miqdarını axtarın və ya yeni əlavə edin..." 
+                             value={customPackaging}
                             onValueChange={setCustomPackaging}
                             onKeyDown={(e) => {
                               if (e.key === "Enter" && customPackaging.trim()) {
@@ -495,7 +495,7 @@ export default function AddOperation() {
                                         currentPackagingType === option ? "opacity-100" : "opacity-0"
                                       )}
                                     />
-                                    {option} metr
+                                    {option} metr/paket
                                   </CommandItem>
                                 ))}
                             </CommandGroup>
@@ -566,16 +566,16 @@ export default function AddOperation() {
                    <Label>Seçilmiş {currentPackaging.length > 0 && currentPackaging[0].method ? currentPackaging[0].method + 'lar' : 'paketləşdirmələr'}</Label>
                    <div className="space-y-2 max-h-32 overflow-y-auto">
                         {currentPackaging.map((item, index) => {
-                          const packagingSize = parseInt(item.type.toString().split(/[+()]/)[0]);
-                          const totalMeters = packagingSize * item.count;
+                          const quantityPerPackage = parseInt(item.type.toString().split(/[+()]/)[0]);
+                          const totalQuantity = quantityPerPackage * item.count;
                           return (
                             <div key={`packaging-${item.type}-${item.count}-${index}`} className="flex items-center justify-between bg-muted p-2 rounded">
                               <div className="flex flex-col">
                                 <span className="text-sm font-medium">
-                                  {item.count} ədəd × {item.type} metr ({item.method})
+                                  {item.count} ədəd paket × {item.type} metr/paket ({item.method})
                                 </span>
                                 <span className="text-xs text-muted-foreground">
-                                  Ümumi: {totalMeters} metr
+                                  Ümumi məhsul: {totalQuantity} metr
                                 </span>
                               </div>
                               <Button
@@ -592,7 +592,7 @@ export default function AddOperation() {
                         })}
                     </div>
                      <div className="text-sm font-medium text-primary bg-primary/10 p-2 rounded">
-                       Məhsul üçün ümumi miqdar: {getCurrentProductTotalQuantity()} metr
+                       Ümumi məhsul miqdarı: {getCurrentProductTotalQuantity()} metr
                      </div>
                   </div>
                 )}
