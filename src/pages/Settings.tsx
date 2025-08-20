@@ -9,6 +9,7 @@ import { Settings as SettingsIcon, Save, Download, Upload, Cloud, HardDrive, Che
 import { useStorageProvider } from "@/hooks/useStorageProvider";
 import { useDataExport } from "@/hooks/useDataExport";
 import { useAutoImport } from "@/hooks/useAutoImport";
+import { useSystemRestore } from "@/hooks/useSystemRestore";
 import { toast } from "@/hooks/use-toast";
 
 interface AppSettings {
@@ -26,6 +27,7 @@ export default function Settings() {
   const { config, switchToLocal, switchToGoogleDrive, connectGoogleDrive, disconnectGoogleDrive } = useStorageProvider();
   const { exportToFile, shareData } = useDataExport();
   const { triggerFileSelect } = useAutoImport();
+  const { triggerSystemRestore } = useSystemRestore();
 
   // Settings state
   const [settings, setSettings] = useState<AppSettings>({
@@ -264,38 +266,38 @@ export default function Settings() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Məlumatların İdarə Edilməsi</CardTitle>
+          <CardTitle>Sistem Yedeyi və Bərpası</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Button 
               variant="outline" 
               className="flex flex-col items-center gap-2 h-20"
               onClick={exportToFile}
-              aria-label="Məlumatları JSON faylı kimi yüklə"
+              aria-label="Tam sistem yedeyini hazırla"
             >
               <Download className="h-6 w-6" />
-              <span>Məlumatları İxrac Et</span>
+              <span>Sistem Yedeyi</span>
             </Button>
 
             <Button 
               variant="outline" 
               className="flex flex-col items-center gap-2 h-20"
               onClick={shareData}
-              aria-label="Məlumatları digər cihazlara paylaş"
+              aria-label="Sistem yedeyini digər cihazlara paylaş"
             >
               <Share className="h-6 w-6" />
-              <span>Məlumatları Paylaş</span>
+              <span>Yedeyi Paylaş</span>
             </Button>
 
             <Button 
               variant="outline" 
               className="flex flex-col items-center gap-2 h-20"
-              onClick={triggerFileSelect}
-              aria-label="Digər cihazdan gələn məlumatları idxal et"
+              onClick={triggerSystemRestore}
+              aria-label="Sistem yedeyindən bərpa et"
             >
               <Upload className="h-6 w-6" />
-              <span>Məlumatları İdxal Et</span>
+              <span>Sistem Bərpası</span>
             </Button>
 
             <Button 
@@ -320,11 +322,45 @@ export default function Settings() {
           </div>
 
           <div className="mt-6 p-4 bg-muted rounded-lg">
-            <h4 className="font-medium mb-2">Məlumat Paylaşması</h4>
+            <h4 className="font-medium mb-2">Sistem Yedeyi Xüsusiyyətləri</h4>
             <div className="text-sm text-muted-foreground space-y-1">
-              <p><strong>İxrac Et:</strong> Məlumatları JSON faylı kimi yüklə</p>
-              <p><strong>Paylaş:</strong> Android Quick Share, Bluetooth və ya WiFi vasitəsilə başqa cihaza göndər</p>
-              <p><strong>İdxal Et:</strong> Başqa cihazdan gələn JSON faylını avtomatik tanıyıb import et</p>
+              <p><strong>Sistem Yedeyi:</strong> Bütün məlumatlar, parametrlər və ayarlar daxil olmaqla tam sistem yedeyi</p>
+              <p><strong>Yedeyi Paylaş:</strong> Quick Share, Bluetooth və ya WiFi ilə başqa cihaza göndər</p>
+              <p><strong>Sistem Bərpası:</strong> Sistem yedeyini seçərək bütün məlumatları bərpa et</p>
+              <p><strong>Upgrade Funksiyası:</strong> Başqa cihazdan gələn yedeyi quraşdıraraq sistemi yenilə</p>
+            </div>
+          </div>
+
+          <div className="mt-4 p-4 border border-primary/20 bg-primary/5 rounded-lg">
+            <h4 className="font-medium mb-2 text-primary">Diqqət</h4>
+            <div className="text-sm text-muted-foreground">
+              <p>Sistem bərpası mövcud bütün məlumatları əvəzləyəcək. Bərpa etməzdən əvvəl sistem yedeyini hazırlayın.</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Məhsul Məlumatları İmport</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-1">
+            <Button 
+              variant="outline" 
+              className="flex flex-col items-center gap-2 h-20"
+              onClick={triggerFileSelect}
+              aria-label="Excel faylından məhsul məlumatlarını idxal et"
+            >
+              <Upload className="h-6 w-6" />
+              <span>Excel İmport</span>
+            </Button>
+          </div>
+
+          <div className="mt-4 p-4 bg-muted rounded-lg">
+            <h4 className="font-medium mb-2">Excel İmport</h4>
+            <div className="text-sm text-muted-foreground">
+              <p>Yalnız məhsul məlumatlarını Excel faylından idxal etmək üçün istifadə edin. Tam sistem bərpası üçün yuxarıdakı "Sistem Bərpası" düyməsini istifadə edin.</p>
             </div>
           </div>
         </CardContent>

@@ -13,13 +13,25 @@ export const useDataExport = () => {
 
   const exportToFile = useCallback(() => {
     try {
+      // Get all settings and data from localStorage
+      const appSettings = localStorage.getItem('app-settings');
+      const storageConfig = localStorage.getItem('storage-config');
+      const theme = localStorage.getItem('vite-ui-theme');
+      
       const exportData = {
+        // Store data
         products,
         warehouses,
         packagingOptions,
-        version: "1.0.0",
+        // System settings
+        settings: appSettings ? JSON.parse(appSettings) : null,
+        storageConfig: storageConfig ? JSON.parse(storageConfig) : null,
+        theme: theme || 'system',
+        // Metadata
+        version: "2.0.0",
         exportDate: new Date().toISOString(),
-        deviceName: navigator.userAgent.includes('Mobile') ? 'Mobil Cihaz' : 'Kompyuter'
+        deviceName: navigator.userAgent.includes('Mobile') ? 'Mobil Cihaz' : 'Kompyuter',
+        systemBackup: true
       };
 
       const jsonString = JSON.stringify(exportData, null, 2);
@@ -28,14 +40,14 @@ export const useDataExport = () => {
 
       const link = document.createElement('a');
       link.href = url;
-      link.download = `anbar_məlumatları_${new Date().toISOString().split('T')[0]}.json`;
+      link.download = `sistem_yedeyi_${new Date().toISOString().split('T')[0]}.json`;
       link.click();
 
       URL.revokeObjectURL(url);
 
       toast({
-        title: "Məlumatlar export edildi",
-        description: "Fayl yükləndi və paylaşmaq üçün hazırdır",
+        title: "Sistem yedeyi hazırlandı",
+        description: "Tam sistem yedeyi yükləndi və başqa cihaza quraşdırmaq üçün hazırdır",
       });
 
       return blob;
@@ -50,17 +62,29 @@ export const useDataExport = () => {
 
   const shareData = useCallback(async () => {
     try {
+      // Get all settings and data from localStorage
+      const appSettings = localStorage.getItem('app-settings');
+      const storageConfig = localStorage.getItem('storage-config');
+      const theme = localStorage.getItem('vite-ui-theme');
+      
       const exportData = {
+        // Store data
         products,
         warehouses,
         packagingOptions,
-        version: "1.0.0",
+        // System settings
+        settings: appSettings ? JSON.parse(appSettings) : null,
+        storageConfig: storageConfig ? JSON.parse(storageConfig) : null,
+        theme: theme || 'system',
+        // Metadata
+        version: "2.0.0",
         exportDate: new Date().toISOString(),
-        deviceName: navigator.userAgent.includes('Mobile') ? 'Mobil Cihaz' : 'Kompyuter'
+        deviceName: navigator.userAgent.includes('Mobile') ? 'Mobil Cihaz' : 'Kompyuter',
+        systemBackup: true
       };
 
       const jsonString = JSON.stringify(exportData, null, 2);
-      const fileName = `anbar_məlumatları_${new Date().toISOString().split('T')[0]}.json`;
+      const fileName = `sistem_yedeyi_${new Date().toISOString().split('T')[0]}.json`;
 
       // Check if we're on a native platform (Android/iOS)
       if (Capacitor.isNativePlatform()) {
@@ -70,17 +94,17 @@ export const useDataExport = () => {
 
         // Use Capacitor Share plugin for native sharing
         await Share.share({
-          title: 'Anbar Sistemi Məlumatları',
-          text: 'Anbar sistemindən export edilmiş məlumatlar',
+          title: 'Anbar Sistemi Tam Yedeyi',
+          text: 'Sistem yedeyi - başqa cihaza quraşdırmaq üçün hazırdır',
           url: url,
-          dialogTitle: 'Məlumatları paylaş'
+          dialogTitle: 'Sistem yedeyini paylaş'
         });
 
         URL.revokeObjectURL(url);
 
         toast({
-          title: "Native paylaşma açıldı",
-          description: "Quick Share, Bluetooth və ya digər seçimlərdən birini seçin",
+          title: "Sistem yedeyi paylaşıma hazırdır",
+          description: "Quick Share, Bluetooth və ya digər üsullarla başqa cihaza göndərin",
         });
       } else {
         // Web platform - use Web Share API or download fallback
@@ -89,21 +113,21 @@ export const useDataExport = () => {
 
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
-            title: 'Anbar Sistemi Məlumatları',
-            text: 'Anbar sistemindən export edilmiş məlumatlar',
+            title: 'Anbar Sistemi Tam Yedeyi',
+            text: 'Sistem yedeyi - başqa cihaza quraşdırmaq üçün hazırdır',
             files: [file],
           });
 
           toast({
-            title: "Paylaşıldı",
-            description: "Məlumatlar uğurla paylaşıldı",
+            title: "Sistem yedeyi paylaşıldı",
+            description: "Tam sistem yedeyi uğurla paylaşıldı",
           });
         } else {
           // Fallback - just download the file
           exportToFile();
           toast({
             title: "Paylaşma dəstəklənmir",
-            description: "Fayl yükləndi, manual olaraq paylaşa bilərsiniz",
+            description: "Sistem yedeyi yükləndi, manual olaraq paylaşa bilərsiniz",
           });
         }
       }
