@@ -63,7 +63,7 @@ export default function Settings() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Parametrlər</h1>
+        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight">Parametrlər</h1>
         <Button aria-label="Dəyişiklikləri saxla" onClick={saveSettings}>
           <Save className="mr-2 h-4 w-4" />
           Dəyişiklikləri saxla

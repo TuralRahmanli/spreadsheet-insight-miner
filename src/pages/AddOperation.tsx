@@ -288,7 +288,7 @@ export default function AddOperation() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Yeni Əməliyyat</h1>
+        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight">Yeni Əməliyyat</h1>
       </div>
 
       <div className="grid gap-6">

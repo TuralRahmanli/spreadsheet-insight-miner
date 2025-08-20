@@ -69,7 +69,7 @@ export default function Reports() {
   return (
     <div className="space-y-6">
       <div className="space-y-4 md:space-y-0 md:flex md:items-center md:justify-between">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Hesabatlar</h1>
+        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight">Hesabatlar</h1>
         <div className="flex flex-wrap gap-2">
           <Button 
             variant={reportType === "overview" ? "default" : "outline"}

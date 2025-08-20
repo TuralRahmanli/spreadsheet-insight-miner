@@ -35,7 +35,7 @@ const Index = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="min-w-0 flex-1">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight word-break-normal">Anbar İdarəetmə Sistemi</h1>
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight word-break-normal">Anbar İdarəetmə Sistemi</h1>
           <p className="text-muted-foreground text-sm sm:text-base">Anbar partiyalarını izləyin və idarə edin</p>
         </div>
         <Button asChild className="w-full sm:w-auto flex-shrink-0">

@@ -112,7 +112,7 @@ export default function ProductsList() {
         <CardHeader>
           <CardTitle className="space-y-3 md:space-y-0 md:flex md:items-center md:justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-lg md:text-xl">Məhsullar Siyahısı</span>
+              <h1 className="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight">Məhsullar Siyahısı</h1>
               <Badge variant="outline">{filteredProducts.length}</Badge>
             </div>
             <div className="flex flex-wrap items-center gap-2">
