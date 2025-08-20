@@ -110,22 +110,23 @@ export default function ProductsList() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle className="space-y-3 md:space-y-0 md:flex md:items-center md:justify-between">
             <div className="flex items-center gap-2">
-              <span>Məhsullar Siyahısı</span>
+              <span className="text-lg md:text-xl">Məhsullar Siyahısı</span>
               <Badge variant="outline">{filteredProducts.length}</Badge>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-1 text-xs md:text-sm"
               >
-                <Filter className="h-4 w-4" />
-                Filtrlər
+                <Filter className="h-3 w-3 md:h-4 md:w-4" />
+                <span className="hidden sm:inline">Filtrlər</span>
+                <span className="sm:hidden">Filtr</span>
                 {hasActiveFilters && (
-                  <Badge variant="secondary" className="ml-1 h-5 w-5 rounded-full p-0 text-xs">
+                  <Badge variant="secondary" className="ml-1 h-4 w-4 md:h-5 md:w-5 rounded-full p-0 text-xs">
                     !
                   </Badge>
                 )}
@@ -137,9 +138,10 @@ export default function ProductsList() {
                 isOpen={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
                 trigger={
-                  <Button className="flex items-center gap-2">
-                    <Plus className="h-4 w-4" />
-                    Yeni Məhsul
+                  <Button className="flex items-center gap-1 text-xs md:text-sm">
+                    <Plus className="h-3 w-3 md:h-4 md:w-4" />
+                    <span className="hidden sm:inline">Yeni Məhsul</span>
+                    <span className="sm:hidden">Yeni</span>
                   </Button>
                 }
               />
