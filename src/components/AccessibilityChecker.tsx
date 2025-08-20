@@ -118,9 +118,9 @@ export function AccessibilityOverlay() {
   const [showDetails, setShowDetails] = useState(false);
 
   // Only show in development
-  if (process.env.NODE_ENV !== 'development') {
-    return null;
-  }
+    if (process.env.NODE_ENV !== 'development') {
+      return null;
+    }
 
   const errorCount = issues.filter(i => i.type === 'error').length;
   const warningCount = issues.filter(i => i.type === 'warning').length;
