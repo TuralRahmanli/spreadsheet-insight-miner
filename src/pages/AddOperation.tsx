@@ -49,17 +49,21 @@ export default function AddOperation() {
 
   const getCurrentProductTotalQuantity = () => {
     return currentPackaging.reduce((total, item) => {
-      const packagingSize = parseInt(item.type.split(/[+()]/)[0]);
-      if (isNaN(packagingSize) || isNaN(item.count)) return total;
-      return total + (packagingSize * item.count);
+      // Handle both numeric and text-based packaging types
+      const packagingSize = parseInt(item.type.toString().split(/[+()]/)[0]);
+      const count = parseInt(item.count.toString());
+      if (isNaN(packagingSize) || isNaN(count) || count <= 0) return total;
+      return total + (packagingSize * count);
     }, 0);
   };
 
   const getProductTotalQuantity = (packaging: {type: string, count: number, method?: string}[]) => {
     return packaging.reduce((total, item) => {
-      const packagingSize = parseInt(item.type.split(/[+()]/)[0]);
-      if (isNaN(packagingSize) || isNaN(item.count)) return total;
-      return total + (packagingSize * item.count);
+      // Handle both numeric and text-based packaging types
+      const packagingSize = parseInt(item.type.toString().split(/[+()]/)[0]);
+      const count = parseInt(item.count.toString());
+      if (isNaN(packagingSize) || isNaN(count) || count <= 0) return total;
+      return total + (packagingSize * count);
     }, 0);
   };
 
@@ -67,11 +71,29 @@ export default function AddOperation() {
     if (currentPackagingType && currentPackageCount && currentPackagingMethod) {
       const countNum = parseInt(currentPackageCount);
       if (!isNaN(countNum) && countNum > 0) {
-        setCurrentPackaging(prev => [...prev, { 
-          type: currentPackagingType, 
-          count: countNum,
-          method: currentPackagingMethod
-        }]);
+        // Check if this packaging type and method combination already exists
+        const existingIndex = currentPackaging.findIndex(
+          item => item.type === currentPackagingType && item.method === currentPackagingMethod
+        );
+        
+        if (existingIndex >= 0) {
+          // Update existing packaging quantity
+          setCurrentPackaging(prev => 
+            prev.map((item, index) => 
+              index === existingIndex 
+                ? { ...item, count: item.count + countNum }
+                : item
+            )
+          );
+        } else {
+          // Add new packaging entry
+          setCurrentPackaging(prev => [...prev, { 
+            type: currentPackagingType, 
+            count: countNum,
+            method: currentPackagingMethod
+          }]);
+        }
+        
         setCurrentPackagingType("");
         setCurrentPackageCount("");
         setCurrentPackagingMethod("");
@@ -543,26 +565,35 @@ export default function AddOperation() {
                  <div className="space-y-2">
                    <Label>Seçilmiş {currentPackaging.length > 0 && currentPackaging[0].method ? currentPackaging[0].method + 'lar' : 'paketləşdirmələr'}</Label>
                    <div className="space-y-2 max-h-32 overflow-y-auto">
-                       {currentPackaging.map((item, index) => (
-                        <div key={`packaging-${item.type}-${item.count}-${index}`} className="flex items-center justify-between bg-muted p-2 rounded">
-                          <span className="text-sm">
-                            {item.count} ədəd × {item.type} metr ({item.method}) = {parseInt(item.type.split(/[+()]/)[0]) * item.count} metr
-                          </span>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleRemovePackaging(index)}
-                            className="h-6 w-6 p-0"
-                            aria-label={`${item.type} paketini sil`}
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      ))}
+                        {currentPackaging.map((item, index) => {
+                          const packagingSize = parseInt(item.type.toString().split(/[+()]/)[0]);
+                          const totalMeters = packagingSize * item.count;
+                          return (
+                            <div key={`packaging-${item.type}-${item.count}-${index}`} className="flex items-center justify-between bg-muted p-2 rounded">
+                              <div className="flex flex-col">
+                                <span className="text-sm font-medium">
+                                  {item.count} ədəd × {item.type} metr ({item.method})
+                                </span>
+                                <span className="text-xs text-muted-foreground">
+                                  Ümumi: {totalMeters} metr
+                                </span>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleRemovePackaging(index)}
+                                className="h-6 w-6 p-0"
+                                aria-label={`${item.type} paketini sil`}
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          );
+                        })}
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      Məhsul üçün ümumi: {getCurrentProductTotalQuantity()} metr
-                    </div>
+                     <div className="text-sm font-medium text-primary bg-primary/10 p-2 rounded">
+                       Məhsul üçün ümumi miqdar: {getCurrentProductTotalQuantity()} metr
+                     </div>
                   </div>
                 )}
 
