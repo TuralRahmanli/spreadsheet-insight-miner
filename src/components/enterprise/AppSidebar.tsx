@@ -51,7 +51,7 @@ interface NavGroup {
 }
 
 export function AppSidebar() {
-  const { state } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
   const isCollapsed = state === 'collapsed';
   const location = useLocation();
   const currentPath = location.pathname;
@@ -163,10 +163,16 @@ export function AppSidebar() {
   };
 
   const handleNavClick = (item: NavItem) => {
+    // Close mobile sidebar when navigation item is clicked
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+    
     log.debug('Navigation clicked', 'AppSidebar', {
       title: item.title,
       url: item.url,
-      currentPath
+      currentPath,
+      isMobile
     });
   };
 
