@@ -57,7 +57,7 @@ export function WarehouseResponsiveTable({
             <TableHead className="whitespace-nowrap">Vəziyyət</TableHead>
             <TableHead className="whitespace-nowrap">Artikul</TableHead>
             <TableHead className="whitespace-nowrap">Məhsul Adı</TableHead>
-            <TableHead className="whitespace-nowrap">{dynamicPackagingLabel}</TableHead>
+            <TableHead className="whitespace-nowrap">Paket</TableHead>
             <TableHead className="whitespace-nowrap">Stok</TableHead>
             <TableHead className="whitespace-nowrap">Digər Anbarlar</TableHead>
             <TableHead className="whitespace-nowrap">Kateqoriya</TableHead>
