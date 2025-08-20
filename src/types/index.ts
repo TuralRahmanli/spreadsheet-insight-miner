@@ -7,7 +7,6 @@ export type Product = {
   stock: number;
   unit: string;
   packaging: {type: string, quantity: number}[];
-  packagingMethod?: string; // New field for packaging method (Rulon, Qutu, etc.)
   warehouses: string[];
   description?: string;
   createdAt?: Date;
