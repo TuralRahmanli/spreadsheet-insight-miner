@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
 import { Product } from "@/types";
-import { usePackagingMethodsStore } from "@/lib/packagingMethodsStore";
+import { usePackagingStore } from "@/lib/packagingStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
 
 interface Filters {
@@ -33,11 +33,11 @@ export function ProductFilters({
   hasActiveFilters, 
   onClearFilters 
 }: ProductFiltersProps) {
-  const { packagingMethods } = usePackagingMethodsStore();
+  const { packagingOptions } = usePackagingStore();
   const { warehouses } = useWarehouseStore();
   const allStatuses = ["all", "active", "out_of_stock", "low_stock"];
   const allLocations = ["all", ...warehouses.map(w => w.name)];
-  const allRolls = ["all", ...packagingMethods];
+  const allRolls = ["all", ...packagingOptions];
 
   const getStatusLabel = (status: string) => {
     switch (status) {
