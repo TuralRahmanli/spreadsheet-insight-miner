@@ -18,8 +18,10 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 interface Filters {
   status: string;
-  unit: string;
   category: string;
+  location: string;
+  roll: string;
+  stockRange: { min: string; max: string };
 }
 
 const getStatusBadge = (status: string, stock: number) => {
@@ -39,8 +41,10 @@ export default function ProductsList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<Filters>({
     status: "all",
-    unit: "all",
-    category: "all"
+    category: "all",
+    location: "all",
+    roll: "all",
+    stockRange: { min: "", max: "" }
   });
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -67,23 +71,44 @@ export default function ProductsList() {
         (filters.status === "out_of_stock" && (product.status === "out_of_stock" || product.stock === 0)) ||
         (filters.status === "low_stock" && (product.status === "low_stock" || (product.stock > 0 && product.stock < 50)));
       
-      const matchesUnit = filters.unit === "all" || product.unit === filters.unit;
+      // Location filter based on warehouses
+      const matchesLocation = filters.location === "all" || 
+        (product.warehouses && product.warehouses.includes(filters.location));
       
-      return matchesSearch && matchesCategory && matchesStatus && matchesUnit;
+      // Roll filter based on packaging methods
+      const matchesRoll = filters.roll === "all" || 
+        (product.packaging && product.packaging.some(pkg => pkg.type === filters.roll));
+      
+      // Stock range filter
+      const matchesStockRange = (() => {
+        if (filters.stockRange.min === "" && filters.stockRange.max === "") return true;
+        const min = filters.stockRange.min ? parseInt(filters.stockRange.min) : 0;
+        const max = filters.stockRange.max ? parseInt(filters.stockRange.max) : Infinity;
+        return product.stock >= min && product.stock <= max;
+      })();
+      
+      return matchesSearch && matchesCategory && matchesStatus && matchesLocation && matchesRoll && matchesStockRange;
     });
   }, [products, searchTerm, filters]);
 
   const clearAllFilters = () => {
     setFilters({
       status: "all",
-      unit: "all",
-      category: "all"
+      category: "all",
+      location: "all",
+      roll: "all",
+      stockRange: { min: "", max: "" }
     });
     setSearchTerm("");
   };
 
   const hasActiveFilters = filters.status !== "all" || 
-                          filters.unit !== "all" || filters.category !== "all" || searchTerm !== "";
+                          filters.category !== "all" || 
+                          filters.location !== "all" || 
+                          filters.roll !== "all" || 
+                          filters.stockRange.min !== "" || 
+                          filters.stockRange.max !== "" || 
+                          searchTerm !== "";
 
   const handleDeleteProduct = (productId: string) => {
     const { removeProduct } = useProductStore.getState();

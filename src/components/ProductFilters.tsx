@@ -2,13 +2,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
 import { Product } from "@/types";
+import { usePackagingMethodsStore } from "@/lib/packagingMethodsStore";
+import { useWarehouseStore } from "@/lib/warehouseStore";
 
 interface Filters {
   status: string;
-  unit: string;
   category: string;
+  location: string;
+  roll: string;
+  stockRange: { min: string; max: string };
 }
 
 interface ProductFiltersProps {
@@ -28,8 +33,11 @@ export function ProductFilters({
   hasActiveFilters, 
   onClearFilters 
 }: ProductFiltersProps) {
-  const allUnits = ["all", ...Array.from(new Set(products.map(p => p.unit).filter(Boolean)))];
+  const { packagingMethods } = usePackagingMethodsStore();
+  const { warehouses } = useWarehouseStore();
   const allStatuses = ["all", "active", "out_of_stock", "low_stock"];
+  const allLocations = ["all", ...warehouses.map(w => w.name)];
+  const allRolls = ["all", ...packagingMethods];
 
   const getStatusLabel = (status: string) => {
     switch (status) {
@@ -54,7 +62,7 @@ export function ProductFilters({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <div className="space-y-2">
             <label className="text-sm font-medium">Kateqoriya</label>
             <Select value={filters.category} onValueChange={(value) => 
@@ -92,21 +100,69 @@ export function ProductFilters({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Ölçü Vahidi</label>
-            <Select value={filters.unit} onValueChange={(value) => 
-              onFiltersChange({ ...filters, unit: value })
+            <label className="text-sm font-medium">Yerləşmə</label>
+            <Select value={filters.location} onValueChange={(value) => 
+              onFiltersChange({ ...filters, location: value })
             }>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {allUnits.map(unit => (
-                  <SelectItem key={unit} value={unit}>
-                    {unit === "all" ? "Hamısı" : unit}
+                {allLocations.map(location => (
+                  <SelectItem key={location} value={location}>
+                    {location === "all" ? "Hamısı" : location}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Rulon</label>
+            <Select value={filters.roll} onValueChange={(value) => 
+              onFiltersChange({ ...filters, roll: value })
+            }>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {allRolls.map(roll => (
+                  <SelectItem key={roll} value={roll}>
+                    {roll === "all" ? "Hamısı" : roll}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Qalıqlar</label>
+            <div className="flex gap-2">
+              <Input
+                type="number"
+                placeholder="Min"
+                value={filters.stockRange.min}
+                onChange={(e) => 
+                  onFiltersChange({ 
+                    ...filters, 
+                    stockRange: { ...filters.stockRange, min: e.target.value } 
+                  })
+                }
+                className="text-sm"
+              />
+              <Input
+                type="number"
+                placeholder="Max"
+                value={filters.stockRange.max}
+                onChange={(e) => 
+                  onFiltersChange({ 
+                    ...filters, 
+                    stockRange: { ...filters.stockRange, max: e.target.value } 
+                  })
+                }
+                className="text-sm"
+              />
+            </div>
           </div>
         </div>
 
@@ -133,12 +189,33 @@ export function ProductFilters({
                   />
                 </Badge>
               )}
-              {filters.unit !== "all" && (
+              {filters.location !== "all" && (
                 <Badge variant="secondary" className="gap-1">
-                  Vahid: {filters.unit}
+                  Yerləşmə: {filters.location}
                   <X 
                     className="h-3 w-3 cursor-pointer" 
-                    onClick={() => onFiltersChange({ ...filters, unit: "all" })}
+                    onClick={() => onFiltersChange({ ...filters, location: "all" })}
+                  />
+                </Badge>
+              )}
+              {filters.roll !== "all" && (
+                <Badge variant="secondary" className="gap-1">
+                  Rulon: {filters.roll}
+                  <X 
+                    className="h-3 w-3 cursor-pointer" 
+                    onClick={() => onFiltersChange({ ...filters, roll: "all" })}
+                  />
+                </Badge>
+              )}
+              {(filters.stockRange.min !== "" || filters.stockRange.max !== "") && (
+                <Badge variant="secondary" className="gap-1">
+                  Qalıqlar: {filters.stockRange.min || "0"}-{filters.stockRange.max || "∞"}
+                  <X 
+                    className="h-3 w-3 cursor-pointer" 
+                    onClick={() => onFiltersChange({ 
+                      ...filters, 
+                      stockRange: { min: "", max: "" } 
+                    })}
                   />
                 </Badge>
               )}
