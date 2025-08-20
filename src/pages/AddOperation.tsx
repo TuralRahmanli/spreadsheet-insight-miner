@@ -504,10 +504,10 @@ export default function AddOperation() {
                       </PopoverContent>
                     </Popover>
                     <div className="flex flex-col gap-2">
-                      <Select value={currentPackagingMethod} onValueChange={setCurrentPackagingMethod}>
-                        <SelectTrigger className="w-32">
-                          <SelectValue placeholder="Üsul" />
-                        </SelectTrigger>
+                       <Select value={currentPackagingMethod} onValueChange={setCurrentPackagingMethod}>
+                         <SelectTrigger className="w-32">
+                           <SelectValue placeholder="Paketləşdirmə üsulu" />
+                         </SelectTrigger>
                         <SelectContent>
                           {packagingMethods.map((method) => (
                             <SelectItem key={method} value={method}>
