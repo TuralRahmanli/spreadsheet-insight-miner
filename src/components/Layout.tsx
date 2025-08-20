@@ -85,16 +85,16 @@ export default function Layout() {
               <SidebarContent isMobile onItemClick={() => setSidebarOpen(false)} />
             </SheetContent>
           </Sheet>
-          <div className="flex items-center gap-2 font-semibold flex-1">
-            <img src="/icon-192x192.png" alt="AIS Logo" className="h-6 w-6" />
-            <span className="text-sm sm:text-base">AIS</span>
+          <div className="flex items-center gap-2 font-semibold flex-1 min-w-0">
+            <img src="/icon-192x192.png" alt="AIS Logo" className="h-6 w-6 flex-shrink-0" />
+            <span className="text-sm sm:text-base truncate">AIS</span>
           </div>
           <ThemeToggle />
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 lg:p-6 w-full min-w-0" role="main">
-          <div className="w-full max-w-full overflow-x-auto">
+        <main className="flex-1 p-4 lg:p-6 w-full min-w-0 overflow-hidden" role="main">
+          <div className="w-full max-w-full">
             <Outlet />
           </div>
         </main>

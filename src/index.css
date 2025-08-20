@@ -128,6 +128,8 @@ All colors MUST be HSL.
     * {
       /* Prevent horizontal scroll on mobile */
       max-width: 100vw;
+      /* Prevent layout shift on mobile */
+      word-break: break-word;
     }
     
     /* Ensure tables and content don't overflow */
@@ -163,22 +165,42 @@ All colors MUST be HSL.
       padding-bottom: env(keyboard-inset-height, 0);
     }
     
-    /* Viewport zoom support */
-    @media (max-resolution: 1dppx) {
-      html {
-        zoom: 1.25;
-      }
-    }
-    
-    @media (max-resolution: 0.8dppx) {
-      html {
-        zoom: 1.5;
-      }
-    }
-    
     /* Improve table readability on mobile */
     table {
       font-size: 14px;
+    }
+    
+    /* Fix layout shifting issues */
+    .flex.justify-between {
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    
+    /* Ensure text doesn't overflow containers */
+    .truncate {
+      min-width: 0;
+    }
+    
+    /* Improve mobile spacing */
+    .space-y-3 > * + * {
+      margin-top: 0.75rem !important;
+    }
+    
+    /* Fix mobile button spacing */
+    .flex.gap-1 {
+      gap: 0.25rem;
+      flex-wrap: nowrap;
+    }
+    
+    /* Prevent text from jumping around */
+    h1, h2, h3, h4, h5, h6 {
+      word-break: break-word;
+      hyphens: auto;
+    }
+    
+    /* Improve mobile layout stability */
+    .card {
+      overflow: hidden;
     }
   }
 

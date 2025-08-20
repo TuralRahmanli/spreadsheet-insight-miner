@@ -34,11 +34,11 @@ const Index = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Anbar İdarəetmə Sistemi</h1>
-          <p className="text-muted-foreground">Anbar partiyalarını izləyin və idarə edin</p>
+        <div className="min-w-0 flex-1">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight word-break-normal">Anbar İdarəetmə Sistemi</h1>
+          <p className="text-muted-foreground text-sm sm:text-base">Anbar partiyalarını izləyin və idarə edin</p>
         </div>
-        <Button asChild className="w-full sm:w-auto">
+        <Button asChild className="w-full sm:w-auto flex-shrink-0">
           <Link to="/add">
             <Plus className="mr-2 h-4 w-4" />
             Yeni Əməliyyat
@@ -111,22 +111,22 @@ const Index = () => {
           </CardHeader>
           <CardContent>
             {operations.length > 0 ? (
-              <div className="space-y-3">
-                {operations.slice(0, 3).map((operation) => (
-                  <div key={operation.id} className="flex items-center justify-between py-2">
-                    <div>
-                       <p className="font-medium">
-                         <OperationIcon type={operation.type} /> {operation.productName} - {operation.type}
-                       </p>
-                      <p className="text-sm text-muted-foreground">
-                        {formatTimestamp(operation.timestamp)}
-                      </p>
-                    </div>
-                    <span className={`font-medium ${getOperationColor(operation.type)}`}>
-                      {operation.quantity} ədəd
-                    </span>
-                  </div>
-                ))}
+          <div className="space-y-2 min-w-0">
+            {operations.slice(0, 3).map((operation) => (
+              <div key={operation.id} className="flex items-start justify-between py-2 gap-2 min-w-0">
+                <div className="flex-1 min-w-0">
+                   <p className="font-medium truncate">
+                     <OperationIcon type={operation.type} /> {operation.productName} - {operation.type}
+                   </p>
+                  <p className="text-sm text-muted-foreground truncate">
+                    {formatTimestamp(operation.timestamp)}
+                  </p>
+                </div>
+                <span className={`font-medium flex-shrink-0 ${getOperationColor(operation.type)}`}>
+                  {operation.quantity} ədəd
+                </span>
+              </div>
+            ))}
               </div>
             ) : (
               <div className="text-center py-8 text-muted-foreground">

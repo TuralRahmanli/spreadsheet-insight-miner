@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Edit, Trash2, MapPin } from "lucide-react";
 import { Product } from "@/types";
 import { useNavigate } from "react-router-dom";
+import { MobileContainer, MobileFlexBetween, MobileText, MobileButtonGroup } from "@/components/ui/mobile-layout";
 
 interface MobileProductCardProps {
   product: Product;
@@ -16,106 +17,110 @@ export function MobileProductCard({ product, getStatusBadge, onEdit, onDelete }:
   const navigate = useNavigate();
 
   return (
-    <Card className="w-full">
-      <CardContent className="p-4 space-y-3">
-        {/* Header */}
-        <div className="flex items-start justify-between">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-medium truncate">{product.name}</h3>
-            <p className="text-sm text-muted-foreground">{product.article}</p>
-          </div>
-          <div className="flex items-center gap-1 ml-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onEdit(product)}
-              className="h-8 w-8 p-0"
-            >
-              <Edit className="h-3 w-3" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onDelete(product.id)}
-              className="h-8 w-8 p-0 text-destructive"
-            >
-              <Trash2 className="h-3 w-3" />
-            </Button>
-          </div>
-        </div>
-
-        {/* Info Row */}
-        <div className="flex items-center justify-between">
-          <Badge variant="outline" className="bg-secondary/50">
-            {product.category}
-          </Badge>
-          {getStatusBadge(product.status, product.stock)}
-        </div>
-
-        {/* Stock */}
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">Miqdar:</span>
-          <span className="font-medium">{product.stock} {product.unit}</span>
-        </div>
-
-        {/* Warehouses */}
-        {product.warehouses && product.warehouses.length > 0 && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-1 text-sm text-muted-foreground">
-              <MapPin className="h-3 w-3" />
-              <span>Anbarlar:</span>
+    <MobileContainer>
+      <Card className="w-full">
+        <CardContent className="p-4 space-y-3">
+          {/* Header */}
+          <MobileFlexBetween>
+            <div className="flex-1 min-w-0 pr-2">
+              <MobileText variant="subtitle" className="truncate leading-tight">{product.name}</MobileText>
+              <MobileText variant="caption" className="truncate">{product.article}</MobileText>
             </div>
-            <div className="flex flex-wrap gap-1">
-              {product.warehouses.slice(0, 3).map((warehouse, index) => (
-                <Button
-                  key={`${product.id}-warehouse-${warehouse}`}
-                  variant="outline"
-                  size="sm"
-                  className="h-6 px-2 text-xs"
-                  onClick={() => navigate(`/warehouses/${warehouse}`)}
-                >
-                  {warehouse}
-                </Button>
-              ))}
-              {product.warehouses.length > 3 && (
-                <Badge variant="secondary" className="h-6 px-2 text-xs">
-                  +{product.warehouses.length - 3}
-                </Badge>
-              )}
-            </div>
-          </div>
-        )}
+            <MobileButtonGroup>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onEdit(product)}
+                className="h-8 w-8 p-0 flex-shrink-0"
+              >
+                <Edit className="h-3 w-3" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onDelete(product.id)}
+                className="h-8 w-8 p-0 text-destructive flex-shrink-0"
+              >
+                <Trash2 className="h-3 w-3" />
+              </Button>
+            </MobileButtonGroup>
+          </MobileFlexBetween>
 
-        {/* Packaging */}
-        {product.packaging.length > 0 && (
-          <div className="space-y-1">
-            <span className="text-sm text-muted-foreground">Paketlər:</span>
-            <div className="flex flex-wrap gap-1">
-              {product.packaging.slice(0, 3).map((pack) => (
-                <Badge 
-                  key={`${product.id}-pack-${pack.type}`} 
-                  variant="outline" 
-                  className="text-xs bg-accent/50"
-                >
-                  {pack.type}×{pack.quantity}
-                </Badge>
-              ))}
-              {product.packaging.length > 3 && (
-                <Badge variant="secondary" className="text-xs">
-                  +{product.packaging.length - 3}
-                </Badge>
-              )}
+          {/* Info Row */}
+          <MobileFlexBetween>
+            <Badge variant="outline" className="bg-secondary/50 flex-shrink-0">
+              {product.category}
+            </Badge>
+            <div className="flex-shrink-0">
+              {getStatusBadge(product.status, product.stock)}
             </div>
-          </div>
-        )}
+          </MobileFlexBetween>
 
-        {/* Description */}
-        {product.description && (
-          <p className="text-sm text-muted-foreground line-clamp-2">
-            {product.description}
-          </p>
-        )}
-      </CardContent>
-    </Card>
+          {/* Stock */}
+          <MobileFlexBetween>
+            <MobileText variant="caption" className="flex-shrink-0">Miqdar:</MobileText>
+            <MobileText variant="body" className="font-medium text-right">{product.stock} {product.unit}</MobileText>
+          </MobileFlexBetween>
+
+          {/* ... keep existing code (warehouses, packaging, description sections) */}
+          {product.warehouses && product.warehouses.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                <MapPin className="h-3 w-3" />
+                <span>Anbarlar:</span>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {product.warehouses.slice(0, 3).map((warehouse, index) => (
+                  <Button
+                    key={`${product.id}-warehouse-${warehouse}`}
+                    variant="outline"
+                    size="sm"
+                    className="h-6 px-2 text-xs"
+                    onClick={() => navigate(`/warehouses/${warehouse}`)}
+                  >
+                    {warehouse}
+                  </Button>
+                ))}
+                {product.warehouses.length > 3 && (
+                  <Badge variant="secondary" className="h-6 px-2 text-xs">
+                    +{product.warehouses.length - 3}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Packaging */}
+          {product.packaging.length > 0 && (
+            <div className="space-y-1">
+              <span className="text-sm text-muted-foreground">Paketlər:</span>
+              <div className="flex flex-wrap gap-1">
+                {product.packaging.slice(0, 3).map((pack) => (
+                  <Badge 
+                    key={`${product.id}-pack-${pack.type}`} 
+                    variant="outline" 
+                    className="text-xs bg-accent/50"
+                  >
+                    {pack.type}×{pack.quantity}
+                  </Badge>
+                ))}
+                {product.packaging.length > 3 && (
+                  <Badge variant="secondary" className="text-xs">
+                    +{product.packaging.length - 3}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Description */}
+          {product.description && (
+            <p className="text-sm text-muted-foreground line-clamp-2">
+              {product.description}
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    </MobileContainer>
   );
 }

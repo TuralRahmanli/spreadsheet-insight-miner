@@ -111,21 +111,21 @@ export function ProductTable({ products, searchTerm, hasActiveFilters, getStatus
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-lg border">
         <Table>
           <TableHeader>
             <TableRow>
               {columnOrder
                 .filter(columnId => columnVisibility[columnId])
                 .map((columnId) => (
-                  <TableHead key={columnId} className="min-w-[100px]">
+                  <TableHead key={columnId} className="min-w-[120px] whitespace-nowrap">
                     <div className="flex items-center gap-2">
-                      <GripVertical className="h-3 w-3 text-muted-foreground" />
+                      <GripVertical className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                       <span className="truncate">{columnLabels[columnId]}</span>
                     </div>
                   </TableHead>
                 ))}
-              <TableHead className="w-[100px]">Əməliyyatlar</TableHead>
+              <TableHead className="w-[100px] whitespace-nowrap">Əməliyyatlar</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -154,7 +154,7 @@ export function ProductTable({ products, searchTerm, hasActiveFilters, getStatus
                         getStatusBadge={getStatusBadge}
                       />
                     ))}
-                  <TableCell>
+                  <TableCell className="whitespace-nowrap">
                     <ProductTableActions
                       product={product}
                       onEdit={handleEditProduct}

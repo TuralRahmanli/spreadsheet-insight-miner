@@ -82,9 +82,9 @@ export const MobileResponsiveTable = ({
                 .sort((a, b) => (a.mobileOrder || 0) - (b.mobileOrder || 0))
                 .slice(0, 4) // Show only first 4 most important columns on mobile
                 .map(col => (
-                  <div key={col.key} className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">{col.label}:</span>
-                    <span className="text-sm font-medium">
+                  <div key={col.key} className="flex justify-between items-start gap-2 min-w-0">
+                    <span className="text-sm text-muted-foreground flex-shrink-0">{col.label}:</span>
+                    <span className="text-sm font-medium text-right flex-1 min-w-0">
                       {col.render ? col.render(item) : item[col.key]}
                     </span>
                   </div>
