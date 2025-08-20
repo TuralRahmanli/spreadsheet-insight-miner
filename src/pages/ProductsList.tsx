@@ -17,9 +17,11 @@ import { MobileProductCard } from "../components/MobileProductCard";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 
 interface Filters {
-  status: string;
-  unit: string;
-  category: string;
+  status: string[];
+  category: string[];
+  location: string[];
+  roll: string[];
+  stockRange: { min: number | undefined; max: number | undefined };
 }
 
 const getStatusBadge = (status: string, stock: number) => {
@@ -38,9 +40,11 @@ export default function ProductsList() {
   const { initializeFromProducts } = useWarehouseStockStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<Filters>({
-    status: "all",
-    unit: "all",
-    category: "all"
+    status: [],
+    category: [],
+    location: [],
+    roll: [],
+    stockRange: { min: undefined, max: undefined }
   });
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -60,30 +64,42 @@ export default function ProductsList() {
     return products.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            product.article.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCategory = filters.category === "all" || product.category === filters.category;
       
-      const matchesStatus = filters.status === "all" || 
-        (filters.status === "active" && product.status === "active") ||
-        (filters.status === "out_of_stock" && (product.status === "out_of_stock" || product.stock === 0)) ||
-        (filters.status === "low_stock" && (product.status === "low_stock" || (product.stock > 0 && product.stock < 50)));
+      const matchesCategory = filters.category.length === 0 || filters.category.includes(product.category);
       
-      const matchesUnit = filters.unit === "all" || product.unit === filters.unit;
+      const matchesStatus = filters.status.length === 0 || filters.status.includes(product.status);
       
-      return matchesSearch && matchesCategory && matchesStatus && matchesUnit;
+      const matchesLocation = filters.location.length === 0 || 
+        product.warehouses.some(warehouse => filters.location.includes(warehouse));
+      
+      const matchesRoll = filters.roll.length === 0; // Placeholder since roll doesn't exist yet
+      
+      const matchesStockRange = 
+        (filters.stockRange.min === undefined || product.stock >= filters.stockRange.min) &&
+        (filters.stockRange.max === undefined || product.stock <= filters.stockRange.max);
+      
+      return matchesSearch && matchesCategory && matchesStatus && matchesLocation && matchesRoll && matchesStockRange;
     });
   }, [products, searchTerm, filters]);
 
   const clearAllFilters = () => {
     setFilters({
-      status: "all",
-      unit: "all",
-      category: "all"
+      status: [],
+      category: [],
+      location: [],
+      roll: [],
+      stockRange: { min: undefined, max: undefined }
     });
     setSearchTerm("");
   };
 
-  const hasActiveFilters = filters.status !== "all" || 
-                          filters.unit !== "all" || filters.category !== "all" || searchTerm !== "";
+  const hasActiveFilters = filters.status.length > 0 || 
+                          filters.category.length > 0 || 
+                          filters.location.length > 0 || 
+                          filters.roll.length > 0 ||
+                          filters.stockRange.min !== undefined ||
+                          filters.stockRange.max !== undefined ||
+                          searchTerm !== "";
 
   const handleDeleteProduct = (productId: string) => {
     const { removeProduct } = useProductStore.getState();
