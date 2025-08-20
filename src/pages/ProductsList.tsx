@@ -18,10 +18,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 interface Filters {
   status: string;
+  unit: string;
   category: string;
-  location: string;
-  roll: string;
-  stockRange: { min: number | undefined; max: number | undefined };
 }
 
 const getStatusBadge = (status: string, stock: number) => {
@@ -40,11 +38,9 @@ export default function ProductsList() {
   const { initializeFromProducts } = useWarehouseStockStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<Filters>({
-    status: '',
-    category: '',
-    location: '',
-    roll: '',
-    stockRange: { min: undefined, max: undefined }
+    status: "all",
+    unit: "all",
+    category: "all"
   });
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -64,41 +60,30 @@ export default function ProductsList() {
     return products.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            product.article.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = filters.category === "all" || product.category === filters.category;
       
-      const matchesCategory = filters.category === '' || filters.category === product.category;
+      const matchesStatus = filters.status === "all" || 
+        (filters.status === "active" && product.status === "active") ||
+        (filters.status === "out_of_stock" && (product.status === "out_of_stock" || product.stock === 0)) ||
+        (filters.status === "low_stock" && (product.status === "low_stock" || (product.stock > 0 && product.stock < 50)));
       
-      const matchesStatus = filters.status === '' || filters.status === product.status;
+      const matchesUnit = filters.unit === "all" || product.unit === filters.unit;
       
-      const matchesLocation = filters.location === '' || product.warehouses.includes(filters.location);
-      
-      const matchesRoll = filters.roll === '' || product.packaging.some(pkg => pkg.type === filters.roll);
-      
-      const matchesStockRange = 
-        (filters.stockRange.min === undefined || product.stock >= filters.stockRange.min) &&
-        (filters.stockRange.max === undefined || product.stock <= filters.stockRange.max);
-      
-      return matchesSearch && matchesCategory && matchesStatus && matchesLocation && matchesRoll && matchesStockRange;
+      return matchesSearch && matchesCategory && matchesStatus && matchesUnit;
     });
   }, [products, searchTerm, filters]);
 
   const clearAllFilters = () => {
     setFilters({
-      status: '',
-      category: '',
-      location: '',
-      roll: '',
-      stockRange: { min: undefined, max: undefined }
+      status: "all",
+      unit: "all",
+      category: "all"
     });
     setSearchTerm("");
   };
 
-  const hasActiveFilters = filters.status !== '' || 
-                          filters.category !== '' || 
-                          filters.location !== '' || 
-                          filters.roll !== '' ||
-                          filters.stockRange.min !== undefined ||
-                          filters.stockRange.max !== undefined ||
-                          searchTerm !== "";
+  const hasActiveFilters = filters.status !== "all" || 
+                          filters.unit !== "all" || filters.category !== "all" || searchTerm !== "";
 
   const handleDeleteProduct = (productId: string) => {
     const { removeProduct } = useProductStore.getState();
