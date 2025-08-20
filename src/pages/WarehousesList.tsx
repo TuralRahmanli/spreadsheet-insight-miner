@@ -4,14 +4,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Search, Warehouse, Package, MapPin, Plus } from "lucide-react";
+import { Search, Warehouse, Package, Plus } from "lucide-react";
 import { useProductStore } from "@/lib/productStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
 import { usePackagingMethodsStore } from "@/lib/packagingMethodsStore";
 import { useOperationHistory } from "@/hooks/useOperationHistory";
 import { useParams, useNavigate } from "react-router-dom";
+import { WarehouseResponsiveTable } from "@/components/WarehouseResponsiveTable";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function WarehousesList() {
   const { warehouse: selectedWarehouse } = useParams();
@@ -23,6 +24,7 @@ export default function WarehousesList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [newWarehouseName, setNewWarehouseName] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   // Get the first packaging method from store or default to "Paket"
   const getMostUsedPackagingMethod = () => {
@@ -214,10 +216,11 @@ export default function WarehousesList() {
       )}
 
       {!selectedWarehouse && allWarehouses.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           {allWarehouses.map(warehouse => {
             const warehouseProducts = products.filter(p => p.warehouses?.includes(warehouse));
             const totalStock = warehouseProducts.reduce((sum, p) => sum + p.stock, 0);
+            const totalPackages = warehouseProducts.reduce((total, product) => total + product.packaging.length, 0);
             
             return (
               <Card 
@@ -226,12 +229,15 @@ export default function WarehousesList() {
                 onClick={() => navigate(`/warehouses/${encodeURIComponent(warehouse)}`)}
               >
                 <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Warehouse className="h-5 w-5 text-primary" />
-                    {warehouse}
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                    <Warehouse className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                    <span className="truncate">{warehouse}</span>
                   </CardTitle>
+                  <div className="text-sm text-muted-foreground">
+                    {warehouseProducts.length} məhsul, {totalPackages} paket
+                  </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-0">
                   <div className="space-y-2">
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Məhsul növü:</span>
@@ -239,7 +245,7 @@ export default function WarehousesList() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">{dynamicPackagingLabel}:</span>
-                      <span className="font-medium">{warehouseProducts.reduce((total, product) => total + product.packaging.length, 0)}</span>
+                      <span className="font-medium">{totalPackages}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Ümumi stok:</span>
@@ -253,89 +259,34 @@ export default function WarehousesList() {
         </div>
       )}
 
-      {filteredData.map(warehouse => (
-        <Card key={warehouse.name}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Warehouse className="h-5 w-5" />
-              {warehouse.name} ({warehouse.products.length} məhsul, {warehouse.products.reduce((total, product) => total + product.packaging.length, 0)} paket)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {warehouse.products.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>Bu anbarda {searchTerm ? 'axtarış şərtinə uyğun' : ''} məhsul tapılmadı</p>
-              </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Vəziyyət</TableHead>
-                    <TableHead>Artikul</TableHead>
-                    <TableHead>Məhsul Adı</TableHead>
-                    <TableHead>{dynamicPackagingLabel}</TableHead>
-                    <TableHead>Stok</TableHead>
-                    <TableHead>Digər Anbarlar</TableHead>
-                    <TableHead>Kateqoriya</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {warehouse.products.map((product) => (
-                    <TableRow key={product.id}>
-                      <TableCell>
-                        {getStatusBadge(product.status, product.stock)}
-                      </TableCell>
-                      <TableCell className="font-medium">{product.article}</TableCell>
-                      <TableCell>{product.name}</TableCell>
-                      <TableCell>
-                        <div className="flex gap-1 flex-wrap max-w-[120px]">
-                          {product.packaging.length > 0 ? (
-                            product.packaging.map((pack) => (
-                              <Badge 
-                                key={`${product.id}-pack-${pack.type}`} 
-                                variant="outline" 
-                                className="text-xs bg-accent/50"
-                              >
-                                {pack.type}×{pack.quantity}
-                              </Badge>
-                            ))
-                          ) : (
-                            <span className="text-muted-foreground text-xs">Yoxdur</span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>{product.stock} {product.unit}</TableCell>
-                      <TableCell>
-                        <div className="flex gap-1 flex-wrap">
-                          {product.warehouses
-                            ?.filter(w => w !== warehouse.name)
-                            .map((otherWarehouse, index) => (
-                              <Badge 
-                                key={`${product.id}-other-warehouse-${otherWarehouse}-${index}`} 
-                                variant="secondary" 
-                                className="text-xs cursor-pointer hover:bg-secondary/80"
-                                onClick={() => navigate(`/warehouses/${encodeURIComponent(otherWarehouse)}`)}
-                              >
-                                {otherWarehouse}
-                              </Badge>
-                            ))}
-                          {(product.warehouses?.filter(w => w !== warehouse.name).length || 0) === 0 && (
-                            <span className="text-muted-foreground text-sm">Yalnız bu anbarda</span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{product.category}</Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
-      ))}
+      {filteredData.map(warehouse => {
+        const totalPackages = warehouse.products.reduce((total, product) => total + product.packaging.length, 0);
+        
+        return (
+          <Card key={warehouse.name}>
+            <CardHeader>
+              <CardTitle className="flex items-start sm:items-center flex-col sm:flex-row gap-2">
+                <div className="flex items-center gap-2">
+                  <Warehouse className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                  <span className="font-semibold">{warehouse.name}</span>
+                </div>
+                <div className="text-sm sm:text-base font-normal text-muted-foreground">
+                  {warehouse.products.length} məhsul, {totalPackages} paket
+                </div>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <WarehouseResponsiveTable 
+                products={warehouse.products}
+                warehouseName={warehouse.name}
+                getStatusBadge={getStatusBadge}
+                dynamicPackagingLabel={dynamicPackagingLabel}
+                searchTerm={searchTerm}
+              />
+            </CardContent>
+          </Card>
+        );
+      })}
     </div>
   );
 }
