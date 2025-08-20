@@ -21,12 +21,12 @@ export function MobileProductCard({ product, getStatusBadge, onEdit, onDelete }:
       <Card className="w-full">
         <CardContent className="p-4 space-y-3">
           {/* Header */}
-          <MobileFlexBetween>
-            <div className="flex-1 min-w-0 pr-2">
-              <MobileText variant="subtitle" className="truncate leading-tight">{product.name}</MobileText>
-              <MobileText variant="caption" className="truncate">{product.article}</MobileText>
+          <MobileFlexBetween className="items-start">
+            <div className="flex-1 min-w-0 pr-3 overflow-hidden">
+              <MobileText variant="subtitle" className="block truncate leading-tight mb-1">{product.name}</MobileText>
+              <MobileText variant="caption" className="block truncate">{product.article}</MobileText>
             </div>
-            <MobileButtonGroup>
+            <div className="flex gap-1 flex-shrink-0 ml-auto">
               <Button
                 variant="ghost"
                 size="sm"
@@ -45,7 +45,7 @@ export function MobileProductCard({ product, getStatusBadge, onEdit, onDelete }:
               >
                 <Trash2 className="h-3 w-3" />
               </Button>
-            </MobileButtonGroup>
+            </div>
           </MobileFlexBetween>
 
           {/* Info Row */}
