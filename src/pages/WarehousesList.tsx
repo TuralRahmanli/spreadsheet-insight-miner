@@ -333,6 +333,7 @@ export default function WarehousesList() {
                     getStatusBadge={getStatusBadge}
                     dynamicPackagingLabel={packagingSummary}
                     searchTerm={searchTerm}
+                    showSettings={true}
                   />
                 </CardContent>
               </CollapsibleContent>
