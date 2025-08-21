@@ -40,29 +40,24 @@ export default function WarehousesList() {
 
   // Get packaging methods summary from products
   const getPackagingSummary = (products: any[]) => {
-    let paketCount = 0;
-    let rulonCount = 0;
+    const methodCounts: { [key: string]: number } = {};
     
     products.forEach(product => {
       if (product.packaging && Array.isArray(product.packaging)) {
         product.packaging.forEach((pkg: any) => {
           const packageCount = pkg.quantity || 0;
-          if (pkg.type === "Rulon") {
-            rulonCount += packageCount;
-          } else {
-            paketCount += packageCount;
+          const method = pkg.method || pkg.type || "Paket";
+          
+          if (packageCount > 0) {
+            methodCounts[method] = (methodCounts[method] || 0) + packageCount;
           }
         });
       }
     });
 
-    if (paketCount === 0 && rulonCount === 0) return "Paket";
+    const parts = Object.entries(methodCounts).map(([method, count]) => `${count} ${method.toLowerCase()}`);
     
-    const parts = [];
-    if (paketCount > 0) parts.push(`${paketCount} paket`);
-    if (rulonCount > 0) parts.push(`${rulonCount} Rulon`);
-    
-    return parts.join(" + ");
+    return parts.length > 0 ? parts.join(" + ") : "Paketləşdirmə yoxdur";
   };
 
   // Get warehouses from warehouse store
