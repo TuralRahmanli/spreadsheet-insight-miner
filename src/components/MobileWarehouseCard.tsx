@@ -72,6 +72,27 @@ export function MobileWarehouseCard({
           {hasAdditionalInfo && (
             <CollapsibleContent>
               <CardContent className="px-4 pb-4 pt-0 space-y-3 border-t bg-muted/20">
+                {/* Packaging Methods */}
+                {product.packaging.length > 0 && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <Package className="h-3 w-3" />
+                      <span>Paketləşdirmə üsulları:</span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {[...new Set(product.packaging.map(pack => pack.type))].map((type, index) => (
+                        <Badge 
+                          key={`${product.id}-method-${type}-${index}`} 
+                          variant="secondary" 
+                          className="text-xs"
+                        >
+                          {type}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Packaging */}
                 {product.packaging.length > 0 && (
                   <div className="space-y-2">

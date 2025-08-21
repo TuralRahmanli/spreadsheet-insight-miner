@@ -57,6 +57,7 @@ export function WarehouseResponsiveTable({
             <TableHead className="whitespace-nowrap">Vəziyyət</TableHead>
             <TableHead className="whitespace-nowrap">Artikul</TableHead>
             <TableHead className="whitespace-nowrap">Məhsul Adı</TableHead>
+            <TableHead className="whitespace-nowrap">Paketləşdirmə</TableHead>
             <TableHead className="whitespace-nowrap">Paket</TableHead>
             <TableHead className="whitespace-nowrap">Stok</TableHead>
             <TableHead className="whitespace-nowrap">Digər Anbarlar</TableHead>
@@ -71,6 +72,23 @@ export function WarehouseResponsiveTable({
               </TableCell>
               <TableCell className="font-medium whitespace-nowrap">{product.article}</TableCell>
               <TableCell className="max-w-[200px] truncate">{product.name}</TableCell>
+              <TableCell>
+                <div className="flex gap-1 flex-wrap max-w-[120px]">
+                  {product.packaging.length > 0 ? (
+                    [...new Set(product.packaging.map(pack => pack.type))].map((type, index) => (
+                      <Badge 
+                        key={`${product.id}-method-${type}-${index}`} 
+                        variant="secondary" 
+                        className="text-xs whitespace-nowrap"
+                      >
+                        {type}
+                      </Badge>
+                    ))
+                  ) : (
+                    <span className="text-muted-foreground text-xs">Yoxdur</span>
+                  )}
+                </div>
+              </TableCell>
               <TableCell>
                 <div className="flex gap-1 flex-wrap max-w-[120px]">
                   {product.packaging.length > 0 ? (
