@@ -413,54 +413,26 @@ export default function AddOperation() {
               <div className="space-y-4">
                  <div className="grid grid-cols-2 gap-4">
                    <div className="space-y-2">
-                     <Label>Paketləşdirmə</Label>
-                     <Select value={currentPackagingMethod} onValueChange={setCurrentPackagingMethod}>
-                       <SelectTrigger>
-                         <SelectValue placeholder="Paketləşdirmə seçin" />
-                       </SelectTrigger>
-                       <SelectContent>
-                         {packagingMethods.map((method) => (
-                           <SelectItem key={method} value={method}>
-                             {method}
-                           </SelectItem>
-                         ))}
-                       </SelectContent>
-                     </Select>
-                   </div>
-
-                   <div className="space-y-2">
-                     <Label>Say (paket sayı)</Label>
-                     <Input
-                       type="number"
-                       placeholder="Paket sayı"
-                       value={currentPackageCount}
-                       onChange={(e) => setCurrentPackageCount(e.target.value)}
-                       min="1"
-                     />
-                   </div>
-                 </div>
-
-                 <div className="space-y-2">
-                   <Label>Paket miqdarı (hər paketdə olan məhsulun miqdarı)</Label>
-                   <Popover open={packagingOpen} onOpenChange={setPackagingOpen}>
-                     <PopoverTrigger asChild>
-                       <Button
-                         variant="outline"
-                         role="combobox"
-                         aria-expanded={packagingOpen}
-                         className="w-full justify-between"
-                       >
-                         {currentPackagingType || "Paket miqdarı seç..."}
-                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                       </Button>
-                     </PopoverTrigger>
-                     <PopoverContent className="w-full p-0">
-                       <Command>
-                         <CommandInput placeholder="Paket miqdarı axtar..." />
-                         <CommandList>
-                           <CommandEmpty>Uyğun miqdar tapılmadı.</CommandEmpty>
-                           <CommandGroup>
-                              {packagingOptions.map((option) => (
+                     <Label>Paket miqdarı (hər paketdə olan məhsulun miqdarı)</Label>
+                     <Popover open={packagingOpen} onOpenChange={setPackagingOpen}>
+                       <PopoverTrigger asChild>
+                         <Button
+                           variant="outline"
+                           role="combobox"
+                           aria-expanded={packagingOpen}
+                           className="w-full justify-between"
+                         >
+                           {currentPackagingType || "Paket miqdarı seç..."}
+                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                         </Button>
+                       </PopoverTrigger>
+                       <PopoverContent className="w-full p-0">
+                         <Command>
+                           <CommandInput placeholder="Paket miqdarı axtar..." />
+                           <CommandList>
+                             <CommandEmpty>Uyğun miqdar tapılmadı.</CommandEmpty>
+                             <CommandGroup>
+                               {packagingOptions.map((option) => (
                                  <CommandItem
                                    key={option}
                                    value={option}
@@ -477,12 +449,40 @@ export default function AddOperation() {
                                    />
                                    {option}
                                  </CommandItem>
-                              ))}
-                         </CommandGroup>
-                       </CommandList>
-                     </Command>
-                   </PopoverContent>
-                 </Popover>
+                               ))}
+                             </CommandGroup>
+                           </CommandList>
+                         </Command>
+                       </PopoverContent>
+                     </Popover>
+                   </div>
+
+                   <div className="space-y-2">
+                     <Label>Say (paket sayı)</Label>
+                     <Input
+                       type="number"
+                       placeholder="Paket sayı"
+                       value={currentPackageCount}
+                       onChange={(e) => setCurrentPackageCount(e.target.value)}
+                       min="1"
+                     />
+                   </div>
+                 </div>
+
+                 <div className="space-y-2">
+                   <Label>Paketləşdirmə</Label>
+                   <Select value={currentPackagingMethod} onValueChange={setCurrentPackagingMethod}>
+                     <SelectTrigger>
+                       <SelectValue placeholder="Paketləşdirmə seçin" />
+                     </SelectTrigger>
+                     <SelectContent>
+                       {packagingMethods.map((method) => (
+                         <SelectItem key={method} value={method}>
+                           {method}
+                         </SelectItem>
+                       ))}
+                     </SelectContent>
+                   </Select>
                  </div>
 
                  <Button 
