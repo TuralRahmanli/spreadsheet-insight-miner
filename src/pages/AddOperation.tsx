@@ -28,7 +28,7 @@ type ProductEntry = {
 export default function AddOperation() {
   const { products, updateWarehouseStock, updateProductPackaging } = useProductStore();
   const { packagingOptions, addPackagingOption } = usePackagingStore();
-  const { packagingMethods, addPackagingMethod } = usePackagingMethodsStore();
+  const { packagingMethods, addPackagingMethod, removePackagingMethod } = usePackagingMethodsStore();
   const { warehouses } = useWarehouseStore();
   const { addOperation, operations, formatTimestamp, getOperationColor } = useOperationHistory();
   const [operationType, setOperationType] = useState("");
@@ -503,45 +503,80 @@ export default function AddOperation() {
                         </Command>
                       </PopoverContent>
                     </Popover>
-                    <div className="flex flex-col gap-2">
-                       <Select value={currentPackagingMethod} onValueChange={setCurrentPackagingMethod}>
-                         <SelectTrigger className="w-40">
-                           <SelectValue placeholder="Paketləşdirmə üsulu" />
-                         </SelectTrigger>
-                        <SelectContent>
-                          {packagingMethods.map((method) => (
-                            <SelectItem key={method} value={method}>
-                              {method}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <div className="flex gap-1">
-                        <Input
-                          id="new-packaging-method-input"
-                          placeholder="Yeni üsul"
-                          value={customPackagingMethod}
-                          onChange={(e) => setCustomPackagingMethod(e.target.value)}
-                          className="text-xs h-8 flex-1"
-                          aria-label="Yeni paketləşdirmə üsulu"
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" && customPackagingMethod.trim()) {
-                              e.preventDefault();
-                              handleAddCustomPackagingMethod();
-                            }
-                          }}
-                        />
-                        <Button 
-                          size="sm" 
-                          onClick={handleAddCustomPackagingMethod}
-                          disabled={!customPackagingMethod.trim()}
-                          className="h-8 px-2"
-                          aria-label="Yeni paketləşdirmə üsulunu əlavə et"
-                        >
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
+                     <div className="flex flex-col gap-2">
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium">Paketləşdirmə</Label>
+                          <div className="flex gap-1">
+                            <Input
+                              id="new-packaging-method-input"
+                              placeholder="Yeni paketləşdirmə üsulu əlavə et"
+                              value={customPackagingMethod}
+                              onChange={(e) => setCustomPackagingMethod(e.target.value)}
+                              className="text-sm h-9 flex-1"
+                              aria-label="Yeni paketləşdirmə üsulu"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter" && customPackagingMethod.trim()) {
+                                  e.preventDefault();
+                                  handleAddCustomPackagingMethod();
+                                }
+                              }}
+                            />
+                            <Button 
+                              size="sm" 
+                              onClick={handleAddCustomPackagingMethod}
+                              disabled={!customPackagingMethod.trim()}
+                              className="h-9 px-3"
+                              aria-label="Yeni paketləşdirmə üsulunu əlavə et"
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <div className="max-h-32 overflow-y-auto border rounded-md p-2 bg-muted/20">
+                            {packagingMethods.length > 0 ? (
+                              <div className="space-y-1">
+                                {packagingMethods.map((method) => (
+                                  <div key={method} className="flex items-center justify-between group hover:bg-background rounded px-2 py-1">
+                                    <button
+                                      type="button"
+                                      onClick={() => setCurrentPackagingMethod(method)}
+                                      className={cn(
+                                        "text-sm flex-1 text-left hover:text-primary transition-colors",
+                                        currentPackagingMethod === method && "text-primary font-medium"
+                                      )}
+                                    >
+                                      {method}
+                                    </button>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => {
+                                        removePackagingMethod(method);
+                                        if (currentPackagingMethod === method) {
+                                          setCurrentPackagingMethod("");
+                                        }
+                                      }}
+                                      className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:text-destructive"
+                                      aria-label={`${method} üsulunu sil`}
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-sm text-muted-foreground text-center py-2">
+                                Hələ ki paketləşdirmə üsulu yoxdur
+                              </p>
+                            )}
+                          </div>
+                          {currentPackagingMethod && (
+                            <div className="text-sm text-primary bg-primary/10 px-2 py-1 rounded">
+                              Seçilmiş: {currentPackagingMethod}
+                            </div>
+                          )}
+                        </div>
+                     </div>
                     <Input
                       id="package-count-input"
                       type="number"
