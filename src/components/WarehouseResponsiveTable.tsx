@@ -4,6 +4,7 @@ import { Package } from "lucide-react";
 import { Product } from "@/types";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useWarehouseStockStore } from "@/lib/warehouseStockStore";
 import { MobileWarehouseCard } from "./MobileWarehouseCard";
 import React, { useState, useEffect } from "react";
 import { ProductTableSettings } from "./ProductTableSettings";
@@ -21,12 +22,13 @@ export function WarehouseResponsiveTable({
   products, 
   warehouseName, 
   getStatusBadge, 
-  dynamicPackagingLabel, 
+  dynamicPackagingLabel,
   searchTerm,
   showSettings = false
 }: WarehouseResponsiveTableProps) {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { getProductStock } = useWarehouseStockStore();
 
   // Define column labels
   const columnLabels: Record<string, string> = {
@@ -118,10 +120,11 @@ export function WarehouseResponsiveTable({
           </TableHeader>
           <TableBody>
             {products.map((product) => {
+              const warehouseStock = getProductStock(product.id, warehouseName);
               const renderCell = (columnKey: string) => {
                 switch (columnKey) {
                   case 'status':
-                    return <TableCell className="whitespace-nowrap">{getStatusBadge(product.status, product.stock)}</TableCell>;
+                    return <TableCell className="whitespace-nowrap">{getStatusBadge(product.status, warehouseStock)}</TableCell>;
                   case 'article':
                     return <TableCell className="font-medium whitespace-nowrap">{product.article}</TableCell>;
                   case 'name':
@@ -167,7 +170,7 @@ export function WarehouseResponsiveTable({
                       </TableCell>
                     );
                   case 'stock':
-                    return <TableCell className="whitespace-nowrap">{product.stock} {product.unit}</TableCell>;
+                    return <TableCell className="whitespace-nowrap">{warehouseStock} {product.unit}</TableCell>;
                   case 'warehouses':
                     return (
                       <TableCell>

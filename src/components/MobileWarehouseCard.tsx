@@ -6,6 +6,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Package, MapPin, ChevronDown, ChevronUp } from "lucide-react";
 import { Product } from "@/types";
 import { useNavigate } from "react-router-dom";
+import { useWarehouseStockStore } from "@/lib/warehouseStockStore";
 import { MobileContainer, MobileFlexBetween, MobileText } from "@/components/ui/mobile-layout";
 
 interface MobileWarehouseCardProps {
@@ -22,6 +23,8 @@ export function MobileWarehouseCard({
   dynamicPackagingLabel 
 }: MobileWarehouseCardProps) {
   const navigate = useNavigate();
+  const { getProductStock } = useWarehouseStockStore();
+  const warehouseStock = getProductStock(product.id, currentWarehouse);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const hasAdditionalInfo = product.packaging.length > 0 || 
@@ -45,7 +48,7 @@ export function MobileWarehouseCard({
                     </MobileText>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0 ml-auto">
-                    {getStatusBadge(product.status, product.stock)}
+                    {getStatusBadge(product.status, warehouseStock)}
                     {hasAdditionalInfo && (
                       isExpanded ? (
                         <ChevronUp className="h-4 w-4 text-muted-foreground" />
@@ -62,7 +65,7 @@ export function MobileWarehouseCard({
                     {product.category}
                   </Badge>
                   <MobileText variant="body" className="font-medium text-right">
-                    {product.stock} {product.unit}
+                    {warehouseStock} {product.unit}
                   </MobileText>
                 </MobileFlexBetween>
               </div>

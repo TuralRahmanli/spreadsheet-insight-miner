@@ -9,6 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Search, Warehouse, Package, Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { useProductStore } from "@/lib/productStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
+import { useWarehouseStockStore } from "@/lib/warehouseStockStore";
 import { usePackagingMethodsStore } from "@/lib/packagingMethodsStore";
 import { useOperationHistory } from "@/hooks/useOperationHistory";
 import { useParams, useNavigate } from "react-router-dom";
@@ -20,6 +21,7 @@ export default function WarehousesList() {
   const navigate = useNavigate();
   const { products } = useProductStore();
   const { warehouses, addWarehouse } = useWarehouseStore();
+  const { getProductStock } = useWarehouseStockStore();
   const { packagingMethods } = usePackagingMethodsStore();
   const { operations } = useOperationHistory();
   const [searchTerm, setSearchTerm] = useState("");
@@ -255,7 +257,7 @@ export default function WarehousesList() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           {allWarehouses.map(warehouse => {
             const warehouseProducts = products.filter(p => p.warehouses?.includes(warehouse));
-            const totalStock = warehouseProducts.reduce((sum, p) => sum + p.stock, 0);
+            const totalStock = warehouseProducts.reduce((sum, p) => sum + getProductStock(p.id, warehouse), 0);
             const packagingSummary = getPackagingSummary(warehouseProducts);
             
             return (
