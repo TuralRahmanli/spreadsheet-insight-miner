@@ -46,18 +46,26 @@ export default function WarehousesList() {
       if (product.packaging && Array.isArray(product.packaging)) {
         product.packaging.forEach((pkg: any) => {
           const packageCount = pkg.quantity || 0;
+          // Use the method field, fallback to type, then default
           const method = pkg.method || pkg.type || "Paket";
           
-          if (packageCount > 0) {
+          if (packageCount > 0 && method && method !== "Yoxdur") {
             methodCounts[method] = (methodCounts[method] || 0) + packageCount;
           }
         });
       }
     });
 
-    const parts = Object.entries(methodCounts).map(([method, count]) => `${count} ${method.toLowerCase()}`);
+    // Filter out empty or invalid methods and create display string
+    const validMethods = Object.entries(methodCounts).filter(([method, count]) => count > 0);
     
-    return parts.length > 0 ? parts.join(" + ") : "Paketləşdirmə yoxdur";
+    if (validMethods.length === 0) {
+      return "Paketləşdirmə yoxdur";
+    }
+    
+    const parts = validMethods.map(([method, count]) => `${count} ${method.toLowerCase()}`);
+    
+    return parts.join(" + ");
   };
 
   // Get warehouses from warehouse store
