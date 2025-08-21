@@ -72,16 +72,16 @@ export function WarehouseResponsiveTable({
               </TableCell>
               <TableCell className="font-medium whitespace-nowrap">{product.article}</TableCell>
               <TableCell className="max-w-[200px] truncate">{product.name}</TableCell>
-              <TableCell>
+               <TableCell>
                 <div className="flex gap-1 flex-wrap max-w-[120px]">
                   {product.packaging.length > 0 ? (
-                    [...new Set(product.packaging.map(pack => pack.type))].map((type, index) => (
+                    [...new Set(product.packaging.map(pack => pack.method || 'Yoxdur'))].map((method, index) => (
                       <Badge 
-                        key={`${product.id}-method-${type}-${index}`} 
+                        key={`${product.id}-method-${method}-${index}`} 
                         variant="secondary" 
                         className="text-xs whitespace-nowrap"
                       >
-                        {type}
+                        {method}
                       </Badge>
                     ))
                   ) : (

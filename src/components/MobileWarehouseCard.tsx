@@ -79,17 +79,17 @@ export function MobileWarehouseCard({
                       <Package className="h-3 w-3" />
                       <span>Paketləşdirmə üsulları:</span>
                     </div>
-                    <div className="flex flex-wrap gap-1">
-                      {[...new Set(product.packaging.map(pack => pack.type))].map((type, index) => (
-                        <Badge 
-                          key={`${product.id}-method-${type}-${index}`} 
-                          variant="secondary" 
-                          className="text-xs"
-                        >
-                          {type}
-                        </Badge>
-                      ))}
-                    </div>
+                     <div className="flex flex-wrap gap-1">
+                       {[...new Set(product.packaging.map(pack => pack.method || 'Yoxdur'))].map((method, index) => (
+                         <Badge 
+                           key={`${product.id}-method-${method}-${index}`} 
+                           variant="secondary" 
+                           className="text-xs"
+                         >
+                           {method}
+                         </Badge>
+                       ))}
+                     </div>
                   </div>
                 )}
 

@@ -254,7 +254,8 @@ export default function AddOperation() {
           // Update product packaging with the types and quantities used in this operation
           const packagingUsed = productEntry.packaging.map(p => ({
             type: p.type,
-            quantity: p.count
+            quantity: p.count,
+            method: p.method
           }));
           updateProductPackaging(product.id, packagingUsed);
 
