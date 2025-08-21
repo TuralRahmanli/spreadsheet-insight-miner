@@ -413,7 +413,7 @@ export default function AddOperation() {
               <div className="space-y-4">
                  <div className="grid grid-cols-2 gap-4">
                    <div className="space-y-2">
-                     <Label>Paket miqdarı (hər paketdə olan məhsulun miqdarı)</Label>
+                     <Label>Paketləmə miqdarı</Label>
                      <Popover open={packagingOpen} onOpenChange={setPackagingOpen}>
                        <PopoverTrigger asChild>
                          <Button
