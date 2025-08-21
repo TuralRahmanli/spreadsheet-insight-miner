@@ -5,11 +5,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Settings as SettingsIcon, Save, Download, Upload, Cloud, HardDrive, CheckCircle, Share } from "lucide-react";
+import { Settings as SettingsIcon, Save, Download, Upload, Cloud, HardDrive, CheckCircle, Share, Plus, X, Package } from "lucide-react";
 import { useStorageProvider } from "@/hooks/useStorageProvider";
 import { useDataExport } from "@/hooks/useDataExport";
 import { useAutoImport } from "@/hooks/useAutoImport";
 import { useSystemRestore } from "@/hooks/useSystemRestore";
+import { usePackagingStore } from "@/lib/packagingStore";
+import { usePackagingMethodsStore } from "@/lib/packagingMethodsStore";
 import { toast } from "@/hooks/use-toast";
 
 interface AppSettings {
@@ -28,6 +30,8 @@ export default function Settings() {
   const { exportToFile, shareData } = useDataExport();
   const { triggerFileSelect } = useAutoImport();
   const { triggerSystemRestore } = useSystemRestore();
+  const { packagingOptions, addPackagingOption, removePackagingOption } = usePackagingStore();
+  const { packagingMethods, addPackagingMethod, removePackagingMethod } = usePackagingMethodsStore();
 
   // Settings state
   const [settings, setSettings] = useState<AppSettings>({
@@ -40,6 +44,10 @@ export default function Settings() {
     email: "",
     lowStockLimit: 10,
   });
+
+  // State for adding new packaging items
+  const [newPackagingOption, setNewPackagingOption] = useState("");
+  const [newPackagingMethod, setNewPackagingMethod] = useState("");
 
   // Load settings from localStorage on mount
   useEffect(() => {
@@ -74,6 +82,44 @@ export default function Settings() {
 
   const updateSetting = (key: keyof AppSettings, value: string | boolean | number) => {
     setSettings(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleAddPackagingOption = () => {
+    if (newPackagingOption.trim() && !packagingOptions.includes(newPackagingOption.trim())) {
+      addPackagingOption(newPackagingOption.trim());
+      setNewPackagingOption("");
+      toast({
+        title: "Paket miqdarı əlavə edildi",
+        description: `"${newPackagingOption.trim()}" paket miqdarı siyahıya əlavə edildi`,
+      });
+    }
+  };
+
+  const handleAddPackagingMethod = () => {
+    if (newPackagingMethod.trim() && !packagingMethods.includes(newPackagingMethod.trim())) {
+      addPackagingMethod(newPackagingMethod.trim());
+      setNewPackagingMethod("");
+      toast({
+        title: "Paketləşdirmə üsulu əlavə edildi",
+        description: `"${newPackagingMethod.trim()}" paketləşdirmə üsulu siyahıya əlavə edildi`,
+      });
+    }
+  };
+
+  const handleRemovePackagingOption = (option: string) => {
+    removePackagingOption(option);
+    toast({
+      title: "Paket miqdarı silindi",
+      description: `"${option}" paket miqdarı siyahıdan silindi`,
+    });
+  };
+
+  const handleRemovePackagingMethod = (method: string) => {
+    removePackagingMethod(method);
+    toast({
+      title: "Paketləşdirmə üsulu silindi",
+      description: `"${method}" paketləşdirmə üsulu siyahıdan silindi`,
+    });
   };
 
   return (
@@ -206,6 +252,96 @@ export default function Settings() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Package className="h-5 w-5" />
+            Paketləşdirmə İdarəetməsi
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            <div>
+              <Label className="text-base font-medium">Paket Miqdarları</Label>
+              <p className="text-sm text-muted-foreground mb-3">
+                Hər paketdə olan məhsul miqdarlarını idarə edin
+              </p>
+              
+              <div className="flex gap-2 mb-4">
+                <Input
+                  placeholder="Yeni paket miqdarı (məs: 100, 50+(3))"
+                  value={newPackagingOption}
+                  onChange={(e) => setNewPackagingOption(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleAddPackagingOption();
+                    }
+                  }}
+                />
+                <Button onClick={handleAddPackagingOption} disabled={!newPackagingOption.trim()}>
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 max-h-40 overflow-y-auto">
+                {packagingOptions.map((option) => (
+                  <div key={option} className="flex items-center justify-between bg-muted px-3 py-2 rounded-md">
+                    <span className="text-sm">{option}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemovePackagingOption(option)}
+                      className="h-auto p-1 text-muted-foreground hover:text-destructive"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-base font-medium">Paketləşdirmə Üsulları</Label>
+              <p className="text-sm text-muted-foreground mb-3">
+                Paketləşdirmə növlərini idarə edin (məs: Rulon, Qutu, Kasa)
+              </p>
+              
+              <div className="flex gap-2 mb-4">
+                <Input
+                  placeholder="Yeni paketləşdirmə üsulu"
+                  value={newPackagingMethod}
+                  onChange={(e) => setNewPackagingMethod(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleAddPackagingMethod();
+                    }
+                  }}
+                />
+                <Button onClick={handleAddPackagingMethod} disabled={!newPackagingMethod.trim()}>
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-40 overflow-y-auto">
+                {packagingMethods.map((method) => (
+                  <div key={method} className="flex items-center justify-between bg-muted px-3 py-2 rounded-md">
+                    <span className="text-sm">{method}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemovePackagingMethod(method)}
+                      className="h-auto p-1 text-muted-foreground hover:text-destructive"
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

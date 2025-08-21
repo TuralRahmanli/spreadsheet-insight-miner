@@ -40,11 +40,9 @@ export default function AddOperation() {
   const [currentPackaging, setCurrentPackaging] = useState<{type: string, count: number, method?: string}[]>([]);
   const [notes, setNotes] = useState("");
   const [packagingOpen, setPackagingOpen] = useState(false);
-  const [customPackaging, setCustomPackaging] = useState("");
   const [currentPackagingType, setCurrentPackagingType] = useState("");
   const [currentPackageCount, setCurrentPackageCount] = useState("");
   const [currentPackagingMethod, setCurrentPackagingMethod] = useState("");
-  const [customPackagingMethod, setCustomPackagingMethod] = useState("");
   const [operationDateTime, setOperationDateTime] = useState<Date>(new Date());
 
   const getCurrentProductTotalQuantity = () => {
@@ -106,21 +104,6 @@ export default function AddOperation() {
     setCurrentPackaging(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleAddCustomPackaging = () => {
-    if (customPackaging.trim() && !packagingOptions.includes(customPackaging.trim())) {
-      addPackagingOption(customPackaging.trim());
-      setCurrentPackagingType(customPackaging.trim());
-      setCustomPackaging("");
-    }
-  };
-
-  const handleAddCustomPackagingMethod = () => {
-    if (customPackagingMethod.trim() && !packagingMethods.includes(customPackagingMethod.trim())) {
-      addPackagingMethod(customPackagingMethod.trim());
-      setCurrentPackagingMethod(customPackagingMethod.trim());
-      setCustomPackagingMethod("");
-    }
-  };
 
   const handleAddProduct = () => {
     if (currentProduct && currentPackaging.length > 0) {
@@ -428,173 +411,88 @@ export default function AddOperation() {
 
             {currentProduct && (
               <div className="space-y-4">
+                 <div className="grid grid-cols-2 gap-4">
+                   <div className="space-y-2">
+                     <Label>Paketləşdirmə</Label>
+                     <Select value={currentPackagingMethod} onValueChange={setCurrentPackagingMethod}>
+                       <SelectTrigger>
+                         <SelectValue placeholder="Paketləşdirmə seçin" />
+                       </SelectTrigger>
+                       <SelectContent>
+                         {packagingMethods.map((method) => (
+                           <SelectItem key={method} value={method}>
+                             {method}
+                           </SelectItem>
+                         ))}
+                       </SelectContent>
+                     </Select>
+                   </div>
+
+                   <div className="space-y-2">
+                     <Label>Say (paket sayı)</Label>
+                     <Input
+                       type="number"
+                       placeholder="Paket sayı"
+                       value={currentPackageCount}
+                       onChange={(e) => setCurrentPackageCount(e.target.value)}
+                       min="1"
+                     />
+                   </div>
+                 </div>
+
                  <div className="space-y-2">
                    <Label>Paket miqdarı (hər paketdə olan məhsulun miqdarı)</Label>
-                   <div className="flex gap-2">
-                    <Popover open={packagingOpen} onOpenChange={setPackagingOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          role="combobox"
-                          aria-expanded={packagingOpen}
-                          className="flex-1 justify-between"
-                        >
-                           {currentPackagingType
-                             ? `Hər paketdə ${currentPackagingType} metr`
-                             : "Paket miqdarını seçin"}
-                           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-full p-0">
-                        <Command>
-                           <CommandInput 
-                             placeholder="Paket miqdarını axtarın və ya yeni əlavə edin..." 
-                             value={customPackaging}
-                            onValueChange={setCustomPackaging}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter" && customPackaging.trim()) {
-                                e.preventDefault();
-                                handleAddCustomPackaging();
-                              }
-                            }}
-                          />
-                          <CommandList>
-                            <CommandEmpty>
-                              <div className="text-center py-2">
-                                <p className="text-sm text-muted-foreground mb-2">
-                                  Nəticə tapılmadı
-                                </p>
-                                {customPackaging.trim() && (
-                                  <Button 
-                                    size="sm" 
-                                    onClick={handleAddCustomPackaging}
-                                    className="text-xs"
-                                  >
-                                    "{customPackaging}" əlavə et
-                                  </Button>
-                                )}
-                              </div>
-                            </CommandEmpty>
-                            <CommandGroup>
-                              {packagingOptions
-                                .filter((option) =>
-                                  option.toLowerCase().includes(customPackaging.toLowerCase())
-                                )
-                                .map((option) => (
-                                  <CommandItem
-                                    key={option}
-                                    value={option}
-                                    onSelect={(currentValue) => {
-                                      setCurrentPackagingType(currentValue);
-                                      setPackagingOpen(false);
-                                    }}
-                                  >
-                                    <Check
-                                      className={cn(
-                                        "mr-2 h-4 w-4",
-                                        currentPackagingType === option ? "opacity-100" : "opacity-0"
-                                      )}
-                                    />
-                                    {option} metr
-                                  </CommandItem>
-                                ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
-                     <div className="flex flex-col gap-2">
-                        <div className="space-y-2">
-                          <Label className="text-sm font-medium">Paketləşdirmə</Label>
-                          <div className="flex gap-1">
-                            <Input
-                              id="new-packaging-method-input"
-                              placeholder="Yeni paketləşdirmə üsulu əlavə et"
-                              value={customPackagingMethod}
-                              onChange={(e) => setCustomPackagingMethod(e.target.value)}
-                              className="text-sm h-9 flex-1"
-                              aria-label="Yeni paketləşdirmə üsulu"
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter" && customPackagingMethod.trim()) {
-                                  e.preventDefault();
-                                  handleAddCustomPackagingMethod();
-                                }
-                              }}
-                            />
-                            <Button 
-                              size="sm" 
-                              onClick={handleAddCustomPackagingMethod}
-                              disabled={!customPackagingMethod.trim()}
-                              className="h-9 px-3"
-                              aria-label="Yeni paketləşdirmə üsulunu əlavə et"
-                            >
-                              <Plus className="h-4 w-4" />
-                            </Button>
-                          </div>
-                          <div className="max-h-32 overflow-y-auto border rounded-md p-2 bg-muted/20">
-                            {packagingMethods.length > 0 ? (
-                              <div className="space-y-1">
-                                {packagingMethods.map((method) => (
-                                  <div key={method} className="flex items-center justify-between group hover:bg-background rounded px-2 py-1">
-                                    <button
-                                      type="button"
-                                      onClick={() => setCurrentPackagingMethod(method)}
-                                      className={cn(
-                                        "text-sm flex-1 text-left hover:text-primary transition-colors",
-                                        currentPackagingMethod === method && "text-primary font-medium"
-                                      )}
-                                    >
-                                      {method}
-                                    </button>
-                                    <Button
-                                      type="button"
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => {
-                                        removePackagingMethod(method);
-                                        if (currentPackagingMethod === method) {
-                                          setCurrentPackagingMethod("");
-                                        }
-                                      }}
-                                      className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity hover:text-destructive"
-                                      aria-label={`${method} üsulunu sil`}
-                                    >
-                                      <X className="h-3 w-3" />
-                                    </Button>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="text-sm text-muted-foreground text-center py-2">
-                                Hələ ki paketləşdirmə üsulu yoxdur
-                              </p>
-                            )}
-                          </div>
-                          {currentPackagingMethod && (
-                            <div className="text-sm text-primary bg-primary/10 px-2 py-1 rounded">
-                              Seçilmiş: {currentPackagingMethod}
-                            </div>
-                          )}
-                        </div>
-                     </div>
-                    <Input
-                      id="package-count-input"
-                      type="number"
-                      placeholder="Sayı"
-                      value={currentPackageCount}
-                      onChange={(e) => setCurrentPackageCount(e.target.value)}
-                      className="w-20"
-                      aria-label="Paket sayı"
-                    />
-                    <Button 
-                      onClick={handleAddPackaging} 
-                      disabled={!currentPackagingType || !currentPackageCount || !currentPackagingMethod}
-                      aria-label="Paketləşdirməni əlavə et"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
+                   <Popover open={packagingOpen} onOpenChange={setPackagingOpen}>
+                     <PopoverTrigger asChild>
+                       <Button
+                         variant="outline"
+                         role="combobox"
+                         aria-expanded={packagingOpen}
+                         className="w-full justify-between"
+                       >
+                         {currentPackagingType || "Paket miqdarı seç..."}
+                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                       </Button>
+                     </PopoverTrigger>
+                     <PopoverContent className="w-full p-0">
+                       <Command>
+                         <CommandInput placeholder="Paket miqdarı axtar..." />
+                         <CommandList>
+                           <CommandEmpty>Uyğun miqdar tapılmadı.</CommandEmpty>
+                           <CommandGroup>
+                              {packagingOptions.map((option) => (
+                                 <CommandItem
+                                   key={option}
+                                   value={option}
+                                   onSelect={() => {
+                                     setCurrentPackagingType(option);
+                                     setPackagingOpen(false);
+                                   }}
+                                 >
+                                   <Check
+                                     className={cn(
+                                       "mr-2 h-4 w-4",
+                                       currentPackagingType === option ? "opacity-100" : "opacity-0"
+                                     )}
+                                   />
+                                   {option}
+                                 </CommandItem>
+                              ))}
+                         </CommandGroup>
+                       </CommandList>
+                     </Command>
+                   </PopoverContent>
+                 </Popover>
+                 </div>
+
+                 <Button 
+                   onClick={handleAddPackaging} 
+                   disabled={!currentPackagingType || !currentPackageCount || !currentPackagingMethod}
+                   className="w-full"
+                 >
+                   <Plus className="mr-2 h-4 w-4" />
+                   Paketləşdirməni əlavə et
+                 </Button>
 
                 {currentPackaging.length > 0 && (
                  <div className="space-y-2">
@@ -763,8 +661,6 @@ export default function AddOperation() {
           </CardContent>
         </Card>
 
-      </div>
-
         <Card>
           <CardHeader>
             <CardTitle>Son Əməliyyatlar</CardTitle>
@@ -796,6 +692,7 @@ export default function AddOperation() {
             )}
           </CardContent>
         </Card>
+      </div>
     </div>
   );
 }
