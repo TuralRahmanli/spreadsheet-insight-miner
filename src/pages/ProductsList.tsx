@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, Filter, X, Upload } from "lucide-react";
+import { Search, Plus, Filter, X, Upload, Trash2, CheckSquare, Square } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useProductStore } from "@/lib/productStore";
@@ -49,6 +49,8 @@ export default function ProductsList() {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
+  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
+  const [isDeletingSelected, setIsDeletingSelected] = useState(false);
   const { toast } = useToast();
   
   const categories = ["all", ...Array.from(new Set(products.map(p => p.category)))];
@@ -123,6 +125,40 @@ export default function ProductsList() {
     setIsDialogOpen(true);
   };
 
+  const handleSelectProduct = (productId: string, checked: boolean) => {
+    const newSelected = new Set(selectedProducts);
+    if (checked) {
+      newSelected.add(productId);
+    } else {
+      newSelected.delete(productId);
+    }
+    setSelectedProducts(newSelected);
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedProducts(new Set(filteredProducts.map(p => p.id)));
+    } else {
+      setSelectedProducts(new Set());
+    }
+  };
+
+  const handleDeleteSelected = () => {
+    const { removeProduct } = useProductStore.getState();
+    selectedProducts.forEach(productId => {
+      removeProduct(productId);
+    });
+    toast({
+      title: "Uğur",
+      description: `${selectedProducts.size} məhsul uğurla silindi`
+    });
+    setSelectedProducts(new Set());
+    setIsDeletingSelected(false);
+  };
+
+  const isAllSelected = filteredProducts.length > 0 && filteredProducts.every(p => selectedProducts.has(p.id));
+  const isPartiallySelected = selectedProducts.size > 0 && !isAllSelected;
+
   return (
     <div className="space-y-6">
       <Card>
@@ -131,8 +167,25 @@ export default function ProductsList() {
             <div className="flex items-center gap-2">
               <h1 className="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight">Məhsullar Siyahısı</h1>
               <Badge variant="outline">{filteredProducts.length}</Badge>
+              {selectedProducts.size > 0 && (
+                <Badge variant="secondary" className="bg-primary/10 text-primary">
+                  {selectedProducts.size} seçildi
+                </Badge>
+              )}
             </div>
             <div className="flex flex-wrap items-center gap-2">
+              {selectedProducts.size > 0 && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => setIsDeletingSelected(true)}
+                  className="flex items-center gap-1 text-xs md:text-sm"
+                >
+                  <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
+                  <span className="hidden sm:inline">Seçilənləri Sil</span>
+                  <span className="sm:hidden">Sil</span>
+                </Button>
+              )}
               <Button
                 variant="outline"
                 size="sm"
@@ -167,16 +220,38 @@ export default function ProductsList() {
         </CardHeader>
         
         <CardContent className="space-y-4">
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Məhsul adı və ya artikul ilə axtarış..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-              aria-label="Məhsul axtarışı"
-            />
+          {/* Search and Select All */}
+          <div className="space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Məhsul adı və ya artikul ilə axtarış..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+                aria-label="Məhsul axtarışı"
+              />
+            </div>
+            
+            {filteredProducts.length > 0 && (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleSelectAll(!isAllSelected)}
+                  className="flex items-center gap-2 text-sm h-8"
+                >
+                  {isAllSelected ? (
+                    <CheckSquare className="h-4 w-4" />
+                  ) : isPartiallySelected ? (
+                    <CheckSquare className="h-4 w-4 opacity-50" />
+                  ) : (
+                    <Square className="h-4 w-4" />
+                  )}
+                  {isAllSelected ? "Hamısını ləğv et" : "Hamısını seç"}
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Filters */}
@@ -198,6 +273,9 @@ export default function ProductsList() {
               searchTerm={searchTerm}
               hasActiveFilters={hasActiveFilters}
               getStatusBadge={getStatusBadge}
+              selectedProducts={selectedProducts}
+              onSelectProduct={handleSelectProduct}
+              showSelection={true}
             />
           </div>
 
@@ -218,6 +296,9 @@ export default function ProductsList() {
                     getStatusBadge={getStatusBadge}
                     onEdit={handleEditProduct}
                     onDelete={(productId) => setDeletingProduct(product)}
+                    isSelected={selectedProducts.has(product.id)}
+                    onSelect={(checked) => handleSelectProduct(product.id, checked)}
+                    showSelection={true}
                   />
                 </div>
               ))
@@ -255,6 +336,29 @@ export default function ProductsList() {
           </AlertDialogContent>
         </AlertDialog>
       )}
+
+      {/* Bulk Delete Confirmation Dialog */}
+      <AlertDialog open={isDeletingSelected} onOpenChange={setIsDeletingSelected}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Seçilən məhsulları sil</AlertDialogTitle>
+            <AlertDialogDescription>
+              {selectedProducts.size} məhsulu silmək istədiyinizə əminsiniz? Bu əməliyyat geri alına bilməz.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setIsDeletingSelected(false)}>
+              Ləğv et
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteSelected}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Sil
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

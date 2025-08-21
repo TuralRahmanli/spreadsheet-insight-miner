@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Edit, Trash2, MapPin } from "lucide-react";
 import { Product } from "@/types";
 import { useNavigate } from "react-router-dom";
@@ -11,9 +12,20 @@ interface MobileProductCardProps {
   getStatusBadge: (status: string, stock: number) => React.ReactNode;
   onEdit: (product: Product) => void;
   onDelete: (productId: string) => void;
+  isSelected?: boolean;
+  onSelect?: (checked: boolean) => void;
+  showSelection?: boolean;
 }
 
-export function MobileProductCard({ product, getStatusBadge, onEdit, onDelete }: MobileProductCardProps) {
+export function MobileProductCard({ 
+  product, 
+  getStatusBadge, 
+  onEdit, 
+  onDelete,
+  isSelected = false,
+  onSelect,
+  showSelection = false
+}: MobileProductCardProps) {
   const navigate = useNavigate();
 
   return (
@@ -22,6 +34,13 @@ export function MobileProductCard({ product, getStatusBadge, onEdit, onDelete }:
         <CardContent className="p-4 space-y-3">
           {/* Header */}
           <MobileFlexBetween className="items-start">
+            {showSelection && onSelect && (
+              <Checkbox
+                checked={isSelected}
+                onCheckedChange={onSelect}
+                className="mr-3 mt-1"
+              />
+            )}
             <div className="flex-1 min-w-0 pr-3 overflow-hidden">
               <MobileText variant="subtitle" className="block truncate leading-tight mb-1">{product.name}</MobileText>
               <MobileText variant="caption" className="block truncate">{product.article}</MobileText>

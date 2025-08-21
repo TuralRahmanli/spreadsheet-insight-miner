@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
 import { GripVertical } from "lucide-react";
 import { Product } from "@/types";
 import { ProductDialog } from "./ProductDialog";
@@ -13,9 +14,20 @@ interface ProductTableProps {
   searchTerm: string;
   hasActiveFilters: boolean;
   getStatusBadge: (status: string, stock: number) => React.ReactNode;
+  selectedProducts?: Set<string>;
+  onSelectProduct?: (productId: string, checked: boolean) => void;
+  showSelection?: boolean;
 }
 
-export function ProductTable({ products, searchTerm, hasActiveFilters, getStatusBadge }: ProductTableProps) {
+export function ProductTable({ 
+  products, 
+  searchTerm, 
+  hasActiveFilters, 
+  getStatusBadge,
+  selectedProducts = new Set(),
+  onSelectProduct,
+  showSelection = false
+}: ProductTableProps) {
   const { packagingMethods } = usePackagingMethodsStore();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -115,6 +127,16 @@ export function ProductTable({ products, searchTerm, hasActiveFilters, getStatus
         <Table>
           <TableHeader>
             <TableRow>
+              {showSelection && onSelectProduct && (
+                <TableHead className="w-[50px]">
+                  <Checkbox
+                    checked={products.length > 0 && products.every(p => selectedProducts.has(p.id))}
+                    onCheckedChange={(checked) => {
+                      products.forEach(p => onSelectProduct(p.id, !!checked));
+                    }}
+                  />
+                </TableHead>
+              )}
               {columnOrder
                 .filter(columnId => columnVisibility[columnId])
                 .map((columnId) => (
@@ -132,7 +154,7 @@ export function ProductTable({ products, searchTerm, hasActiveFilters, getStatus
             {products.length === 0 ? (
               <TableRow>
                 <TableCell 
-                  colSpan={columnOrder.filter(col => columnVisibility[col]).length + 1} 
+                  colSpan={columnOrder.filter(col => columnVisibility[col]).length + 1 + (showSelection ? 1 : 0)} 
                   className="text-center py-8 text-muted-foreground"
                 >
                   {searchTerm || hasActiveFilters 
@@ -144,6 +166,14 @@ export function ProductTable({ products, searchTerm, hasActiveFilters, getStatus
             ) : (
               products.map((product) => (
                 <TableRow key={product.id}>
+                  {showSelection && onSelectProduct && (
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedProducts.has(product.id)}
+                        onCheckedChange={(checked) => onSelectProduct(product.id, !!checked)}
+                      />
+                    </TableCell>
+                  )}
                   {columnOrder
                     .filter(columnId => columnVisibility[columnId])
                     .map((columnId) => (
