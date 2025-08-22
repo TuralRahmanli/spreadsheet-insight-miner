@@ -154,7 +154,7 @@ export default function Settings() {
             <div className="space-y-2">
               <Label htmlFor="language">Dil</Label>
               <Select value={settings.language} onValueChange={(value) => updateSetting('language', value)}>
-                <SelectTrigger>
+                <SelectTrigger id="language" aria-label="Dil seçimi">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -168,7 +168,7 @@ export default function Settings() {
             <div className="space-y-2">
               <Label htmlFor="timezone">Vaxt Zonası</Label>
               <Select value={settings.timezone} onValueChange={(value) => updateSetting('timezone', value)}>
-                <SelectTrigger>
+                <SelectTrigger id="timezone" aria-label="Vaxt zonası seçimi">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -270,6 +270,7 @@ export default function Settings() {
               
               <div className="flex gap-2 mb-4">
                 <Input
+                  id="new-packaging-option"
                   placeholder="Yeni paket miqdarı (məs: 100, 50+(3))"
                   value={newPackagingOption}
                   onChange={(e) => setNewPackagingOption(e.target.value)}
@@ -278,8 +279,13 @@ export default function Settings() {
                       handleAddPackagingOption();
                     }
                   }}
+                  aria-label="Yeni paket miqdarı əlavə et"
                 />
-                <Button onClick={handleAddPackagingOption} disabled={!newPackagingOption.trim()}>
+                <Button 
+                  onClick={handleAddPackagingOption} 
+                  disabled={!newPackagingOption.trim()}
+                  aria-label="Paket miqdarını əlavə et"
+                >
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
@@ -293,6 +299,7 @@ export default function Settings() {
                       size="sm"
                       onClick={() => handleRemovePackagingOption(option)}
                       className="h-auto p-1 text-muted-foreground hover:text-destructive"
+                      aria-label={`${option} paket miqdarını sil`}
                     >
                       <X className="h-3 w-3" />
                     </Button>
@@ -309,6 +316,7 @@ export default function Settings() {
               
               <div className="flex gap-2 mb-4">
                 <Input
+                  id="new-packaging-method"
                   placeholder="Yeni paketləşdirmə üsulu"
                   value={newPackagingMethod}
                   onChange={(e) => setNewPackagingMethod(e.target.value)}
@@ -317,8 +325,13 @@ export default function Settings() {
                       handleAddPackagingMethod();
                     }
                   }}
+                  aria-label="Yeni paketləşdirmə üsulu əlavə et"
                 />
-                <Button onClick={handleAddPackagingMethod} disabled={!newPackagingMethod.trim()}>
+                <Button 
+                  onClick={handleAddPackagingMethod} 
+                  disabled={!newPackagingMethod.trim()}
+                  aria-label="Paketləşdirmə üsulunu əlavə et"
+                >
                   <Plus className="h-4 w-4" />
                 </Button>
               </div>
@@ -332,6 +345,7 @@ export default function Settings() {
                       size="sm"
                       onClick={() => handleRemovePackagingMethod(method)}
                       className="h-auto p-1 text-muted-foreground hover:text-destructive"
+                      aria-label={`${method} paketləşdirmə üsulunu sil`}
                     >
                       <X className="h-3 w-3" />
                     </Button>
