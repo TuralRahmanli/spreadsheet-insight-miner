@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Search, Warehouse, Package, Plus, ChevronDown, ChevronUp } from "lucide-react";
+import { Search, Warehouse, Package, Plus, ChevronDown, ChevronUp, Trash2, CheckSquare, Square } from "lucide-react";
 import { useProductStore } from "@/lib/productStore";
 import { useWarehouseStore } from "@/lib/warehouseStore";
 import { useWarehouseStockStore } from "@/lib/warehouseStockStore";
@@ -15,6 +15,9 @@ import { useOperationHistory } from "@/hooks/useOperationHistory";
 import { useParams, useNavigate } from "react-router-dom";
 import { WarehouseResponsiveTable } from "@/components/WarehouseResponsiveTable";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
+import { Product } from "@/types";
 
 export default function WarehousesList() {
   const { warehouse: selectedWarehouse } = useParams();
@@ -28,7 +31,10 @@ export default function WarehousesList() {
   const [newWarehouseName, setNewWarehouseName] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [expandedWarehouses, setExpandedWarehouses] = useState<Set<string>>(new Set());
+  const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
+  const [isDeletingSelected, setIsDeletingSelected] = useState(false);
   const isMobile = useIsMobile();
+  const { toast } = useToast();
 
   const toggleWarehouse = (warehouseName: string) => {
     const newExpanded = new Set(expandedWarehouses);
@@ -115,19 +121,70 @@ export default function WarehousesList() {
     }
   };
 
+  const handleSelectProduct = (productId: string, checked: boolean) => {
+    const newSelected = new Set(selectedProducts);
+    if (checked) {
+      newSelected.add(productId);
+    } else {
+      newSelected.delete(productId);
+    }
+    setSelectedProducts(newSelected);
+  };
+
+  const handleSelectAll = (checked: boolean, warehouseProducts: Product[]) => {
+    const newSelected = new Set(selectedProducts);
+    if (checked) {
+      warehouseProducts.forEach(product => newSelected.add(product.id));
+    } else {
+      warehouseProducts.forEach(product => newSelected.delete(product.id));
+    }
+    setSelectedProducts(newSelected);
+  };
+
+  const handleDeleteSelected = () => {
+    const { removeProduct } = useProductStore.getState();
+    selectedProducts.forEach(productId => {
+      removeProduct(productId);
+    });
+    toast({
+      title: "Uğur",
+      description: `${selectedProducts.size} məhsul uğurla silindi`
+    });
+    setSelectedProducts(new Set());
+    setIsDeletingSelected(false);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight">
-            {selectedWarehouse ? `${selectedWarehouse} Anbarı` : "Anbarlar Siyahısı"}
-          </h1>
-          <p className="text-muted-foreground">
-            {selectedWarehouse 
-              ? `${selectedWarehouse} anbarında mövcud məhsullar`
-              : "Bütün anbarlar və onlardakı məhsullar"
-            }
-          </p>
+        <div className="flex items-center gap-2">
+          <div>
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight">
+              {selectedWarehouse ? `${selectedWarehouse} Anbarı` : "Anbarlar Siyahısı"}
+            </h1>
+            <p className="text-muted-foreground">
+              {selectedWarehouse 
+                ? `${selectedWarehouse} anbarında mövcud məhsullar`
+                : "Bütün anbarlar və onlardakı məhsullar"
+              }
+            </p>
+          </div>
+          {selectedProducts.size > 0 && (
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary" className="bg-primary/10 text-primary">
+                {selectedProducts.size} seçildi
+              </Badge>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setIsDeletingSelected(true)}
+                className="flex items-center gap-1"
+              >
+                <Trash2 className="h-4 w-4" />
+                Seçilənləri Sil
+              </Button>
+            </div>
+          )}
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
@@ -339,6 +396,9 @@ export default function WarehousesList() {
                     dynamicPackagingLabel={packagingSummary}
                     searchTerm={searchTerm}
                     showSettings={true}
+                    selectedProducts={selectedProducts}
+                    onSelectProduct={handleSelectProduct}
+                    onSelectAll={(checked) => handleSelectAll(checked, warehouse.products)}
                   />
                 </CardContent>
               </CollapsibleContent>
@@ -346,6 +406,29 @@ export default function WarehousesList() {
           </Collapsible>
         );
       })}
+
+      {/* Bulk Delete Confirmation Dialog */}
+      <AlertDialog open={isDeletingSelected} onOpenChange={setIsDeletingSelected}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Seçilən məhsulları sil</AlertDialogTitle>
+            <AlertDialogDescription>
+              {selectedProducts.size} məhsulu silmək istədiyinizə əminsiniz? Bu əməliyyat geri alına bilməz.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setIsDeletingSelected(false)}>
+              Ləğv et
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteSelected}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Sil
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

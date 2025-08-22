@@ -1,6 +1,8 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Package } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Package, CheckSquare, Square } from "lucide-react";
 import { Product } from "@/types";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -16,6 +18,9 @@ interface WarehouseResponsiveTableProps {
   dynamicPackagingLabel: string;
   searchTerm: string;
   showSettings?: boolean;
+  selectedProducts?: Set<string>;
+  onSelectProduct?: (productId: string, checked: boolean) => void;
+  onSelectAll?: (checked: boolean) => void;
 }
 
 export function WarehouseResponsiveTable({ 
@@ -24,7 +29,10 @@ export function WarehouseResponsiveTable({
   getStatusBadge, 
   dynamicPackagingLabel,
   searchTerm,
-  showSettings = false
+  showSettings = false,
+  selectedProducts = new Set(),
+  onSelectProduct,
+  onSelectAll
 }: WarehouseResponsiveTableProps) {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -68,6 +76,10 @@ export function WarehouseResponsiveTable({
   // Filter visible columns based on settings
   const visibleColumns = columnOrder.filter(column => columnVisibility[column]);
 
+  const isAllSelected = products.length > 0 && products.every(p => selectedProducts.has(p.id));
+  const isPartiallySelected = selectedProducts.size > 0 && !isAllSelected;
+  const showSelection = !!onSelectProduct;
+
   if (products.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
@@ -80,6 +92,25 @@ export function WarehouseResponsiveTable({
   if (isMobile) {
     return (
       <div className="space-y-4">
+        {showSelection && products.length > 0 && (
+          <div className="flex items-center gap-2 mb-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onSelectAll && onSelectAll(!isAllSelected)}
+              className="flex items-center gap-2 text-sm h-8"
+            >
+              {isAllSelected ? (
+                <CheckSquare className="h-4 w-4" />
+              ) : isPartiallySelected ? (
+                <CheckSquare className="h-4 w-4 opacity-50" />
+              ) : (
+                <Square className="h-4 w-4" />
+              )}
+              {isAllSelected ? "Hamısını ləğv et" : "Hamısını seç"}
+            </Button>
+          </div>
+        )}
         {products.map((product) => (
           <MobileWarehouseCard
             key={product.id}
@@ -87,6 +118,9 @@ export function WarehouseResponsiveTable({
             currentWarehouse={warehouseName}
             getStatusBadge={getStatusBadge}
             dynamicPackagingLabel={dynamicPackagingLabel}
+            isSelected={selectedProducts.has(product.id)}
+            onSelect={onSelectProduct ? (checked) => onSelectProduct(product.id, checked) : undefined}
+            showSelection={showSelection}
           />
         ))}
       </div>
@@ -107,10 +141,39 @@ export function WarehouseResponsiveTable({
         </div>
       )}
       
+      {showSelection && products.length > 0 && (
+        <div className="flex items-center gap-2 mb-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onSelectAll && onSelectAll(!isAllSelected)}
+            className="flex items-center gap-2 text-sm h-8"
+          >
+            {isAllSelected ? (
+              <CheckSquare className="h-4 w-4" />
+            ) : isPartiallySelected ? (
+              <CheckSquare className="h-4 w-4 opacity-50" />
+            ) : (
+              <Square className="h-4 w-4" />
+            )}
+            {isAllSelected ? "Hamısını ləğv et" : "Hamısını seç"}
+          </Button>
+        </div>
+      )}
+
       <div className="overflow-x-auto rounded-lg border">
         <Table>
           <TableHeader>
             <TableRow>
+              {showSelection && (
+                <TableHead className="w-12">
+                  <Checkbox
+                    checked={isAllSelected}
+                    onCheckedChange={(checked) => onSelectAll && onSelectAll(!!checked)}
+                    aria-label="Hamısını seç"
+                  />
+                </TableHead>
+              )}
               {visibleColumns.map((columnKey) => (
                 <TableHead key={columnKey} className="whitespace-nowrap">
                   {columnLabels[columnKey]}
@@ -202,6 +265,15 @@ export function WarehouseResponsiveTable({
 
               return (
                 <TableRow key={product.id}>
+                  {showSelection && (
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedProducts.has(product.id)}
+                        onCheckedChange={(checked) => onSelectProduct && onSelectProduct(product.id, !!checked)}
+                        aria-label={`${product.name} seç`}
+                      />
+                    </TableCell>
+                  )}
                   {visibleColumns.map((columnKey) => (
                     <React.Fragment key={`${product.id}-${columnKey}`}>
                       {renderCell(columnKey)}

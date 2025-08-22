@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Package, MapPin, ChevronDown, ChevronUp } from "lucide-react";
 import { Product } from "@/types";
@@ -14,13 +15,19 @@ interface MobileWarehouseCardProps {
   currentWarehouse: string;
   getStatusBadge: (status: string, stock: number) => React.ReactNode;
   dynamicPackagingLabel: string;
+  isSelected?: boolean;
+  onSelect?: (checked: boolean) => void;
+  showSelection?: boolean;
 }
 
 export function MobileWarehouseCard({ 
   product, 
   currentWarehouse, 
   getStatusBadge, 
-  dynamicPackagingLabel 
+  dynamicPackagingLabel,
+  isSelected = false,
+  onSelect,
+  showSelection = false
 }: MobileWarehouseCardProps) {
   const navigate = useNavigate();
   const { getProductStock } = useWarehouseStockStore();
@@ -39,13 +46,24 @@ export function MobileWarehouseCard({
               <div className="space-y-3">
                 {/* Header with status and article */}
                 <MobileFlexBetween className="items-start">
-                  <div className="flex-1 min-w-0 pr-3 overflow-hidden">
-                    <MobileText variant="subtitle" className="block truncate font-medium leading-tight mb-1">
-                      {product.name}
-                    </MobileText>
-                    <MobileText variant="caption" className="block truncate">
-                      {product.article}
-                    </MobileText>
+                  <div className="flex items-center gap-2 flex-1 min-w-0 pr-3 overflow-hidden">
+                    {showSelection && (
+                      <Checkbox
+                        checked={isSelected}
+                        onCheckedChange={(checked) => onSelect && onSelect(!!checked)}
+                        aria-label={`${product.name} seç`}
+                        className="flex-shrink-0"
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <MobileText variant="subtitle" className="block truncate font-medium leading-tight mb-1">
+                        {product.name}
+                      </MobileText>
+                      <MobileText variant="caption" className="block truncate">
+                        {product.article}
+                      </MobileText>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0 ml-auto">
                     {getStatusBadge(product.status, warehouseStock)}
